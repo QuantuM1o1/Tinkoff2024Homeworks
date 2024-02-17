@@ -1,7 +1,8 @@
-package edu.java.bot;
+package edu.java.bot.configuration;
 
-import edu.java.bot.UserMessages.UserMessageProcessor;
-import edu.java.bot.configuration.ApplicationConfig;
+import edu.java.bot.bot.Bot;
+import edu.java.bot.bot.TelegramBotImpl;
+import edu.java.bot.userMessages.UserMessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +19,6 @@ public class TelegramBotConfig {
 
     @Bean
     public Bot bot(ApplicationConfig applicationConfig) {
-        // Create and return an instance of TelegramBotImpl with the provided auth token
         return new TelegramBotImpl(applicationConfig, userMessageProcessor);
     }
 }
