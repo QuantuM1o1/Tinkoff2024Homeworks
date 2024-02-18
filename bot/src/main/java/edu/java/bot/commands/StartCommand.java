@@ -1,11 +1,9 @@
 package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.dto.ChatUser;
 import java.util.ArrayList;
 import java.util.Map;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.stereotype.Component;
 
 @Component
