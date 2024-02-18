@@ -8,7 +8,7 @@ public interface Command {
 
     String description();
 
-    SendMessage handle(Update update);
+    String handle(Update update);
 
     default boolean supports(Update update) {
         return update.message().text().startsWith(this.command() + " ")

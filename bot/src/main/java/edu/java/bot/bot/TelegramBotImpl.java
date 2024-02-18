@@ -21,14 +21,14 @@ public class TelegramBotImpl implements Bot {
     }
 
     @Override
-    public <T extends BaseRequest<T, R>, R extends BaseResponse> void execute(BaseRequest<T, R> request) {
-        bot.execute(request);
+    public <T extends BaseRequest<T, R>, R extends BaseResponse> R execute(BaseRequest<T, R> request) {
+        return this.bot.execute(request);
     }
 
     @Override
     public int process(List<Update> updates) {
         for (Update update : updates) {
-            this.bot.execute(userMessageProcessor.process(update));
+            execute(userMessageProcessor.process(update));
         }
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }

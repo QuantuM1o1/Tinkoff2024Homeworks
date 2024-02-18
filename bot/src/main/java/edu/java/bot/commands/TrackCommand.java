@@ -27,7 +27,7 @@ public class TrackCommand implements Command {
     }
 
     @Override
-    public SendMessage handle(Update update) {
+    public String handle(Update update) {
         long chatId = update.message().chat().id();
         String[] messageText = update.message().text().split(" ");
         if (messageText.length != 1) {
@@ -35,12 +35,12 @@ public class TrackCommand implements Command {
             if (isValidUrl(url)) {
                 ChatUser user = usersMap.get(chatId);
                 user.trackedURLs().add(url);
-                return new SendMessage(chatId, "URL '" + url + "' has been added to your tracked URLs list.");
+                return url + " has been added to your tracked URLs list.";
             } else {
-                return new SendMessage(chatId, "Invalid URL format. Please provide a valid URL.");
+                return "Invalid URL format. Please provide a valid URL.";
             }
         } else {
-            return new SendMessage(chatId, "Invalid command format. Please use '/track \"url\"'.");
+            return "Invalid command format. Please use '/track \"url\"'.";
         }
     }
 

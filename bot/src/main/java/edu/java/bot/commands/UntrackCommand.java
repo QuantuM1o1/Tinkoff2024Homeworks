@@ -25,19 +25,19 @@ public class UntrackCommand implements Command {
     }
 
     @Override
-    public SendMessage handle(Update update) {
+    public String handle(Update update) {
         long chatId = update.message().chat().id();
         String[] messageText = update.message().text().split(" ");
         if (messageText.length != 1) {
             String url = messageText[1];
             ChatUser user = usersMap.get(chatId);
             if (user.trackedURLs().remove(url)) {
-                return new SendMessage(chatId, url + "' has been removed from your tracked URLs list.");
+                return url + " has been removed from your tracked URLs list.";
             } else {
-                return new SendMessage(chatId, url + "' is not in your tracked URLs list.");
+                return url + " is not in your tracked URLs list.";
             }
         } else {
-            return new SendMessage(chatId, "Invalid command format. Please use '/untrack \"url\"'.");
+            return "Invalid command format. Please use '/untrack \"url\"'.";
         }
     }
 }

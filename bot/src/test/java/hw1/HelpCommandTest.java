@@ -3,38 +3,28 @@ package hw1;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.commands.Command;
 import edu.java.bot.commands.HelpCommand;
 import edu.java.bot.commands.StartCommand;
 import edu.java.bot.commands.TrackCommand;
-import edu.java.bot.commands.UnknownCommand;
 import edu.java.bot.dto.ChatUser;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 public class HelpCommandTest {
-    @Autowired
-    private Map<Long, ChatUser> usersMap;
     private List<Command> commands;
 
     @Test
     @DisplayName("Имя")
     void name() {
         // given
-        this.commands = new ArrayList<>();
-        this.commands.add(new StartCommand(usersMap));
-        this.commands.add(new TrackCommand(usersMap));
-
 
         // when
         String answer = new HelpCommand(commands).command();
@@ -59,6 +49,8 @@ public class HelpCommandTest {
     @DisplayName("Тест ручки")
     void handle() {
         // given
+        Map<Long, ChatUser> usersMap = new HashMap<>();
+
         this.commands = new ArrayList<>();
         this.commands.add(new StartCommand(usersMap));
         this.commands.add(new TrackCommand(usersMap));
@@ -68,12 +60,16 @@ public class HelpCommandTest {
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
-        HelpCommand helpCommand = new HelpCommand(commands);
+        Command helpCommand = new HelpCommand(commands);
 
         // when
-        SendMessage response = helpCommand.handle(mockUpdate);
+        String answer = helpCommand.handle(mockUpdate);
 
         // then
-        assertThat(response).isNotNull();
+        assertThat(answer).isEqualTo("""
+            Available commands:
+            /start: Start command
+            /track: Track a URL
+            """);
     }
 }

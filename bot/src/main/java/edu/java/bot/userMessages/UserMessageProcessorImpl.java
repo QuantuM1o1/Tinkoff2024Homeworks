@@ -19,10 +19,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMessageProcessorImpl implements UserMessageProcessor {
     private final List<Command> commands;
+    private final Command unknownCommand;
 
     @Autowired
     public UserMessageProcessorImpl(Map<Long, ChatUser> usersMap) {
         this.commands = new ArrayList<>();
+        unknownCommand = new UnknownCommand();
         this.commands.add(new StartCommand(usersMap));
         this.commands.add(new TrackCommand(usersMap));
         this.commands.add(new UntrackCommand(usersMap));
@@ -40,12 +42,12 @@ public class UserMessageProcessorImpl implements UserMessageProcessor {
         SendMessage response = null;
         for (Command command : commands) {
             if (command.supports(update)) {
-                response = command.handle(update);
+                response = new SendMessage(update.message().chat().id(), command.handle(update));
                 break;
             }
         }
         if (response == null) {
-            response = new UnknownCommand().handle(update);
+            response = new SendMessage(update.message().chat().id(), unknownCommand.handle(update));
         }
         return response;
     }

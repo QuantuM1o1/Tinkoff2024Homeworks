@@ -25,17 +25,17 @@ public class ListCommand implements Command {
     }
 
     @Override
-    public SendMessage handle(Update update) {
+    public String handle(Update update) {
         long chatId = update.message().chat().id();
         ChatUser user = usersMap.get(chatId);
-        if (!user.trackedURLs().isEmpty()) {
+        if (user != null && !user.trackedURLs().isEmpty()) {
             StringBuilder messageText = new StringBuilder("Tracked URLs:\n");
             for (String url : user.trackedURLs()) {
                 messageText.append("- ").append(url).append("\n");
             }
-            return new SendMessage(chatId, messageText.toString());
+            return messageText.toString();
         } else {
-            return new SendMessage(chatId, "You are not tracking any URLs.");
+            return "You are not tracking any URLs.";
         }
     }
 }

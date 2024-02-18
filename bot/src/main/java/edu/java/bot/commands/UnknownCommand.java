@@ -15,7 +15,7 @@ public class UnknownCommand implements Command {
     }
 
     @Override
-    public SendMessage handle(Update update) {
-        return new SendMessage(update.message().chat().id(), "Command is unknown");
+    public String handle(Update update) {
+        return "Command is unknown";
     }
 }

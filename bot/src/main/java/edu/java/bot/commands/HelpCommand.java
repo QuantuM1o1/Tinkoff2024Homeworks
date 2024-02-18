@@ -24,11 +24,11 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public SendMessage handle(Update update) {
+    public String handle(Update update) {
         StringBuilder messageText = new StringBuilder("Available commands:\n");
         for (Command command : commands) {
             messageText.append(command.command()).append(": ").append(command.description()).append("\n");
         }
-        return new SendMessage(update.message().chat().id(), messageText.toString());
+        return messageText.toString();
     }
 }
