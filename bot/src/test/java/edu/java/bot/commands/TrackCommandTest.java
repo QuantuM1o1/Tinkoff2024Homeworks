@@ -3,8 +3,6 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.commands.Command;
-import edu.java.bot.commands.TrackCommand;
 import edu.java.bot.dto.ChatUser;
 import java.util.ArrayList;
 import java.util.HashMap;
