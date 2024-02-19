@@ -1,10 +1,10 @@
-package hw1;
+package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.commands.Command;
-import edu.java.bot.commands.TrackCommand;
+import edu.java.bot.commands.UntrackCommand;
 import edu.java.bot.dto.ChatUser;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import org.mockito.Mockito;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
-public class TrackCommandTest {
+public class UntrackCommandTest {
     private Map<Long, ChatUser> usersMap;
 
     @Test
@@ -26,10 +26,10 @@ public class TrackCommandTest {
         usersMap = new HashMap<>();
 
         // when
-        String answer = new TrackCommand(usersMap).command();
+        String answer = new UntrackCommand(usersMap).command();
 
         // then
-        assertThat(answer).isEqualTo("/track");
+        assertThat(answer).isEqualTo("/untrack");
     }
 
     @Test
@@ -39,10 +39,10 @@ public class TrackCommandTest {
         usersMap = new HashMap<>();
 
         // when
-        String answer = new TrackCommand(usersMap).description();
+        String answer = new UntrackCommand(usersMap).description();
 
         // then
-        assertThat(answer).isEqualTo("Track a URL");
+        assertThat(answer).isEqualTo("Untrack a URL");
     }
 
     @Test
@@ -51,23 +51,24 @@ public class TrackCommandTest {
         // given
         usersMap = new HashMap<>();
         List<String> list = new ArrayList<>();
+        list.add("https://edu.tinkoff.ru");
         ChatUser user = new ChatUser(123456L, "Name", list);
         usersMap.put(123456L, user);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
         when(mockUpdate.message()).thenReturn(mockMessage);
-        when(mockUpdate.message().text()).thenReturn("/track https://edu.tinkoff.ru");
+        when(mockUpdate.message().text()).thenReturn("/untrack https://edu.tinkoff.ru");
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
         when(mockUpdate.message().chat().firstName()).thenReturn("Name");
-        Command trackCommand = new TrackCommand(usersMap);
+        Command untrackCommand = new UntrackCommand(usersMap);
 
         // when
-        String answer = trackCommand.handle(mockUpdate);
+        String answer = untrackCommand.handle(mockUpdate);
 
         // then
-        assertThat(answer).isEqualTo("https://edu.tinkoff.ru has been added to your tracked URLs list.");
+        assertThat(answer).isEqualTo("https://edu.tinkoff.ru has been removed from your tracked URLs list.");
     }
 
     @Test
@@ -76,23 +77,24 @@ public class TrackCommandTest {
         // given
         usersMap = new HashMap<>();
         List<String> list = new ArrayList<>();
+        list.add("https://edu.tinkoff.ru");
         ChatUser user = new ChatUser(123456L, "Name", list);
         usersMap.put(123456L, user);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
         when(mockUpdate.message()).thenReturn(mockMessage);
-        when(mockUpdate.message().text()).thenReturn("/track");
+        when(mockUpdate.message().text()).thenReturn("/untrack");
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
         when(mockUpdate.message().chat().firstName()).thenReturn("Name");
-        Command trackCommand = new TrackCommand(usersMap);
+        Command untrackCommand = new UntrackCommand(usersMap);
 
         // when
-        String answer = trackCommand.handle(mockUpdate);
+        String answer = untrackCommand.handle(mockUpdate);
 
         // then
-        assertThat(answer).isEqualTo("Invalid command format. Please use '/track \"url\"'.");
+        assertThat(answer).isEqualTo("Invalid command format. Please use '/untrack \"url\"'.");
     }
 
     @Test
@@ -101,22 +103,23 @@ public class TrackCommandTest {
         // given
         usersMap = new HashMap<>();
         List<String> list = new ArrayList<>();
+        list.add("https://edu.tinkoff.ru");
         ChatUser user = new ChatUser(123456L, "Name", list);
         usersMap.put(123456L, user);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
         when(mockUpdate.message()).thenReturn(mockMessage);
-        when(mockUpdate.message().text()).thenReturn("/track edu.tinkoff.ru");
+        when(mockUpdate.message().text()).thenReturn("/untrack edu.tinkoff.ru");
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
         when(mockUpdate.message().chat().firstName()).thenReturn("Name");
-        Command trackCommand = new TrackCommand(usersMap);
+        Command untrackCommand = new UntrackCommand(usersMap);
 
         // when
-        String answer = trackCommand.handle(mockUpdate);
+        String answer = untrackCommand.handle(mockUpdate);
 
         // then
-        assertThat(answer).isEqualTo("Invalid URL format. Please provide a valid URL.");
+        assertThat(answer).isEqualTo("edu.tinkoff.ru is not in your tracked URLs list.");
     }
 }
