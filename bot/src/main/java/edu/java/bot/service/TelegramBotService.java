@@ -1,4 +1,4 @@
-package edu.java.bot.bot;
+package edu.java.bot.service;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -9,14 +9,16 @@ import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.userMessages.UserMessageProcessor;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
-public class TelegramBotImpl implements Bot {
+@Service
+public class TelegramBotService implements BotService {
     private final TelegramBot bot;
     private final UserMessageProcessor userMessageProcessor;
 
-    public TelegramBotImpl(ApplicationConfig applicationConfig, UserMessageProcessor userMessageProcessor) {
-        bot = new TelegramBot(applicationConfig.telegramToken());
+    public TelegramBotService(ApplicationConfig applicationConfig, UserMessageProcessor userMessageProcessor) {
+        this.bot = new TelegramBot(applicationConfig.telegramToken());
         this.userMessageProcessor = userMessageProcessor;
     }
 
@@ -28,7 +30,7 @@ public class TelegramBotImpl implements Bot {
     @Override
     public int process(List<Update> updates) {
         for (Update update : updates) {
-            execute(userMessageProcessor.process(update));
+            this.execute(this.userMessageProcessor.process(update));
         }
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
@@ -36,12 +38,12 @@ public class TelegramBotImpl implements Bot {
     @Override
     @PostConstruct
     public void start() {
-        bot.setUpdatesListener(this);
+        this.bot.setUpdatesListener(this);
     }
 
     @Override
     @PreDestroy
     public void close() {
-        bot.removeGetUpdatesListener();
+        this.bot.removeGetUpdatesListener();
     }
 }

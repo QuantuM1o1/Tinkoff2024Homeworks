@@ -24,7 +24,7 @@ public class UntrackCommandTest {
         usersMap = new HashMap<>();
 
         // when
-        String answer = new UntrackCommand(usersMap).command();
+        String answer = new UntrackCommand(usersMap).name();
 
         // then
         assertThat(answer).isEqualTo("/untrack");

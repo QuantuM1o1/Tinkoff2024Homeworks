@@ -22,7 +22,7 @@ public class StartCommandTest {
         usersMap = new HashMap<>();
 
         // when
-        String answer = new StartCommand(usersMap).command();
+        String answer = new StartCommand(usersMap).name();
 
         // then
         assertThat(answer).isEqualTo("/start");

@@ -1,4 +1,4 @@
-package edu.java.bot.bot;
+package edu.java.bot.service;
 
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
@@ -6,7 +6,7 @@ import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.response.BaseResponse;
 import java.util.List;
 
-public interface Bot extends AutoCloseable, UpdatesListener {
+public interface BotService extends AutoCloseable, UpdatesListener {
     <T extends BaseRequest<T, R>, R extends BaseResponse> R execute(BaseRequest<T, R> request);
 
     @Override

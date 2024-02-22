@@ -24,7 +24,7 @@ public class ListCommandTest {
         usersMap = new HashMap<>();
 
         // when
-        String answer = new ListCommand(usersMap).command();
+        String answer = new ListCommand(usersMap).name();
 
         // then
         assertThat(answer).isEqualTo("/list");

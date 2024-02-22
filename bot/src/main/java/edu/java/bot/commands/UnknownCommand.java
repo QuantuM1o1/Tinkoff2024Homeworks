@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.model.Update;
 
 public class UnknownCommand implements Command {
     @Override
-    public String command() {
+    public String name() {
         return null;
     }
 

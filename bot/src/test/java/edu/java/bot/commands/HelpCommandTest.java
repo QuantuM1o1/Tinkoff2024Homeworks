@@ -23,7 +23,7 @@ public class HelpCommandTest {
         // given
 
         // when
-        String answer = new HelpCommand(commands).command();
+        String answer = new HelpCommand(commands).name();
 
         // then
         assertThat(answer).isEqualTo("/help");

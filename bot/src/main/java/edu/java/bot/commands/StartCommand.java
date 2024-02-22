@@ -9,32 +9,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class StartCommand implements Command {
     private final Map<Long, ChatUser> usersMap;
+    private static final String commandName = "/start";
+    private static final String commandDescription = "Start command";
 
     public StartCommand(Map<Long, ChatUser> usersMap) {
         this.usersMap = usersMap;
     }
 
     @Override
-    public String command() {
-        return "/start";
+    public String name() {
+        return commandName;
     }
 
     @Override
     public String description() {
-        return "Start command";
+        return commandDescription;
     }
 
     @Override
     public String handle(Update update) {
         long chatId = update.message().chat().id();
         String userName = update.message().chat().firstName();
-        String response;
-        if (usersMap.containsKey(chatId)) {
-            response = "Hello again, " + userName + "! You have already started the bot.";
+        if (this.usersMap.putIfAbsent(chatId, new ChatUser(chatId, userName, new ArrayList<>())) == null) {
+            return "Hello, " + userName + "! Welcome to the notification Telegram bot.";
         } else {
-            usersMap.put(chatId, new ChatUser(chatId, userName, new ArrayList<>()));
-            response = "Hello, " + userName + "! Welcome to the notification Telegram bot.";
+            return "Hello again, " + userName + "! You have already started the bot.";
         }
-        return response;
     }
 }

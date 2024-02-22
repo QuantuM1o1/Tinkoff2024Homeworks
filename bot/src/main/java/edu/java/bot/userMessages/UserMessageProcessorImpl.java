@@ -24,7 +24,7 @@ public class UserMessageProcessorImpl implements UserMessageProcessor {
     @Autowired
     public UserMessageProcessorImpl(Map<Long, ChatUser> usersMap) {
         this.commands = new ArrayList<>();
-        unknownCommand = new UnknownCommand();
+        this.unknownCommand = new UnknownCommand();
         this.commands.add(new StartCommand(usersMap));
         this.commands.add(new TrackCommand(usersMap));
         this.commands.add(new UntrackCommand(usersMap));
@@ -34,20 +34,20 @@ public class UserMessageProcessorImpl implements UserMessageProcessor {
 
     @Override
     public List<? extends Command> commands() {
-        return commands;
+        return this.commands;
     }
 
     @Override
     public SendMessage process(Update update) {
         SendMessage response = null;
-        for (Command command : commands) {
+        for (Command command : this.commands) {
             if (command.supports(update)) {
                 response = new SendMessage(update.message().chat().id(), command.handle(update));
                 break;
             }
         }
         if (response == null) {
-            response = new SendMessage(update.message().chat().id(), unknownCommand.handle(update));
+            response = new SendMessage(update.message().chat().id(), this.unknownCommand.handle(update));
         }
         return response;
     }

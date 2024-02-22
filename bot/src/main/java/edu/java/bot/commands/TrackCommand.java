@@ -10,19 +10,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class TrackCommand implements Command {
     private final Map<Long, ChatUser> usersMap;
+    private static final String commandName = "/track";
+    private static final String commandDescription = "Track a URL";
 
     public TrackCommand(Map<Long, ChatUser> usersMap) {
         this.usersMap = usersMap;
     }
 
     @Override
-    public String command() {
-        return "/track";
+    public String name() {
+        return commandName;
     }
 
     @Override
     public String description() {
-        return "Track a URL";
+        return commandDescription;
     }
 
     @Override
@@ -31,8 +33,8 @@ public class TrackCommand implements Command {
         String[] messageText = update.message().text().split(" ");
         if (messageText.length != 1) {
             String url = messageText[1];
-            if (isValidUrl(url)) {
-                ChatUser user = usersMap.get(chatId);
+            if (this.isValidUrl(url)) {
+                ChatUser user = this.usersMap.get(chatId);
                 user.trackedURLs().add(url);
                 return url + " has been added to your tracked URLs list.";
             } else {

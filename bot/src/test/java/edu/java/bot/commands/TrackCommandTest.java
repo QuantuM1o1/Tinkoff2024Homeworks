@@ -24,7 +24,7 @@ public class TrackCommandTest {
         usersMap = new HashMap<>();
 
         // when
-        String answer = new TrackCommand(usersMap).command();
+        String answer = new TrackCommand(usersMap).name();
 
         // then
         assertThat(answer).isEqualTo("/track");

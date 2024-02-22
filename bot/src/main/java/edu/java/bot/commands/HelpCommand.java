@@ -7,26 +7,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class HelpCommand implements Command {
     private final List<Command> commands;
+    private static final String commandName = "/help";
+    private static final String commandDescription = "List all available commands";
 
     public HelpCommand(List<Command> commands) {
         this.commands = commands;
     }
 
     @Override
-    public String command() {
-        return "/help";
+    public String name() {
+        return commandName;
     }
 
     @Override
     public String description() {
-        return "List all available commands";
+        return commandDescription;
     }
 
     @Override
     public String handle(Update update) {
         StringBuilder messageText = new StringBuilder("Available commands:\n");
-        for (Command command : commands) {
-            messageText.append(command.command()).append(": ").append(command.description()).append("\n");
+        for (Command command : this.commands) {
+            messageText.append(command.name()).append(": ").append(command.description()).append("\n");
         }
         return messageText.toString();
     }
