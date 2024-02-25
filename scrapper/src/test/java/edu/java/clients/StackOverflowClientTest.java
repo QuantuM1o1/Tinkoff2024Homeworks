@@ -47,8 +47,8 @@ public class StackOverflowClientTest {
     }
 
     @Test
-    @DisplayName("Воровство данных")
-    public void fetch() {
+    @DisplayName("Сбор данных в соответствующий DTO")
+    public void fetchDataIntoDTO() {
         // given
         stubFor(get(urlPathEqualTo("/questions/" + args[1]))
             .willReturn(aResponse()
@@ -67,8 +67,8 @@ public class StackOverflowClientTest {
     }
 
     @Test
-    @DisplayName("Нет вопроса")
-    public void notFound() {
+    @DisplayName("Ответ 404 от сервера")
+    public void questionNotFound() {
         // given
         stubFor(get(urlPathEqualTo("/questions/" + args[1]))
             .willReturn(aResponse()

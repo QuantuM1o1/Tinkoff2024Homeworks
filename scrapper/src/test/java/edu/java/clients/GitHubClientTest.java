@@ -47,8 +47,8 @@ public class GitHubClientTest {
     }
 
     @Test
-    @DisplayName("Воровство данных")
-    public void fetch() {
+    @DisplayName("Сбор данных в соответствующий DTO")
+    public void fetchDataIntoDTO() {
         // given
         stubFor(get(urlPathEqualTo("/repos/" + args[0] + "/" + args[1]))
             .willReturn(aResponse()
@@ -67,8 +67,8 @@ public class GitHubClientTest {
     }
 
     @Test
-    @DisplayName("Нет репки")
-    public void notFound() {
+    @DisplayName("Ответ 404 от сервера")
+    public void repositoryNotFound() {
         // given
         stubFor(get(urlPathEqualTo("/repos/" + args[0] + "/" + args[1]))
             .willReturn(aResponse()
