@@ -9,6 +9,8 @@ public interface Command {
 
     String handle(Update update);
 
+    Command getInstance();
+
     default boolean supports(Update update) {
         return update.message().text().startsWith(this.name() + " ")
             || update.message().text().equals(this.name());

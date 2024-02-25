@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class HelpCommand implements Command {
     private final List<Command> commands;
-    private static final String commandName = "/help";
-    private static final String commandDescription = "List all available commands";
+    private static final String COMMAND_NAME = "/help";
+    private static final String COMMAND_DESCRIPTION = "List all available commands";
 
     public HelpCommand(List<Command> commands) {
         this.commands = commands;
@@ -16,12 +16,12 @@ public class HelpCommand implements Command {
 
     @Override
     public String name() {
-        return commandName;
+        return COMMAND_NAME;
     }
 
     @Override
     public String description() {
-        return commandDescription;
+        return COMMAND_DESCRIPTION;
     }
 
     @Override
@@ -31,5 +31,10 @@ public class HelpCommand implements Command {
             messageText.append(command.name()).append(": ").append(command.description()).append("\n");
         }
         return messageText.toString();
+    }
+
+    @Override
+    public Command getInstance() {
+        return new HelpCommand(commands);
     }
 }

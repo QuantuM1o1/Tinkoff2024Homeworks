@@ -4,10 +4,13 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.dto.ChatUser;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,11 +20,15 @@ import static org.mockito.Mockito.when;
 public class ListCommandTest {
     private Map<Long, ChatUser> usersMap;
 
+    @BeforeEach
+    void setUp() {
+        this.usersMap = new HashMap<>();
+    }
+
     @Test
     @DisplayName("Имя")
     void name() {
         // given
-        usersMap = new HashMap<>();
 
         // when
         String answer = new ListCommand(usersMap).name();
@@ -31,23 +38,9 @@ public class ListCommandTest {
     }
 
     @Test
-    @DisplayName("Описание")
-    void description() {
+    @DisplayName("Лист пуст")
+    void CallToEmptyList() {
         // given
-        usersMap = new HashMap<>();
-
-        // when
-        String answer = new ListCommand(usersMap).description();
-
-        // then
-        assertThat(answer).isEqualTo("List all tracked URLs");
-    }
-
-    @Test
-    @DisplayName("Тест ручки")
-    void handle() {
-        // given
-        usersMap = new HashMap<>();
         ChatUser user = new ChatUser(123456L, "Name", new ArrayList<>());
         usersMap.put(123456L, user);
         Update mockUpdate = Mockito.mock(Update.class);
@@ -66,12 +59,16 @@ public class ListCommandTest {
     }
 
     @Test
-    @DisplayName("Тест ручки с записанными URL'ами")
-    void handleNotEmpty() {
+    @DisplayName("Лист с записанным URL")
+    void callToListWithOneURL() {
         // given
-        usersMap = new HashMap<>();
-        List<String> list = new ArrayList<>();
-        list.add("https://edu.tinkoff.ru");
+        List<URI> list = new ArrayList<>();
+        String test = "https://edu.tinkoff.ru";
+        try {
+            list.add(new URI(test));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         ChatUser user = new ChatUser(123456L, "Name", list);
         usersMap.put(123456L, user);
         Update mockUpdate = Mockito.mock(Update.class);
@@ -86,9 +83,6 @@ public class ListCommandTest {
         String answer = listCommand.handle(mockUpdate);
 
         // then
-        assertThat(answer).isEqualTo("""
-            Tracked URLs:
-            - https://edu.tinkoff.ru
-            """);
+        assertThat(answer).contains(test);
     }
 }

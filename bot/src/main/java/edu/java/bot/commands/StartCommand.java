@@ -4,13 +4,15 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.dto.ChatUser;
 import java.util.ArrayList;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class StartCommand implements Command {
+    @Autowired
     private final Map<Long, ChatUser> usersMap;
-    private static final String commandName = "/start";
-    private static final String commandDescription = "Start command";
+    private static final String COMMAND_NAME = "/start";
+    private static final String COMMAND_DESCRIPTION = "Start command";
 
     public StartCommand(Map<Long, ChatUser> usersMap) {
         this.usersMap = usersMap;
@@ -18,12 +20,12 @@ public class StartCommand implements Command {
 
     @Override
     public String name() {
-        return commandName;
+        return COMMAND_NAME;
     }
 
     @Override
     public String description() {
-        return commandDescription;
+        return COMMAND_DESCRIPTION;
     }
 
     @Override
@@ -35,5 +37,10 @@ public class StartCommand implements Command {
         } else {
             return "Hello again, " + userName + "! You have already started the bot.";
         }
+    }
+
+    @Override
+    public Command getInstance() {
+        return new StartCommand(usersMap);
     }
 }

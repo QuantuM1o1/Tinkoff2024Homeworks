@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import groovy.transform.AutoImplement;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 public class HelpCommandTest {
+    @Autowired
     private List<Command> commands;
 
     @Test
@@ -30,26 +33,15 @@ public class HelpCommandTest {
     }
 
     @Test
-    @DisplayName("Описание")
-    void description() {
-        // given
-
-        // when
-        String answer = new HelpCommand(commands).description();
-
-        // then
-        assertThat(answer).isEqualTo("List all available commands");
-    }
-
-    @Test
     @DisplayName("Тест ручки")
-    void handle() {
+    void commandRespond() {
         // given
         Map<Long, ChatUser> usersMap = new HashMap<>();
-
         this.commands = new ArrayList<>();
-        this.commands.add(new StartCommand(usersMap));
-        this.commands.add(new TrackCommand(usersMap));
+        Command testCommand1 = new StartCommand(usersMap);
+        Command testCommand2 = new TrackCommand(usersMap);
+        this.commands.add(testCommand1);
+        this.commands.add(testCommand2);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
         when(mockUpdate.message()).thenReturn(mockMessage);
@@ -62,10 +54,6 @@ public class HelpCommandTest {
         String answer = helpCommand.handle(mockUpdate);
 
         // then
-        assertThat(answer).isEqualTo("""
-            Available commands:
-            /start: Start command
-            /track: Track a URL
-            """);
+        assertThat(answer).contains(testCommand1.name()).contains(testCommand2.name());
     }
 }

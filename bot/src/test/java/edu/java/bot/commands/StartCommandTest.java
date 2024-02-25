@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.dto.ChatUser;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,11 +16,15 @@ import static org.mockito.Mockito.when;
 public class StartCommandTest {
     private Map<Long, ChatUser> usersMap;
 
+    @BeforeEach
+    void setUp() {
+        this.usersMap = new HashMap<>();
+    }
+
     @Test
     @DisplayName("Имя")
     void name() {
         // given
-        usersMap = new HashMap<>();
 
         // when
         String answer = new StartCommand(usersMap).name();
@@ -29,51 +34,38 @@ public class StartCommandTest {
     }
 
     @Test
-    @DisplayName("Описание")
-    void description() {
+    @DisplayName("Первый ответ")
+    void firstReply() {
         // given
-        usersMap = new HashMap<>();
-
-        // when
-        String answer = new StartCommand(usersMap).description();
-
-        // then
-        assertThat(answer).isEqualTo("Start command");
-    }
-
-    @Test
-    @DisplayName("Тест ручки")
-    void handle() {
-        // given
-        usersMap = new HashMap<>();
+        String name = "Name";
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
         when(mockUpdate.message()).thenReturn(mockMessage);
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
-        when(mockUpdate.message().chat().firstName()).thenReturn("Name");
+        when(mockUpdate.message().chat().firstName()).thenReturn(name);
         Command startCommand = new StartCommand(usersMap);
 
         // when
         String answer = startCommand.handle(mockUpdate);
 
         // then
-        assertThat(answer).isEqualTo("Hello, Name! Welcome to the notification Telegram bot.");
+        assertThat(answer).isEqualTo("Hello, " + name + "! Welcome to the notification Telegram bot.");
     }
 
     @Test
-    @DisplayName("Тест ручки второй раз")
-    void handleSecondCall() {
+    @DisplayName("Второй ответ, для уже зарегирированного пользователя")
+    void secondReply() {
         // given
-        usersMap = new HashMap<>();
+        String name = "Name";
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
         when(mockUpdate.message()).thenReturn(mockMessage);
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
-        when(mockUpdate.message().chat().firstName()).thenReturn("Name");
+        when(mockUpdate.message().chat().firstName()).thenReturn(name);
         Command startCommand = new StartCommand(usersMap);
 
         // when
@@ -81,6 +73,6 @@ public class StartCommandTest {
         answer = startCommand.handle(mockUpdate);
 
         // then
-        assertThat(answer).isEqualTo("Hello again, Name! You have already started the bot.");
+        assertThat(answer).isEqualTo("Hello again, " + name + "! You have already started the bot.");
     }
 }

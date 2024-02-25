@@ -9,8 +9,8 @@ import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.userMessages.UserMessageProcessor;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class TelegramBotService implements BotService {
