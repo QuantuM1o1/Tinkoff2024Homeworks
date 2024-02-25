@@ -1,17 +1,19 @@
 package edu.java.clients;
 
+import edu.java.configuration.ApplicationConfig;
+import edu.java.dto.StackOverflowDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-public class StackOverflowClient {
+public class StackOverflowClient implements Client<StackOverflowDTO> {
     private final WebClient webClient;
 
     @Autowired
-    public StackOverflowClient(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("https://api.stackexchange.com/2.3").build();
+    public StackOverflowClient(WebClient.Builder webClientBuilder, ApplicationConfig applicationConfig) {
+        this.webClient = webClientBuilder.baseUrl(applicationConfig.stackOverflowBaseUrl()).build();
     }
 
     @Autowired
@@ -19,10 +21,18 @@ public class StackOverflowClient {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
 
-    public Mono<String> fetch(String site, String questionId) {
-        return webClient.get()
-            .uri("/questions/{questionId}?site={site}", questionId, site)
+    /**
+     * Fetches info, and creates a StackOverflowDTO based on it
+     *
+     * @param args The string arguments:
+     *             Argument 1: Site.
+     *             Argument 2: Question id.
+     */
+    @Override
+    public Mono<StackOverflowDTO> fetch(String[] args) {
+        return this.webClient.get()
+            .uri("/questions/{questionId}?site={site}", args[1], args[0])
             .retrieve()
-            .bodyToMono(String.class);
+            .bodyToMono(StackOverflowDTO.class);
     }
 }

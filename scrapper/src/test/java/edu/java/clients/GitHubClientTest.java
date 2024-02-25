@@ -2,8 +2,8 @@ package edu.java.clients;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import edu.java.dto.GitHubRepositoryDTO;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -26,16 +27,22 @@ public class GitHubClientTest {
     private WebClient.Builder builder;
 
     private WireMockServer wireMockServer;
+    private String[] args;
+    private GitHubClient gitHubClient;
 
     @BeforeEach
-    public void beforeE() {
+    public void setUp() {
         wireMockServer = new WireMockServer();
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
+        args = new String[2];
+        args[0] = "octocat";
+        args[1] = "Hello-World";
+        gitHubClient = new GitHubClient(builder, "http://localhost:8080");
     }
 
     @AfterEach
-    public void afterE() {
+    public void tearDown() {
         wireMockServer.stop();
     }
 
@@ -43,10 +50,7 @@ public class GitHubClientTest {
     @DisplayName("Воровство данных")
     public void fetch() {
         // given
-        String owner = "octocat";
-        String repoName = "Hello-World";
-        GitHubClient gitHubClient = new GitHubClient(builder, "http://localhost:8080");
-        stubFor(get(urlPathEqualTo("/repos/" + owner + "/" + repoName))
+        stubFor(get(urlPathEqualTo("/repos/" + args[0] + "/" + args[1]))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
@@ -54,32 +58,30 @@ public class GitHubClientTest {
                     "{\"full_name\":\"octocat/Hello-World\",\"id\":\"1296269\",\"updated_at\":\"2024-02-18T12:43:36Z\"}")));
 
         // when
-        Mono<String> answer = gitHubClient.fetch(owner, repoName);
+        Mono<GitHubRepositoryDTO> answer = gitHubClient.fetch(args);
 
         // then
-        Assertions.assertEquals(
-            "{\"full_name\":\"octocat/Hello-World\",\"id\":\"1296269\",\"updated_at\":\"2024-02-18T12:43:36Z\"}",
-            answer.block());
+        assertThat(answer.block().id()).isEqualTo(1296269);
+        assertThat(answer.block().fullName()).isEqualTo("octocat/Hello-World");
+        assertThat(answer.block().updatedAt()).isEqualTo("2024-02-18T12:43:36Z");
     }
 
     @Test
     @DisplayName("Нет репки")
     public void notFound() {
         // given
-        String owner = "octocat";
-        String repoName = "Hello-World";
-        GitHubClient gitHubClient = new GitHubClient(builder, "http://localhost:8080");
-        stubFor(get(urlPathEqualTo("/repos/" + owner + "/" + repoName))
+        stubFor(get(urlPathEqualTo("/repos/" + args[0] + "/" + args[1]))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.NOT_FOUND.value())));
 
         // when
+        Mono<GitHubRepositoryDTO> answer = gitHubClient.fetch(args);
 
         // then
         WebClientResponseException exception = assertThrows(
             WebClientResponseException.class,
-            () -> gitHubClient.fetch(owner, repoName).block()
+                answer::block
         );
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }
