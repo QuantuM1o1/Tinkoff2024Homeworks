@@ -32,7 +32,7 @@ public class HelpCommandTest {
     }
 
     @Test
-    @DisplayName("Тест ручки")
+    @DisplayName("Ответ на команду")
     void commandRespond() {
         // given
         Map<Long, ChatUser> usersMap = new HashMap<>();

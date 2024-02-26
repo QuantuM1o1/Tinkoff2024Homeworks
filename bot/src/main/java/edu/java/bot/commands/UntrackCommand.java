@@ -48,6 +48,9 @@ public class UntrackCommand implements Command {
 
     private String getMessage(String stringUrl, long chatId) {
         ChatUser user = this.usersMap.get(chatId);
+        if (user == null) {
+            return "You need to register first";
+        }
         try {
             if (user.trackedURLs().remove(new URI(stringUrl))) {
                 return stringUrl + " has been removed from your tracked URLs list.";

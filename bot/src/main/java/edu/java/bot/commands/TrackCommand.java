@@ -58,6 +58,9 @@ public class TrackCommand implements Command {
     private String getMessage(String stringUrl, long chatId) {
         if (this.isValidUrl(stringUrl)) {
             ChatUser user = this.usersMap.get(chatId);
+            if (user == null) {
+                return "You need to register first";
+            }
             URI url = URI.create(stringUrl);
             user.trackedURLs().add(url);
             return url + " has been added to your tracked URLs list.";

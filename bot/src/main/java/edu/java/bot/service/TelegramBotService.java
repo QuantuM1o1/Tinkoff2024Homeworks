@@ -23,8 +23,8 @@ public class TelegramBotService implements BotService {
     }
 
     @Override
-    public <T extends BaseRequest<T, R>, R extends BaseResponse> R execute(BaseRequest<T, R> request) {
-        return this.bot.execute(request);
+    public <T extends BaseRequest<T, R>, R extends BaseResponse> void execute(BaseRequest<T, R> request) {
+        this.bot.execute(request);
     }
 
     @Override

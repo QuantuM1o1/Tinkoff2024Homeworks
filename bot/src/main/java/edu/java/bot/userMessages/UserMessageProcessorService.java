@@ -13,11 +13,6 @@ public class UserMessageProcessorService implements UserMessageProcessor {
     private List<Command> commands;
 
     @Override
-    public List<? extends Command> commands() {
-        return this.commands;
-    }
-
-    @Override
     public SendMessage process(Update update) {
         for (Command command : this.commands) {
             if (command.supports(update)) {
