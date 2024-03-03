@@ -6,8 +6,8 @@
 
 package edu.java.api;
 
-import edu.java.apiExceptions.AlreadyRegisteredException;
 import dto.ApiErrorResponse;
+import edu.java.apiException.AlreadyRegisteredException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

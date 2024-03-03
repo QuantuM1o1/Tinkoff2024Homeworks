@@ -5,7 +5,7 @@ import dto.LinkResponse;
 import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
 import edu.java.api.LinksApi;
-import edu.java.apiExceptions.LinkAlreadyExistsException;
+import edu.java.apiException.LinkAlreadyExistsException;
 import java.net.URI;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package edu.java.bot.apiExceptions;
+package edu.java.bot.apiException;
 
 import java.util.List;
 import org.jetbrains.annotations.NotNull;

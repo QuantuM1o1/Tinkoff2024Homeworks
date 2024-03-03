@@ -1,14 +1,15 @@
 package edu.java.bot.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import edu.java.bot.apiExceptions.UserNotFoundException;
 import dto.ApiErrorResponse;
+import edu.java.bot.apiException.UserNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {

@@ -1,10 +1,8 @@
-package edu.java.clients;
+package edu.java.client;
 
-
+import dto.ApiErrorResponse;
 import dto.LinkUpdateRequest;
 import edu.java.configuration.ApplicationConfig;
-import dto.ApiErrorResponse;
-import jakarta.servlet.ServletException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -34,7 +32,7 @@ public class UpdatesClient {
             .onStatus(
                     HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new ServletException()))
+                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.getExceptionMessage())))
             )
             .bodyToMono(Void.class);
     }

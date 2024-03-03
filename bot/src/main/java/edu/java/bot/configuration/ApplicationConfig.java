@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
     @NotEmpty
-    String botUrl,
+    String scrapperUrl,
 
     @NotEmpty
     String telegramToken

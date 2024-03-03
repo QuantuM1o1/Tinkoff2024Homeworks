@@ -7,11 +7,11 @@
 package edu.java.api;
 
 import dto.AddLinkRequest;
-import dto.LinkResponse;
-import edu.java.apiExceptions.LinkAlreadyExistsException;
 import dto.ApiErrorResponse;
+import dto.LinkResponse;
 import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
+import edu.java.apiException.LinkAlreadyExistsException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

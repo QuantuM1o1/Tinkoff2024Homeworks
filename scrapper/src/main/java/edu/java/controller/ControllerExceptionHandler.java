@@ -1,9 +1,9 @@
 package edu.java.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import edu.java.apiExceptions.AlreadyRegisteredException;
-import edu.java.apiExceptions.LinkAlreadyExistsException;
 import dto.ApiErrorResponse;
+import edu.java.apiException.AlreadyRegisteredException;
+import edu.java.apiException.LinkAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;

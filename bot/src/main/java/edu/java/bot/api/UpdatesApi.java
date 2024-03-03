@@ -6,9 +6,9 @@
 
 package edu.java.bot.api;
 
-import edu.java.bot.apiExceptions.UserNotFoundException;
 import dto.ApiErrorResponse;
 import dto.LinkUpdateRequest;
+import edu.java.bot.apiException.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

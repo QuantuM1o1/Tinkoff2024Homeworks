@@ -1,14 +1,14 @@
 package edu.java.bot.controller;
 
-import edu.java.bot.api.UpdatesApi;
-import edu.java.bot.apiExceptions.UserNotFoundException;
-import edu.java.bot.dto.ChatUser;
 import dto.LinkUpdateRequest;
+import edu.java.bot.api.UpdatesApi;
+import edu.java.bot.apiException.UserNotFoundException;
+import edu.java.bot.dto.ChatUser;
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,14 +30,13 @@ public class UpdatesController implements UpdatesApi {
 
     @Override
     public ResponseEntity<Void> updatesPost(
-        @Parameter(name = "LinkUpdateRequest", required = true) LinkUpdateRequest linkUpdate) throws UserNotFoundException {
+        @Parameter(name = "LinkUpdateRequest", required = true) LinkUpdateRequest linkUpdate)
+            throws UserNotFoundException {
         List<Long> checkAvailability = checkChats(linkUpdate.getTgChatIds());
         if (checkAvailability.isEmpty()) {
             LOGGER.info("All users are notified!");
         } else {
-            for (Long chatId : checkAvailability) {
-                LOGGER.info("Couldn't find user with id " + chatId);
-            }
+            checkAvailability.forEach(chatId -> LOGGER.info("Couldn't find user with id " + chatId));
             throw new UserNotFoundException(checkAvailability);
         }
 

@@ -1,7 +1,7 @@
 package edu.java.controller;
 
 import edu.java.api.TgChatApi;
-import edu.java.apiExceptions.AlreadyRegisteredException;
+import edu.java.apiException.AlreadyRegisteredException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;

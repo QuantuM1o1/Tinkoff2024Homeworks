@@ -1,4 +1,4 @@
-package edu.java.clients;
+package edu.java.client;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -29,9 +28,9 @@ public class UpdatesClientTest
 
     @BeforeEach
     public void setUp() {
-        wireMockServer = new WireMockServer();
+        wireMockServer = new WireMockServer(8090);
         wireMockServer.start();
-        WireMock.configureFor(8090);
+        WireMock.configureFor(wireMockServer.port());
     }
 
     @AfterEach
@@ -57,7 +56,7 @@ public class UpdatesClientTest
 
     @Test
     @DisplayName("Ответ 404 от сервера")
-    public void questionNotFound() {
+    public void userNotFound() {
         // given
         LinkUpdateRequest request = new LinkUpdateRequest();
         stubFor(post(urlPathEqualTo("/updates"))
@@ -75,10 +74,10 @@ public class UpdatesClientTest
         Mono<Void> answer = updatesClient.sendUpdate(request);
 
         // then
-        WebClientResponseException exception = assertThrows(
-            WebClientResponseException.class,
+        Throwable exception = assertThrows(
+            Throwable.class,
             answer::block
         );
-        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(exception.getMessage()).contains("Couldn't find users with ids [1]");
     }
 }
