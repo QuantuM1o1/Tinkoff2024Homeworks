@@ -3,6 +3,7 @@ app:
     enable: true
     interval: 10s
     force-check-delay: 10s
+  bot-url: "http://localhost:8090"
 
 spring:
   application:
@@ -11,5 +12,11 @@ spring:
 server:
   port: 8080
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
 logging:
   config: classpath:log4j2-plain.xml
+
+

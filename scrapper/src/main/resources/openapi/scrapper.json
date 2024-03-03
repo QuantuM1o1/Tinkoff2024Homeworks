@@ -36,6 +36,16 @@
                                 }
                             }
                         }
+                    },
+                    "409": {
+                        "description": "Повторная регистрация",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -152,6 +162,16 @@
                     },
                     "400": {
                         "description": "Некорректные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Ссылка уже была добавлена ранее",
                         "content": {
                             "application/json": {
                                 "schema": {
