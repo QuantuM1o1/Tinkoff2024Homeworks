@@ -78,12 +78,10 @@ public class LinkResponse {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class dto.LinkResponse {\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    url: ").append(toIndentedString(url)).append("\n");
-    sb.append("}");
-    return sb.toString();
+      return "class dto.LinkResponse {\n"
+          + "    id: " + toIndentedString(id) + "\n"
+          + "    url: " + toIndentedString(url) + "\n"
+          + "}";
   }
 
   /**

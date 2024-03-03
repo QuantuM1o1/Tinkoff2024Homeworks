@@ -55,11 +55,9 @@ public class AddLinkRequest {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class dto.AddLinkRequest {\n");
-    sb.append("    link: ").append(toIndentedString(link)).append("\n");
-    sb.append("}");
-    return sb.toString();
+      return "class dto.AddLinkRequest {\n"
+          + "    link: " + toIndentedString(link) + "\n"
+          + "}";
   }
 
   /**

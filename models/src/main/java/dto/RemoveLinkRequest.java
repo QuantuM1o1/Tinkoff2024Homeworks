@@ -55,10 +55,9 @@ public class RemoveLinkRequest {
 
   @Override
   public String toString() {
-      String sb = "class dto.RemoveLinkRequest {\n"
+      return "class dto.RemoveLinkRequest {\n"
           + "    link: " + toIndentedString(link) + "\n"
           + "}";
-    return sb;
   }
 
   /**

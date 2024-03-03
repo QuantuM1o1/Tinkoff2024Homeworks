@@ -88,12 +88,10 @@ public class ListLinksResponse {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class dto.ListLinksResponse {\n");
-    sb.append("    links: ").append(toIndentedString(links)).append("\n");
-    sb.append("    size: ").append(toIndentedString(size)).append("\n");
-    sb.append("}");
-    return sb.toString();
+      return "class dto.ListLinksResponse {\n"
+          + "    links: " + toIndentedString(links) + "\n"
+          + "    size: " + toIndentedString(size) + "\n"
+          + "}";
   }
 
   /**
