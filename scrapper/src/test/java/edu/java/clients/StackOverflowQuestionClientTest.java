@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -61,9 +64,9 @@ public class StackOverflowQuestionClientTest {
         Mono<StackOverflowQuestionResponse> answer = stackOverflowQuestionClient.fetch(args);
 
         // then
-        assertThat(answer.block().items().getFirst().lastActivityDate()).isEqualTo("2010-09-01T05:55:47Z");
-        assertThat(answer.block().items().getFirst().id()).isEqualTo(3615006);
-        assertThat(answer.block().items().getFirst().link()).isEqualTo("https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package");
+        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().lastActivityDate()).isEqualTo("2010-09-01T05:55:47Z");
+        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().id()).isEqualTo(3615006);
+        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().link()).isEqualTo("https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package");
     }
 
     @Test

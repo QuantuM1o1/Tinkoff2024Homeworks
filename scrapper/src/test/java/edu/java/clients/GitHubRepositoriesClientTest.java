@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -40,7 +43,7 @@ public class GitHubRepositoriesClientTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         wireMockServer.stop();
     }
 
@@ -59,9 +62,9 @@ public class GitHubRepositoriesClientTest {
         Mono<GitHubRepositoryResponse> answer = gitHubRepositoriesClient.fetch(args);
 
         // then
-        assertThat(answer.block().id()).isEqualTo(1296269);
-        assertThat(answer.block().fullName()).isEqualTo("octocat/Hello-World");
-        assertThat(answer.block().updatedAt()).isEqualTo("2024-02-18T12:43:36Z");
+        assertThat(Objects.requireNonNull(answer.block()).id()).isEqualTo(1296269);
+        assertThat(Objects.requireNonNull(answer.block()).fullName()).isEqualTo("octocat/Hello-World");
+        assertThat(Objects.requireNonNull(answer.block()).updatedAt()).isEqualTo("2024-02-18T12:43:36Z");
     }
 
     @Test
