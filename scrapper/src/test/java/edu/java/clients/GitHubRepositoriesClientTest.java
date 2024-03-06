@@ -2,16 +2,15 @@ package edu.java.clients;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import edu.java.dto.GitHubRepositoryDTO;
+import edu.java.configuration.ApplicationConfig;
+import edu.java.dto.GitHubRepositoryResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -20,15 +19,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-public class GitHubClientTest {
-    @Autowired
-    private WebClient.Builder builder;
-
+public class GitHubRepositoriesClientTest {
     private WireMockServer wireMockServer;
     private String[] args;
-    private GitHubClient gitHubClient;
+    private GitHubRepositoriesClient gitHubRepositoriesClient;
 
     @BeforeEach
     public void setUp() {
@@ -38,11 +34,13 @@ public class GitHubClientTest {
         args = new String[2];
         args[0] = "octocat";
         args[1] = "Hello-World";
-        gitHubClient = new GitHubClient(builder, "http://localhost:8080");
+        ApplicationConfig mockConfig = Mockito.mock(ApplicationConfig.class);
+        when(mockConfig.gitHubBaseUrl()).thenReturn("http://localhost:8080");
+        gitHubRepositoriesClient = new GitHubRepositoriesClient(mockConfig);
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws Exception {
         wireMockServer.stop();
     }
 
@@ -58,7 +56,7 @@ public class GitHubClientTest {
                     "{\"full_name\":\"octocat/Hello-World\",\"id\":\"1296269\",\"updated_at\":\"2024-02-18T12:43:36Z\"}")));
 
         // when
-        Mono<GitHubRepositoryDTO> answer = gitHubClient.fetch(args);
+        Mono<GitHubRepositoryResponse> answer = gitHubRepositoriesClient.fetch(args);
 
         // then
         assertThat(answer.block().id()).isEqualTo(1296269);
@@ -75,7 +73,7 @@ public class GitHubClientTest {
                 .withStatus(HttpStatus.NOT_FOUND.value())));
 
         // when
-        Mono<GitHubRepositoryDTO> answer = gitHubClient.fetch(args);
+        Mono<GitHubRepositoryResponse> answer = gitHubRepositoriesClient.fetch(args);
 
         // then
         WebClientResponseException exception = assertThrows(
