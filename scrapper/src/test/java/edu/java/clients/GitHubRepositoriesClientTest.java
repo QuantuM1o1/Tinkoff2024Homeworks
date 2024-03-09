@@ -3,6 +3,7 @@ package edu.java.clients;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.configuration.ApplicationConfig;
+import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.when;
 
 public class GitHubRepositoriesClientTest {
     private WireMockServer wireMockServer;
-    private String[] args;
+    private GitHubRepositoryRequest request;
     private GitHubRepositoriesClient gitHubRepositoriesClient;
 
     @BeforeEach
@@ -34,9 +35,7 @@ public class GitHubRepositoriesClientTest {
         wireMockServer = new WireMockServer();
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
-        args = new String[2];
-        args[0] = "octocat";
-        args[1] = "Hello-World";
+        request = new GitHubRepositoryRequest("octocat", "Hello-World");
         ApplicationConfig mockConfig = Mockito.mock(ApplicationConfig.class);
         when(mockConfig.gitHubBaseUrl()).thenReturn("http://localhost:8080");
         gitHubRepositoriesClient = new GitHubRepositoriesClient(mockConfig);
@@ -51,7 +50,7 @@ public class GitHubRepositoriesClientTest {
     @DisplayName("Сбор данных в соответствующий DTO")
     public void fetchDataIntoDTO() {
         // given
-        stubFor(get(urlPathEqualTo("/repos/" + args[0] + "/" + args[1]))
+        stubFor(get(urlPathEqualTo("/repos/" + request.owner() + "/" + request.repoName()))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
@@ -59,7 +58,7 @@ public class GitHubRepositoriesClientTest {
                     "{\"full_name\":\"octocat/Hello-World\",\"id\":\"1296269\",\"updated_at\":\"2024-02-18T12:43:36Z\"}")));
 
         // when
-        Mono<GitHubRepositoryResponse> answer = gitHubRepositoriesClient.fetch(args);
+        Mono<GitHubRepositoryResponse> answer = gitHubRepositoriesClient.fetch(request);
 
         // then
         assertThat(Objects.requireNonNull(answer.block()).id()).isEqualTo(1296269);
@@ -71,12 +70,12 @@ public class GitHubRepositoriesClientTest {
     @DisplayName("Ответ 404 от сервера")
     public void repositoryNotFound() {
         // given
-        stubFor(get(urlPathEqualTo("/repos/" + args[0] + "/" + args[1]))
+        stubFor(get(urlPathEqualTo("/repos/" + request.owner() + "/" + request.repoName()))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.NOT_FOUND.value())));
 
         // when
-        Mono<GitHubRepositoryResponse> answer = gitHubRepositoriesClient.fetch(args);
+        Mono<GitHubRepositoryResponse> answer = gitHubRepositoriesClient.fetch(request);
 
         // then
         WebClientResponseException exception = assertThrows(
