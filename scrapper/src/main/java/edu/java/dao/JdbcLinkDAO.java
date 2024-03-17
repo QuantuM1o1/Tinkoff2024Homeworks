@@ -1,14 +1,15 @@
 package edu.java.dao;
 
 import edu.java.dto.LinkDTO;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Repository
 public class JdbcLinkDAO implements LinkDAO {
@@ -21,13 +22,14 @@ public class JdbcLinkDAO implements LinkDAO {
 
     @Override
     @Transactional
-    public void addLink(String url) {
-        String sql = "INSERT INTO links (url, added_at, updated_at) VALUES (?, ?, ?)";
+    public void addLink(String url, OffsetDateTime lastActivity, int siteId) {
+        String sql = "INSERT INTO links (url, added_at, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?, ?)";
 
         LocalDateTime currentTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(currentTime);
+        Timestamp lastActivityStamp = Timestamp.from(lastActivity.toInstant());
 
-        jdbcTemplate.update(sql, url, timestamp, timestamp);
+        jdbcTemplate.update(sql, url, timestamp, timestamp, lastActivityStamp, siteId);
     }
 
     @Override
@@ -46,6 +48,6 @@ public class JdbcLinkDAO implements LinkDAO {
     public List<LinkDTO> findAllLinks() {
         String sql = "SELECT * FROM links WHERE deleted_at IS NULL";
 
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(LinkDTO.class));
+        return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
     }
 }

@@ -1,14 +1,14 @@
 package edu.java.dao;
 
 import edu.java.dto.UserDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.DataClassRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class JdbcUserDAO implements UserDAO {
@@ -46,6 +46,6 @@ public class JdbcUserDAO implements UserDAO {
     public List<UserDTO> findAllUsers() {
         String sql = "SELECT chat_id, username, added_at FROM users WHERE deleted_at IS NULL";
 
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserDTO.class));
+        return jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
     }
 }

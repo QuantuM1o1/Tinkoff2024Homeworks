@@ -1,11 +1,13 @@
 package edu.java.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record LinkDTO(
-    Long linkId,
+    long linkId,
     String url,
-    LocalDateTime addedAt,
-    LocalDateTime updatedAt
+    OffsetDateTime addedAt,
+    OffsetDateTime updatedAt,
+    OffsetDateTime lastActivity,
+    int siteId
 ) {
 }

@@ -1,14 +1,14 @@
 package edu.java.dao;
 
 import edu.java.dto.LinkDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.DataClassRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class JdbcUserLinkDAO implements UserLinkDAO {
@@ -45,6 +45,6 @@ public class JdbcUserLinkDAO implements UserLinkDAO {
             "INNER JOIN links l ON ul.link_id = l.link_id " +
             "WHERE ul.user_id = ? AND ul.deleted_at IS NULL";
 
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(LinkDTO.class), chatId);
+        return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), chatId);
     }
 }

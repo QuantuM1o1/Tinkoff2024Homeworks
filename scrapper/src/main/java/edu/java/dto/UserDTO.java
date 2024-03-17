@@ -1,10 +1,10 @@
 package edu.java.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record UserDTO(
-    Long chatId,
+    long chatId,
     String username,
-    LocalDateTime addedAt
+    OffsetDateTime addedAt
 ) {
 }
