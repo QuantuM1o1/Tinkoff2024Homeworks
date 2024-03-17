@@ -6,18 +6,44 @@ import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
 import edu.java.apiException.LinkAlreadyExistsException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
+import edu.java.dto.LinkDTO;
+import edu.java.service.LinkService;
+import edu.java.service.TgChatService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-public class LinksControllerTest
-{
+public class LinksControllerTest {
+    private AutoCloseable closeable;
+
+    @InjectMocks
     private final LinksController linksController = new LinksController();
+
+    @Mock
+    LinkService mockLinkService;
+
+    @BeforeEach
+    public void setUp() {
+        closeable = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
+    }
 
     @Test
     @DisplayName("Удалить ссылку")
@@ -27,6 +53,7 @@ public class LinksControllerTest
         String link = "https://www.google.com/";
         RemoveLinkRequest request = new RemoveLinkRequest();
         request.setLink(URI.create(link));
+        doNothing().when(mockLinkService);
 
         // when
         ResponseEntity<LinkResponse> response = linksController.linksDelete(tgChatId, request);
@@ -42,6 +69,8 @@ public class LinksControllerTest
     public void getLinks() {
         // given
         Long tgChatId = 1L;
+        Collection<LinkDTO> collection = new ArrayList<>();
+        when(mockLinkService.listAll(tgChatId)).thenReturn(collection);
 
         // when
         ResponseEntity<ListLinksResponse> response = linksController.linksGet(tgChatId);
@@ -60,6 +89,7 @@ public class LinksControllerTest
         String link = "https://www.google.com/";
         AddLinkRequest request = new AddLinkRequest();
         request.setLink(URI.create(link));
+        doNothing().when(mockLinkService);
 
         // when
         ResponseEntity<LinkResponse> response = linksController.linksPost(tgChatId, request);

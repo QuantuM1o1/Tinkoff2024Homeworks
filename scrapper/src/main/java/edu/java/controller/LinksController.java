@@ -28,7 +28,7 @@ public class LinksController implements LinksApi {
     private final static Logger LOGGER = LogManager.getLogger();
 
     @Autowired
-    JdbcLinkService linkService;
+    LinkService linkService;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
