@@ -28,8 +28,7 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
     void addTest() {
         // given
         long chatId = 123L;
-        String username = "Mikhail";
-        userRepository.addUser(chatId, username);
+        userRepository.addUser(chatId);
 
         String url = "https://www.google.com/";
         OffsetDateTime lastActivity = OffsetDateTime.now();
@@ -54,8 +53,7 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
     void removeTest() {
         // given
         long chatId = 123L;
-        String username = "Mikhail";
-        userRepository.addUser(chatId, username);
+        userRepository.addUser(chatId);
 
         String url1 = "https://www.google.com/";
         OffsetDateTime lastActivity = OffsetDateTime.now();
@@ -85,8 +83,7 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
     void findAllTest() {
         // given
         long chatId = 123L;
-        String username = "Mikhail";
-        userRepository.addUser(chatId, username);
+        userRepository.addUser(chatId);
 
         String url1 = "https://www.google.com/";
         OffsetDateTime lastActivity = OffsetDateTime.now();

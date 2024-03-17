@@ -2,10 +2,12 @@ package edu.java.controller;
 
 import edu.java.api.TgChatApi;
 import edu.java.apiException.AlreadyRegisteredException;
+import edu.java.service.TgChatService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -15,6 +17,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 public class TgChatController implements TgChatApi {
     private final static Logger LOGGER = LogManager.getLogger();
 
+    @Autowired
+    TgChatService tgChatService;
+
     @Override
     public Optional<NativeWebRequest> getRequest() {
         return TgChatApi.super.getRequest();
@@ -22,7 +27,7 @@ public class TgChatController implements TgChatApi {
 
     @Override
     public ResponseEntity<Void> tgChatIdDelete(Long id) {
-        LOGGER.info("Deleted chat with id " + id);
+        tgChatService.unregister(id);
         return ResponseEntity.ok().build();
     }
 
@@ -32,7 +37,7 @@ public class TgChatController implements TgChatApi {
         if (alreadyRegistered) {
             throw new AlreadyRegisteredException();
         }
-        LOGGER.info("Added chat with id " + id);
+        tgChatService.register(id);
         return ResponseEntity.ok().build();
     }
 

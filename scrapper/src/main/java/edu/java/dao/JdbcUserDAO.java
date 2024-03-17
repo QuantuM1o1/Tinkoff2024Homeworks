@@ -21,13 +21,13 @@ public class JdbcUserDAO implements UserDAO {
 
     @Override
     @Transactional
-    public void addUser(Long chatId, String username) {
-        String sql = "INSERT INTO users (chat_id, username, added_at) VALUES (?, ?, ?)";
+    public void addUser(Long chatId) {
+        String sql = "INSERT INTO users (chat_id, added_at) VALUES (?, ?)";
 
         LocalDateTime currentTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(currentTime);
 
-        jdbcTemplate.update(sql, chatId, username, timestamp);
+        jdbcTemplate.update(sql, chatId, timestamp);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class JdbcUserDAO implements UserDAO {
     @Override
     @Transactional(readOnly = true)
     public List<UserDTO> findAllUsers() {
-        String sql = "SELECT chat_id, username, added_at FROM users WHERE deleted_at IS NULL";
+        String sql = "SELECT * FROM users WHERE deleted_at IS NULL";
 
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
     }

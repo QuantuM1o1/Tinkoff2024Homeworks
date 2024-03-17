@@ -3,12 +3,16 @@ package edu.java.controller;
 import edu.java.apiException.AlreadyRegisteredException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@SpringBootTest
 public class TgChatControllerTest {
-    private final TgChatController controller = new TgChatController();
+    @Autowired
+    private TgChatController controller;
 
     @Test
     @DisplayName("Удалить чат")

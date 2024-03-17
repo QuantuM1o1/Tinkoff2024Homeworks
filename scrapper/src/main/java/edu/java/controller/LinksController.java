@@ -6,11 +6,18 @@ import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
 import edu.java.api.LinksApi;
 import edu.java.apiException.LinkAlreadyExistsException;
+import edu.java.dto.LinkDTO;
+import edu.java.service.LinkService;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import edu.java.service.jdbc.JdbcLinkService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -20,6 +27,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 public class LinksController implements LinksApi {
     private final static Logger LOGGER = LogManager.getLogger();
 
+    @Autowired
+    JdbcLinkService linkService;
+
     @Override
     public Optional<NativeWebRequest> getRequest() {
         return LinksApi.super.getRequest();
@@ -27,6 +37,7 @@ public class LinksController implements LinksApi {
 
     @Override
     public ResponseEntity<LinkResponse> linksDelete(Long tgChatId, RemoveLinkRequest removeLinkRequest) {
+        linkService.remove(tgChatId, removeLinkRequest.getLink().toString());
         LinkResponse response = new LinkResponse()
             .id(tgChatId)
             .url(removeLinkRequest.getLink());
@@ -35,8 +46,17 @@ public class LinksController implements LinksApi {
 
     @Override
     public ResponseEntity<ListLinksResponse> linksGet(Long tgChatId) {
-        ListLinksResponse response = new ListLinksResponse().size(0);
-        LOGGER.info("List all links for user " + tgChatId);
+        Collection<LinkDTO> list = linkService.listAll(tgChatId);
+        List<LinkResponse> responseList = new ArrayList<>();
+        for (LinkDTO link : list) {
+            LinkResponse linkResponse = new LinkResponse();
+            linkResponse.setId(link.linkId());
+            linkResponse.setUrl(URI.create(link.url()));
+            responseList.add(linkResponse);
+        }
+        ListLinksResponse response = new ListLinksResponse();
+        response.setLinks(responseList);
+        response.setSize(responseList.size());
         return ResponseEntity.ok().body(response);
     }
 
@@ -47,6 +67,7 @@ public class LinksController implements LinksApi {
         if (alreadyExists) {
             throw new LinkAlreadyExistsException();
         }
+        linkService.add(tgChatId, addLinkRequest.getLink().toString());
         LinkResponse response = new LinkResponse()
             .id(tgChatId)
             .url(addLinkRequest.getLink());

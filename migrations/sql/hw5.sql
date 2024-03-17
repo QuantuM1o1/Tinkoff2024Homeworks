@@ -16,3 +16,6 @@ INSERT INTO links_sites (id, site_name)
 VALUES (1, 'StackOverflowQuestion');
 INSERT INTO links_sites (id, site_name)
 VALUES (2, 'GitHubRepository');
+
+ALTER TABLE users
+DROP COLUMN username;

@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 
 public record UserDTO(
     long chatId,
-    String username,
     OffsetDateTime addedAt
 ) {
 }

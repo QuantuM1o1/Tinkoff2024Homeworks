@@ -28,17 +28,15 @@ public class JdbcUserDAOTest extends IntegrationTest {
     void addTest() {
         // given
         long chatId = 123L;
-        String username = "Mikhail";
         String sql = "SELECT * FROM users";
 
         // when
-        userRepository.addUser(chatId, username);
+        userRepository.addUser(chatId);
         List<UserDTO> answer = jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
 
         // then
         assertThat(answer.size()).isEqualTo(1);
         assertThat(answer.getFirst().chatId()).isEqualTo(chatId);
-        assertThat(answer.getFirst().username()).isEqualTo(username);
     }
 
     @Test
@@ -48,27 +46,23 @@ public class JdbcUserDAOTest extends IntegrationTest {
     void removeTest() {
         // given
         long chatId1 = 123L;
-        String username1 = "Mikhail";
         long chatId2 = 1231L;
-        String username2 = "Dmitry";
         OffsetDateTime addedAt = OffsetDateTime.now();
         String sql = "SELECT * FROM users WHERE deleted_at IS NULL";
         String sqlDeleted = "SELECT * FROM users WHERE deleted_at IS NOT NULL";
-        String sqlAdd = "INSERT INTO users (chat_id, username, added_at) VALUES (?, ?, ?)";
+        String sqlAdd = "INSERT INTO users (chat_id, added_at) VALUES (?, ?)";
 
         // when
-        jdbcTemplate.update(sqlAdd, chatId1, username1, addedAt);
-        jdbcTemplate.update(sqlAdd, chatId2, username2, addedAt);
+        jdbcTemplate.update(sqlAdd, chatId1, addedAt);
+        jdbcTemplate.update(sqlAdd, chatId2, addedAt);
         userRepository.removeUser(chatId1);
         List<UserDTO> answer = jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
         List<UserDTO> deleted = jdbcTemplate.query(sqlDeleted, new DataClassRowMapper<>(UserDTO.class));
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().username()).isEqualTo(username2);
         assertThat(answer.getFirst().chatId()).isEqualTo(chatId2);
         assertThat(deleted.size()).isEqualTo(1);
-        assertThat(deleted.getFirst().username()).isEqualTo(username1);
         assertThat(deleted.getFirst().chatId()).isEqualTo(chatId1);
     }
 
@@ -79,22 +73,18 @@ public class JdbcUserDAOTest extends IntegrationTest {
     void findAllTest() {
         // given
         long chatId1 = 123L;
-        String username1 = "Mikhail";
         long chatId2 = 1231L;
-        String username2 = "Dmitry";
         OffsetDateTime addedAt = OffsetDateTime.now();
-        String sqlAdd = "INSERT INTO users (chat_id, username, added_at) VALUES (?, ?, ?)";
+        String sqlAdd = "INSERT INTO users (chat_id, added_at) VALUES (?, ?)";
 
         // when
-        jdbcTemplate.update(sqlAdd, chatId1, username1, addedAt);
-        jdbcTemplate.update(sqlAdd, chatId2, username2, addedAt);
+        jdbcTemplate.update(sqlAdd, chatId1, addedAt);
+        jdbcTemplate.update(sqlAdd, chatId2, addedAt);
         List<UserDTO> answer = userRepository.findAllUsers();
 
         // then
         assertThat(answer.size()).isEqualTo(2);
         assertThat(answer.getFirst().chatId()).isEqualTo(chatId1);
-        assertThat(answer.getFirst().username()).isEqualTo(username1);
         assertThat(answer.getLast().chatId()).isEqualTo(chatId2);
-        assertThat(answer.getLast().username()).isEqualTo(username2);
     }
 }

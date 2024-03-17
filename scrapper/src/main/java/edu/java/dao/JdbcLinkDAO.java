@@ -50,4 +50,19 @@ public class JdbcLinkDAO implements LinkDAO {
 
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LinkDTO> findLinkByUrl(String url) {
+        String sql = "SELECT * FROM links WHERE deleted_at IS NULL AND url = ?";
+
+        return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), url);
+    }
+
+    @Override
+    public List<LinkDTO> findNLinksLastUpdated(int n) {
+        String sql = "SELECT * FROM links WHERE deleted_at IS NULL ORDER BY updated_at ASC LIMIT ?";
+
+        return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), n);
+    }
 }
