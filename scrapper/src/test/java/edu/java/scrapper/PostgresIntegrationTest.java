@@ -3,18 +3,18 @@ package edu.java.scrapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class PostgresIntegrationTest {
+public class PostgresIntegrationTest extends IntegrationTest {
     @Test
-    @DisplayName("Имя")
+    @DisplayName("База данных запущена")
     void name() {
         // given
 
         // when
 
         // then
-        assertThat(IntegrationTest.POSTGRES.getDatabaseName()).isEqualTo("scrapper");
+        assertTrue(POSTGRES.isRunning());
     }
 }
