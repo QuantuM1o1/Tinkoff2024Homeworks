@@ -4,6 +4,13 @@ app:
     interval: 10s
     force-check-delay: 10s
   bot-url: "http://localhost:8090"
+  github-baseurl: "https://api.github.com"
+  stackoverflow-baseurl: "https://api.stackexchange.com/2.3"
+
+scheduler:
+  enable: true
+  interval: 10s
+  force-check-delay: 10000
 
 spring:
   application:
@@ -18,5 +25,3 @@ springdoc:
 
 logging:
   config: classpath:log4j2-plain.xml
-
-
