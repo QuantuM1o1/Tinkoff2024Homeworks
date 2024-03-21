@@ -1,8 +1,4 @@
 app:
-  scheduler:
-    enable: true
-    interval: 10s
-    force-check-delay: 10s
   bot-url: "http://localhost:8090"
   github-baseurl: "https://api.github.com"
   stackoverflow-baseurl: "https://api.stackexchange.com/2.3"
