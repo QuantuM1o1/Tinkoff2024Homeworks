@@ -32,7 +32,7 @@ public class UpdatesClient {
             .onStatus(
                     HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.getExceptionMessage())))
+                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
             )
             .bodyToMono(Void.class);
     }

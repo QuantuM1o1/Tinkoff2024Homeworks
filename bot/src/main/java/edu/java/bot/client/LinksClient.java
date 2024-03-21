@@ -39,7 +39,7 @@ public class LinksClient {
             .onStatus(
                 HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.getExceptionMessage())))
+                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
             )
             .bodyToMono(LinkResponse.class);
     }
@@ -52,7 +52,7 @@ public class LinksClient {
             .onStatus(
                 HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.getExceptionMessage())))
+                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
             )
             .bodyToMono(ListLinksResponse.class);
     }
@@ -66,7 +66,7 @@ public class LinksClient {
             .onStatus(
                 HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.getExceptionMessage())))
+                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
             )
             .bodyToMono(LinkResponse.class);
     }

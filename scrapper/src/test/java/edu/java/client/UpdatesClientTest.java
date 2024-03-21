@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
+import java.net.URI;
+import java.util.ArrayList;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -25,12 +27,19 @@ public class UpdatesClientTest
     private WireMockServer wireMockServer;
     @Autowired
     private UpdatesClient updatesClient;
+    private LinkUpdateRequest request;
 
     @BeforeEach
     public void setUp() {
         wireMockServer = new WireMockServer(8090);
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
+        request = new LinkUpdateRequest(
+            123L,
+            URI.create("https://www.google.com/"),
+            "google",
+            new ArrayList<>()
+        );
     }
 
     @AfterEach
@@ -42,7 +51,6 @@ public class UpdatesClientTest
     @DisplayName("Отправка update")
     public void sendUpdates() {
         // given
-        LinkUpdateRequest request = new LinkUpdateRequest();
         stubFor(post(urlPathEqualTo("/updates"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())));
@@ -58,7 +66,6 @@ public class UpdatesClientTest
     @DisplayName("Ответ 404 от сервера")
     public void userNotFound() {
         // given
-        LinkUpdateRequest request = new LinkUpdateRequest();
         stubFor(post(urlPathEqualTo("/updates"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.NOT_FOUND.value())

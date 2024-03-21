@@ -6,6 +6,7 @@ import dto.AddLinkRequest;
 import dto.LinkResponse;
 import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
+import java.net.URI;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +48,10 @@ public class LinksClientTest {
     public void deleteLink() {
         // given
         Long chatId = 123L;
-        RemoveLinkRequest request = new RemoveLinkRequest();
+        String url = "https://www.google.com/";
+        RemoveLinkRequest request = new RemoveLinkRequest(
+            URI.create(url)
+        );
         stubFor(delete(urlPathEqualTo("/links"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
@@ -59,8 +63,8 @@ public class LinksClientTest {
         Mono<LinkResponse> answer = linksClient.deleteLink(chatId, request);
 
         // then
-        assertThat(Objects.requireNonNull(answer.block()).getId()).isEqualTo(123);
-        assertThat(Objects.requireNonNull(answer.block()).getUrl().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).id()).isEqualTo(123);
+        assertThat(Objects.requireNonNull(answer.block()).url().toString()).isEqualTo("https://www.google.com/");
     }
 
     @Test
@@ -78,9 +82,9 @@ public class LinksClientTest {
         Mono<ListLinksResponse> answer = linksClient.getLinks(chatId);
 
         // then
-        assertThat(Objects.requireNonNull(answer.block()).getSize()).isEqualTo(1);
-        assertThat(Objects.requireNonNull(answer.block()).getLinks().getFirst().getUrl().toString()).isEqualTo("https://www.google.com/");
-        assertThat(Objects.requireNonNull(answer.block()).getLinks().getFirst().getId()).isEqualTo(12);
+        assertThat(Objects.requireNonNull(answer.block()).size()).isEqualTo(1);
+        assertThat(Objects.requireNonNull(answer.block()).links().getFirst().url().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).links().getFirst().id()).isEqualTo(12);
     }
 
     @Test
@@ -88,7 +92,8 @@ public class LinksClientTest {
     public void addLink() {
         // given
         Long chatId = 123L;
-        AddLinkRequest request = new AddLinkRequest();
+        String link = "https://www.google.com/";
+        AddLinkRequest request = new AddLinkRequest(URI.create(link));
         stubFor(post(urlPathEqualTo("/links"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
@@ -100,7 +105,7 @@ public class LinksClientTest {
         Mono<LinkResponse> answer = linksClient.addLink(chatId, request);
 
         // then
-        assertThat(Objects.requireNonNull(answer.block()).getId()).isEqualTo(123);
-        assertThat(Objects.requireNonNull(answer.block()).getUrl().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).id()).isEqualTo(123);
+        assertThat(Objects.requireNonNull(answer.block()).url().toString()).isEqualTo("https://www.google.com/");
     }
 }

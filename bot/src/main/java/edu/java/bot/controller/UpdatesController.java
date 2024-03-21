@@ -1,51 +1,86 @@
 package edu.java.bot.controller;
 
+import dto.ApiErrorResponse;
 import dto.LinkUpdateRequest;
-import edu.java.bot.api.UpdatesApi;
 import edu.java.bot.apiException.UserNotFoundException;
 import edu.java.bot.dto.ChatUser;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.NativeWebRequest;
 
+@Log4j2
+@Validated
+@Tag(name = "updates", description = "the updates API")
 @RestController
 @RequiredArgsConstructor
-public class UpdatesController implements UpdatesApi {
-    @Autowired Map<Long, ChatUser> usersMap;
-    private final static Logger LOGGER = LogManager.getLogger();
+public class UpdatesController {
+    @Autowired
+    Map<Long, ChatUser> usersMap;
 
-    @Override
-    public Optional<NativeWebRequest> getRequest() {
-        return UpdatesApi.super.getRequest();
-    }
-
-    @Override
-    public ResponseEntity<Void> updatesPost(
-        @Parameter(name = "LinkUpdateRequest", required = true) LinkUpdateRequest linkUpdate)
-            throws UserNotFoundException {
-        List<Long> checkAvailability = checkChats(linkUpdate.getTgChatIds());
+    /**
+     * POST /updates : Отправить обновление
+     *
+     * @param linkUpdate  (required)
+     * @return Обновление обработано (status code 200)
+     *         or Некорректные параметры запроса (status code 400)
+     */
+    @Operation(
+        operationId = "updatesPost",
+        summary = "Отправить обновление",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Обновление обработано"),
+            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/updates",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    public ResponseEntity<Void> postUpdates(
+        @Parameter(name = "LinkUpdateRequest", required = true)
+        @Valid
+        @RequestBody
+        LinkUpdateRequest linkUpdate) throws UserNotFoundException {
+        Optional<Long> checkAvailability = checkChats(linkUpdate.tgChatIds());
         if (checkAvailability.isEmpty()) {
-            LOGGER.info("All users are notified!");
+            log.info("All users are notified!");
         } else {
-            checkAvailability.forEach(chatId -> LOGGER.info("Couldn't find user with id " + chatId));
-            throw new UserNotFoundException(checkAvailability);
+            log.info("Couldn't find user with id " + checkAvailability);
+            throw new UserNotFoundException(checkAvailability.get());
         }
 
         return ResponseEntity.ok().build();
     }
 
-    private List<Long> checkChats(List<Long> chatIds) {
-        return chatIds.stream()
-            .filter(chatId -> !usersMap.containsKey(chatId))
-            .collect(Collectors.toList());
+    private Optional<Long> checkChats(List<Long> chatIds) {
+        for (long id : chatIds) {
+            if (!usersMap.containsKey(id)) {
+                return Optional.of(id);
+            }
+        }
+        return Optional.empty();
     }
 }
