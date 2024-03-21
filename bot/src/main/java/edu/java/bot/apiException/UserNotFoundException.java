@@ -7,7 +7,7 @@ import org.springframework.http.ProblemDetail;
 
 public class UserNotFoundException
     extends jakarta.servlet.ServletException
-    implements org.springframework.web.ErrorResponse{
+    implements org.springframework.web.ErrorResponse {
     private final Long userId;
 
     public UserNotFoundException(long userId) {
