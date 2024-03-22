@@ -3,26 +3,39 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.dto.ChatUser;
+import dto.LinkResponse;
+import dto.ListLinksResponse;
+import edu.java.bot.client.LinksClient;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import reactor.core.publisher.Mono;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 public class ListCommandTest {
-    private Map<Long, ChatUser> usersMap;
+    private AutoCloseable closeable;
+    @Mock
+    private LinksClient mockClient;
+    @InjectMocks
+    private final ListCommand listCommand = new ListCommand();
 
     @BeforeEach
-    void setUp() {
-        this.usersMap = new HashMap<>();
+    public void setUp() {
+        closeable = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
     }
 
     @Test
@@ -31,7 +44,7 @@ public class ListCommandTest {
         // given
 
         // when
-        String answer = new ListCommand(usersMap).name();
+        String answer = listCommand.name();
 
         // then
         assertThat(answer).isEqualTo("/list");
@@ -41,15 +54,18 @@ public class ListCommandTest {
     @DisplayName("Лист пуст")
     void CallToEmptyList() {
         // given
-        ChatUser user = new ChatUser(123456L, "Name", new ArrayList<>());
-        usersMap.put(123456L, user);
+        long chatId = 123456L;
+        ListLinksResponse list = new ListLinksResponse();
+        list.setSize(0);
+        list.setLinks(new ArrayList<>());
+        Mono<ListLinksResponse> mockMono = Mono.just(list);
+        when(mockClient.getLinks(chatId)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
         when(mockUpdate.message()).thenReturn(mockMessage);
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
-        Command listCommand = new ListCommand(usersMap);
 
         // when
         String answer = listCommand.handle(mockUpdate);
@@ -62,22 +78,23 @@ public class ListCommandTest {
     @DisplayName("Лист с записанным URL")
     void callToListWithOneURL() {
         // given
-        List<URI> list = new ArrayList<>();
         String test = "https://edu.tinkoff.ru";
-        try {
-            list.add(new URI(test));
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        ChatUser user = new ChatUser(123456L, "Name", list);
-        usersMap.put(123456L, user);
+        List<LinkResponse> listLinks = new ArrayList<>();
+        LinkResponse linkResponse = new LinkResponse();
+        linkResponse.setUrl(URI.create(test));
+        listLinks.add(linkResponse);
+        long chatId = 123456L;
+        ListLinksResponse list = new ListLinksResponse();
+        list.setSize(1);
+        list.setLinks(listLinks);
+        Mono<ListLinksResponse> mockMono = Mono.just(list);
+        when(mockClient.getLinks(chatId)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
         when(mockUpdate.message()).thenReturn(mockMessage);
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
-        Command listCommand = new ListCommand(usersMap);
 
         // when
         String answer = listCommand.handle(mockUpdate);

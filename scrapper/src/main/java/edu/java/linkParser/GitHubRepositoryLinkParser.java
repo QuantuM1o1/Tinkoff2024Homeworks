@@ -12,8 +12,12 @@ public class GitHubRepositoryLinkParser {
         String patternString = "^https?://github\\.com/(.*)/(.*)$";
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(url);
-        String owner = matcher.group(1);
-        String repoName = matcher.group(2);
+        String owner = "";
+        String repoName = "";
+        if (matcher.find()) {
+            owner = matcher.group(1);
+            repoName = matcher.group(2);
+        }
 
         return new GitHubRepositoryRequest(owner, repoName);
     }

@@ -1,23 +1,24 @@
 package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
+import dto.AddLinkRequest;
+import dto.LinkResponse;
+import edu.java.bot.client.LinksClient;
 import edu.java.bot.dto.ChatUser;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TrackCommand implements Command {
     @Autowired
-    private final Map<Long, ChatUser> usersMap;
+    private LinksClient client;
     private static final String COMMAND_NAME = "/track";
     private static final String COMMAND_DESCRIPTION = "Track a URL";
-
-    public TrackCommand(Map<Long, ChatUser> usersMap) {
-        this.usersMap = usersMap;
-    }
 
     @Override
     public String name() {
@@ -43,7 +44,7 @@ public class TrackCommand implements Command {
 
     @Override
     public Command getInstance() {
-        return new TrackCommand(usersMap);
+        return new TrackCommand();
     }
 
     private boolean isValidUrl(String url) {
@@ -57,13 +58,11 @@ public class TrackCommand implements Command {
 
     private String getMessage(String stringUrl, long chatId) {
         if (this.isValidUrl(stringUrl)) {
-            ChatUser user = this.usersMap.get(chatId);
-            if (user == null) {
-                return "You need to register first";
-            }
             URI url = URI.create(stringUrl);
-            user.trackedURLs().add(url);
-            return url + " has been added to your tracked URLs list.";
+            AddLinkRequest addLinkRequest = new AddLinkRequest();
+            addLinkRequest.setLink(URI.create(stringUrl));
+            LinkResponse response = this.client.addLink(chatId, addLinkRequest).block();
+            return Objects.requireNonNull(response).getUrl() + " has been added to your tracked URLs list.";
         } else {
             return "Invalid URL format. Please provide a valid URL.";
         }

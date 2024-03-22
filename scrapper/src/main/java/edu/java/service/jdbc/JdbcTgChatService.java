@@ -19,4 +19,10 @@ public class JdbcTgChatService implements TgChatService {
     public void unregister(long tgChatId) {
         userRepository.removeUser(tgChatId);
     }
+
+    @Override
+    public boolean checkIfAlreadyRegistered(long tgChatId) {
+        return !userRepository.findUserById(tgChatId).isEmpty();
+    }
+
 }

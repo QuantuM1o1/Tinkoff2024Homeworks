@@ -10,6 +10,7 @@ import edu.java.dto.StackOverflowQuestionResponse;
 import edu.java.linkParser.GitHubRepositoryLinkParser;
 import edu.java.linkParser.StackOverflowQuestionLinkParser;
 import edu.java.service.LinkService;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,9 @@ public class JdbcLinkService implements LinkService {
                     .fetch(GitHubRepositoryLinkParser.createRequest(url))
                     .block();
                 linkRepository.addLink(url, Objects.requireNonNull(response).updatedAt(), siteId);
+            } else {
+                siteId = 0;
+                linkRepository.addLink(url, OffsetDateTime.now(), siteId);
             }
         }
         long linkId = linkRepository.findLinkByUrl(url).getFirst().linkId();
@@ -54,8 +58,10 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public void remove(long tgChatId, String url) {
-        long linkId = linkRepository.findLinkByUrl(url).getFirst().linkId();
-        userLinkRepository.removeUserLink(tgChatId, linkId);
+        if (!linkRepository.findLinkByUrl(url).isEmpty()) {
+            long linkId = linkRepository.findLinkByUrl(url).getFirst().linkId();
+            userLinkRepository.removeUserLink(tgChatId, linkId);
+        }
     }
 
     @Override

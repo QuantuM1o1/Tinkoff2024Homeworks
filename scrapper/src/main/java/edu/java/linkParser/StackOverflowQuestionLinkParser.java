@@ -12,7 +12,10 @@ public class StackOverflowQuestionLinkParser {
         String patternString = "^https?://stackoverflow\\.com/.*/(.*)/.*$";
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(url);
-        long questionId = Long.parseLong(matcher.group(1));
+        long questionId = 0;
+        if (matcher.find()) {
+            questionId = Long.parseLong(matcher.group(1));
+        }
 
         return new StackOverflowQuestionRequest("stackoverflow", questionId);
     }

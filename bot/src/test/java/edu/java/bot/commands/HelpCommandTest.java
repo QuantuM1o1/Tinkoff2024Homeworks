@@ -3,11 +3,8 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.dto.ChatUser;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,10 +32,9 @@ public class HelpCommandTest {
     @DisplayName("Ответ на команду")
     void commandRespond() {
         // given
-        Map<Long, ChatUser> usersMap = new HashMap<>();
         this.commands = new ArrayList<>();
-        Command testCommand1 = new StartCommand(usersMap);
-        Command testCommand2 = new TrackCommand(usersMap);
+        Command testCommand1 = new StartCommand();
+        Command testCommand2 = new TrackCommand();
         this.commands.add(testCommand1);
         this.commands.add(testCommand2);
         Update mockUpdate = Mockito.mock(Update.class);

@@ -21,7 +21,7 @@ public class JdbcUserDAO implements UserDAO {
 
     @Override
     @Transactional
-    public void addUser(Long chatId) {
+    public void addUser(long chatId) {
         String sql = "INSERT INTO users (chat_id, added_at) VALUES (?, ?)";
 
         LocalDateTime currentTime = LocalDateTime.now();
@@ -32,7 +32,7 @@ public class JdbcUserDAO implements UserDAO {
 
     @Override
     @Transactional
-    public void removeUser(Long chatId) {
+        public void removeUser(long chatId) {
         String sql = "UPDATE users SET deleted_at = ? WHERE chat_id = ?";
 
         LocalDateTime currentTime = LocalDateTime.now();
@@ -47,5 +47,12 @@ public class JdbcUserDAO implements UserDAO {
         String sql = "SELECT * FROM users WHERE deleted_at IS NULL";
 
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
+    }
+
+    @Override
+    public List<UserDTO> findUserById(long chatId) {
+        String sql = "SELECT * FROM users WHERE deleted_at IS NULL AND chat_id = ?";
+
+        return jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class), chatId);
     }
 }

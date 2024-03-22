@@ -15,8 +15,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 @RestController
 @RequiredArgsConstructor
 public class TgChatController implements TgChatApi {
-    private final static Logger LOGGER = LogManager.getLogger();
-
     @Autowired
     TgChatService tgChatService;
 
@@ -42,7 +40,6 @@ public class TgChatController implements TgChatApi {
     }
 
     private boolean checkIfAlreadyRegistered(Long id) {
-        LOGGER.info("Checking for previous registration");
-        return false;
+        return tgChatService.checkIfAlreadyRegistered(id);
     }
 }
