@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class UserMessageProcessorServiceTest {
     @Autowired
-    private UserMessageProcessor userMessageProcessor;
+    private UserMessageProcessorService userMessageProcessor;
 
     @Test
     @DisplayName("Обработка команды /help")
@@ -36,50 +36,6 @@ public class UserMessageProcessorServiceTest {
 
         // then
         assertThat(answer).contains("/list").contains("/start").contains("/track");
-    }
-
-    @Test
-    @DisplayName("Обработка команды /list")
-    void listCommand() {
-        // given
-        Update mockUpdate = Mockito.mock(Update.class);
-        Message mockMessage = Mockito.mock(Message.class);
-        when(mockUpdate.message()).thenReturn(mockMessage);
-        String testText = "/list";
-        when(mockUpdate.message().text()).thenReturn(testText);
-        Chat mockChat = Mockito.mock(Chat.class);
-        when(mockUpdate.message().chat()).thenReturn(mockChat);
-        when(mockUpdate.message().chat().id()).thenReturn(123456L);
-
-        // when
-        SendMessage sendMessage = this.userMessageProcessor.process(mockUpdate);
-        String answer = sendMessage.getParameters().get("text").toString();
-
-        // then
-        assertThat(answer).isEqualTo("You are not tracking any URLs.");
-    }
-
-    @Test
-    @DisplayName("Обработка команды /start")
-    void startCommand() {
-        // given
-        Update mockUpdate = Mockito.mock(Update.class);
-        Message mockMessage = Mockito.mock(Message.class);
-        when(mockUpdate.message()).thenReturn(mockMessage);
-        String testText = "/start";
-        when(mockUpdate.message().text()).thenReturn(testText);
-        Chat mockChat = Mockito.mock(Chat.class);
-        when(mockUpdate.message().chat()).thenReturn(mockChat);
-        when(mockUpdate.message().chat().id()).thenReturn(123456L);
-        String name = "Name";
-        when(mockUpdate.message().chat().firstName()).thenReturn(name);
-
-        // when
-        SendMessage sendMessage = this.userMessageProcessor.process(mockUpdate);
-        String answer = sendMessage.getParameters().get("text").toString();
-
-        // then
-        assertThat(answer).isEqualTo("Hello, " + name + "! Welcome to the notification Telegram bot.");
     }
 
     @Test

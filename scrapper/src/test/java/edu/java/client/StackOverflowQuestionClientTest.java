@@ -1,4 +1,4 @@
-package edu.java.clients;
+package edu.java.client;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -59,9 +59,12 @@ public class StackOverflowQuestionClientTest {
         Mono<StackOverflowQuestionResponse> answer = stackOverflowQuestionClient.fetch(request);
 
         // then
-        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().lastActivityDate()).isEqualTo("2010-09-01T05:55:47Z");
-        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().id()).isEqualTo(3615006);
-        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().link()).isEqualTo("https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package");
+        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().lastActivityDate())
+            .isEqualTo("2010-09-01T05:55:47Z");
+        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().id())
+            .isEqualTo(3615006);
+        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().link())
+            .isEqualTo("https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package");
     }
 
     @Test

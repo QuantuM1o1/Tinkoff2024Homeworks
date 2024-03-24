@@ -3,22 +3,34 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.dto.ChatUser;
-import java.util.HashMap;
-import java.util.Map;
+import edu.java.bot.client.TgChatClient;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import reactor.core.publisher.Mono;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 public class StartCommandTest {
-    private Map<Long, ChatUser> usersMap;
+    private AutoCloseable closeable;
+    @Mock
+    private TgChatClient mockClient;
+    @InjectMocks
+    private final StartCommand startCommand = new StartCommand();
 
     @BeforeEach
-    void setUp() {
-        this.usersMap = new HashMap<>();
+    public void setUp() {
+        closeable = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
     }
 
     @Test
@@ -27,52 +39,32 @@ public class StartCommandTest {
         // given
 
         // when
-        String answer = new StartCommand(usersMap).name();
+        String answer = startCommand.name();
 
         // then
         assertThat(answer).isEqualTo("/start");
     }
 
     @Test
-    @DisplayName("Первый ответ")
-    void firstReply() {
+    @DisplayName("Ответ на регистрацию")
+    void reply() {
         // given
         String name = "Name";
+        Long chatId = 123456L;
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
         when(mockUpdate.message()).thenReturn(mockMessage);
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
-        when(mockUpdate.message().chat().id()).thenReturn(123456L);
+        when(mockUpdate.message().chat().id()).thenReturn(chatId);
         when(mockUpdate.message().chat().firstName()).thenReturn(name);
-        Command startCommand = new StartCommand(usersMap);
+        Mono<Void> mockMono = Mono.empty();
+        when(mockClient.addChat(chatId)).thenReturn(mockMono);
 
         // when
         String answer = startCommand.handle(mockUpdate);
 
         // then
         assertThat(answer).isEqualTo("Hello, " + name + "! Welcome to the notification Telegram bot.");
-    }
-
-    @Test
-    @DisplayName("Второй ответ, для уже зарегирированного пользователя")
-    void secondReply() {
-        // given
-        String name = "Name";
-        Update mockUpdate = Mockito.mock(Update.class);
-        Message mockMessage = Mockito.mock(Message.class);
-        when(mockUpdate.message()).thenReturn(mockMessage);
-        Chat mockChat = Mockito.mock(Chat.class);
-        when(mockUpdate.message().chat()).thenReturn(mockChat);
-        when(mockUpdate.message().chat().id()).thenReturn(123456L);
-        when(mockUpdate.message().chat().firstName()).thenReturn(name);
-        Command startCommand = new StartCommand(usersMap);
-
-        // when
-        String answer = startCommand.handle(mockUpdate);
-        answer = startCommand.handle(mockUpdate);
-
-        // then
-        assertThat(answer).isEqualTo("Hello again, " + name + "! You have already started the bot.");
     }
 }

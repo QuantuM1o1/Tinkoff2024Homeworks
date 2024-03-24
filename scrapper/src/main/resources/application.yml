@@ -1,18 +1,34 @@
 app:
+  bot-url: "http://localhost:8090"
   github-baseurl: "https://api.github.com"
   stackoverflow-baseurl: "https://api.stackexchange.com/2.3"
+  database-access-type: JDBC
 
 scheduler:
   enable: true
-  interval: 10s
-  force-check-delay: 10000
+  interval: 10m
+  force-check-delay: 10m
 
 spring:
   application:
     name: scrapper
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scrapper
+    username: postgres
+    password: postgres
+  liquibase:
+    enabled: false
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
   port: 8080
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 
 logging:
   config: classpath:log4j2-plain.xml
