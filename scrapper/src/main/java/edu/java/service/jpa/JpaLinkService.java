@@ -51,6 +51,8 @@ public class JpaLinkService implements LinkService {
                     .block();
                 linkEntity.setLastActivity(Objects.requireNonNull(response).items().getFirst().lastActivityDate());
                 linkEntity.setSiteId(siteId);
+                linkEntity.setAnswerCount(Objects.requireNonNull(response).items().getFirst().answerCount());
+                linkEntity.setCommentCount(Objects.requireNonNull(response).items().getFirst().commentCount());
                 this.jpaLinkRepository.save(linkEntity);
             } else if (url.startsWith("https://github.com/")) {
                 siteId = 2;
@@ -93,7 +95,9 @@ public class JpaLinkService implements LinkService {
             linkEntity.getAddedAt(),
             linkEntity.getUpdatedAt(),
             linkEntity.getLastActivity(),
-            linkEntity.getSiteId()
+            linkEntity.getSiteId(),
+            linkEntity.getAnswerCount(),
+            linkEntity.getCommentCount()
         )));
 
         return list;

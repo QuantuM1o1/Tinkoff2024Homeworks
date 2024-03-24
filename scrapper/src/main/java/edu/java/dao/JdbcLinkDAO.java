@@ -22,14 +22,17 @@ public class JdbcLinkDAO implements LinkDAO {
 
     @Override
     @Transactional
-    public void addLink(String url, OffsetDateTime lastActivity, int siteId) {
-        String sql = "INSERT INTO links (url, added_at, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?, ?)";
+    public void addLink(String url, OffsetDateTime lastActivity, int siteId, int answerCount, int commentCount) {
+        String sql =
+            "INSERT INTO links "
+                + "(url, added_at, updated_at, last_activity, site_id, answer_count, comment_count) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         LocalDateTime currentTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(currentTime);
         Timestamp lastActivityStamp = Timestamp.from(lastActivity.toInstant());
 
-        this.jdbcTemplate.update(sql, url, timestamp, timestamp, lastActivityStamp, siteId);
+        this.jdbcTemplate.update(sql, url, timestamp, timestamp, lastActivityStamp, siteId, answerCount, commentCount);
     }
 
     @Override

@@ -47,7 +47,14 @@ public class LinkUpdaterScheduler {
                         != link.lastActivity()) {
                         LinkUpdateRequest request = new LinkUpdateRequest();
                         request.setUrl(URI.create(link.url()));
-                        client.sendUpdate(request);
+                        if (Objects.requireNonNull(response).items().getFirst().answerCount()
+                            > link.answerCount()) {
+                            request.setDescription("New answer");
+                        } else if (Objects.requireNonNull(response).items().getFirst().commentCount()
+                            > link.commentCount()) {
+                            request.setDescription("New comment");
+                        }
+                        this.client.sendUpdate(request);
                     }
                     break;
                 }
@@ -58,7 +65,7 @@ public class LinkUpdaterScheduler {
                     if (Objects.requireNonNull(response).updatedAt() != link.lastActivity()) {
                         LinkUpdateRequest request = new LinkUpdateRequest();
                         request.setUrl(URI.create(link.url()));
-                        client.sendUpdate(request);
+                        this.client.sendUpdate(request);
                     }
                     break;
                 }

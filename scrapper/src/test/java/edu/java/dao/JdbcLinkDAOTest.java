@@ -34,7 +34,7 @@ public class JdbcLinkDAOTest extends IntegrationTest {
         String sql = "SELECT * FROM links";
 
         // when
-        this.linkRepository.addLink(url, lastActivity, siteId);
+        this.linkRepository.addLink(url, lastActivity, siteId, 0, 0);
         List<LinkDTO> answer = this.jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
 
         // then

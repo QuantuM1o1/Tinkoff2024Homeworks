@@ -42,16 +42,18 @@ public class JdbcLinkService implements LinkService {
                 jdbcLinkRepository.addLink(
                     url,
                     Objects.requireNonNull(response).items().getFirst().lastActivityDate(),
-                    siteId);
+                    siteId,
+                    Objects.requireNonNull(response).items().getFirst().answerCount(),
+                    Objects.requireNonNull(response).items().getFirst().commentCount());
             } else if (url.startsWith("https://github.com/")) {
                 siteId = 2;
                 GitHubRepositoryResponse response = gitHubRepositoriesClient
                     .fetch(GitHubRepositoryLinkParser.createRequest(url))
                     .block();
-                jdbcLinkRepository.addLink(url, Objects.requireNonNull(response).updatedAt(), siteId);
+                jdbcLinkRepository.addLink(url, Objects.requireNonNull(response).updatedAt(), siteId, 0, 0);
             } else {
                 siteId = 0;
-                jdbcLinkRepository.addLink(url, OffsetDateTime.now(), siteId);
+                jdbcLinkRepository.addLink(url, OffsetDateTime.now(), siteId, 0, 0);
             }
         }
         long linkId = jdbcLinkRepository.findLinkByUrl(url).getFirst().linkId();

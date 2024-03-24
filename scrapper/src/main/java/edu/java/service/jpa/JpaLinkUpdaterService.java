@@ -28,7 +28,9 @@ public class JpaLinkUpdaterService implements LinkUpdaterService {
                 entity.getAddedAt(),
                 entity.getUpdatedAt(),
                 entity.getLastActivity(),
-                entity.getSiteId()
+                entity.getSiteId(),
+                entity.getAnswerCount(),
+                entity.getCommentCount()
             ));
         }
 

@@ -12,4 +12,5 @@
     <include file="sql/hw6.sql"/>
     <include file="sql/hw6user_link_add_unique_id.sql"/>
     <include file="sql/hw6rename_table.sql"/>
+    <include file="sql/hw5bonus.sql"/>
 </databaseChangeLog>

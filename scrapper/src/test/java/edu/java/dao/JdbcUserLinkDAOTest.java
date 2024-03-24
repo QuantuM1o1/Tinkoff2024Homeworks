@@ -33,7 +33,7 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
         String url = "https://www.google.com/";
         OffsetDateTime lastActivity = OffsetDateTime.now();
         int siteId = 1;
-        linkRepository.addLink(url, lastActivity, siteId);
+        linkRepository.addLink(url, lastActivity, siteId, 0, 0);
         Long linkId = linkRepository.findAllLinks().getFirst().linkId();
 
         // when
@@ -58,11 +58,11 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
         String url1 = "https://www.google.com/";
         OffsetDateTime lastActivity = OffsetDateTime.now();
         int siteId = 1;
-        linkRepository.addLink(url1, lastActivity, siteId);
+        linkRepository.addLink(url1, lastActivity, siteId, 0, 0);
         Long linkId1 = linkRepository.findAllLinks().getLast().linkId();
 
         String url2 = "https://guessthe.game/";
-        linkRepository.addLink(url2, lastActivity, siteId);
+        linkRepository.addLink(url2, lastActivity, siteId, 0, 0);
         Long linkId2 = linkRepository.findAllLinks().getLast().linkId();
 
         // when
@@ -88,11 +88,11 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
         String url1 = "https://www.google.com/";
         OffsetDateTime lastActivity = OffsetDateTime.now();
         int siteId = 1;
-        linkRepository.addLink(url1, lastActivity, siteId);
+        linkRepository.addLink(url1, lastActivity, siteId, 0, 0);
         Long linkId1 = linkRepository.findAllLinks().getLast().linkId();
 
         String url2 = "https://guessthe.game/";
-        linkRepository.addLink(url2, lastActivity, siteId);
+        linkRepository.addLink(url2, lastActivity, siteId, 0,0);
         Long linkId2 = linkRepository.findAllLinks().getLast().linkId();
 
 

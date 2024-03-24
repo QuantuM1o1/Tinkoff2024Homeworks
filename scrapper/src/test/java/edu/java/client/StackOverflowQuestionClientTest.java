@@ -53,7 +53,12 @@ public class StackOverflowQuestionClientTest {
                 .withStatus(HttpStatus.OK.value())
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .withBody(
-                    "{\"items\":[{\"last_activity_date\":1283320547,\"question_id\":3615006,\"link\":\"https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package\"}]}")));
+                    "{   \"items\": [     {       " +
+                        "\"comment_count\": 1,       " +
+                        "\"answer_count\": 2,       " +
+                        "\"last_activity_date\": 1283320547,       " +
+                        "\"question_id\": 3615006,       " +
+                        "\"link\": \"https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package\"     }   ] }")));
 
         // when
         Mono<StackOverflowQuestionResponse> answer = stackOverflowQuestionClient.fetch(request);

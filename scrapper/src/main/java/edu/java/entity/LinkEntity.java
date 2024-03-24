@@ -41,6 +41,10 @@ public class LinkEntity {
 
     private int siteId;
 
+    private Integer answerCount;
+
+    private Integer commentCount;
+
     @ManyToMany(mappedBy = "links")
     private List<UserEntity> users = new ArrayList<>();
 
