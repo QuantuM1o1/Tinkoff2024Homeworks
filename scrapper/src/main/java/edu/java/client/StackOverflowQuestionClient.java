@@ -1,4 +1,4 @@
-package edu.java.clients;
+package edu.java.client;
 
 import edu.java.configuration.ApplicationConfig;
 import edu.java.dto.StackOverflowQuestionRequest;

@@ -1,7 +1,7 @@
 package edu.java.controller;
 
 import edu.java.apiException.AlreadyRegisteredException;
-import edu.java.service.TgChatService;
+import edu.java.service.jdbc.JdbcTgChatService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 public class TgChatControllerTest {
     private AutoCloseable closeable;
@@ -20,12 +21,11 @@ public class TgChatControllerTest {
     private final TgChatController controller = new TgChatController();
 
     @Mock
-    TgChatService mockChatService;
+    JdbcTgChatService mockChatService;
 
     @BeforeEach
     public void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        doNothing().when(mockChatService);
     }
 
     @AfterEach
@@ -37,9 +37,10 @@ public class TgChatControllerTest {
     @DisplayName("Удалить чат")
     public void deleteChat() {
         // given
-        Long tgChatId = 1L;
+        long tgChatId = 1L;
 
         // when
+        doNothing().when(mockChatService);
         ResponseEntity<Void> response = controller.tgChatIdDelete(tgChatId);
 
         // then
@@ -50,9 +51,11 @@ public class TgChatControllerTest {
     @DisplayName("Добавить чат")
     public void addChat() throws AlreadyRegisteredException {
         // given
-        Long tgChatId = 1L;
+        long tgChatId = 1L;
 
         // when
+        doNothing().when(mockChatService).register(tgChatId);
+        when(mockChatService.checkIfAlreadyRegistered(tgChatId)).thenReturn(false);
         ResponseEntity<Void> response = controller.tgChatIdPost(tgChatId);
 
         // then

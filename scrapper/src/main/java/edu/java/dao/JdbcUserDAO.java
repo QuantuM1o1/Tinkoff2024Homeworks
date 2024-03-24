@@ -27,18 +27,18 @@ public class JdbcUserDAO implements UserDAO {
         LocalDateTime currentTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(currentTime);
 
-        jdbcTemplate.update(sql, chatId, timestamp);
+        this.jdbcTemplate.update(sql, chatId, timestamp);
     }
 
     @Override
     @Transactional
-        public void removeUser(long chatId) {
+    public void removeUser(long chatId) {
         String sql = "UPDATE users SET deleted_at = ? WHERE chat_id = ?";
 
         LocalDateTime currentTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(currentTime);
 
-        jdbcTemplate.update(sql, timestamp, chatId);
+        this.jdbcTemplate.update(sql, timestamp, chatId);
     }
 
     @Override
@@ -46,13 +46,13 @@ public class JdbcUserDAO implements UserDAO {
     public List<UserDTO> findAllUsers() {
         String sql = "SELECT * FROM users WHERE deleted_at IS NULL";
 
-        return jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
+        return this.jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
     }
 
     @Override
     public List<UserDTO> findUserById(long chatId) {
         String sql = "SELECT * FROM users WHERE deleted_at IS NULL AND chat_id = ?";
 
-        return jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class), chatId);
+        return this.jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class), chatId);
     }
 }

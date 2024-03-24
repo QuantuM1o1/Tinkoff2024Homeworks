@@ -5,8 +5,6 @@ import edu.java.apiException.AlreadyRegisteredException;
 import edu.java.service.TgChatService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +23,7 @@ public class TgChatController implements TgChatApi {
 
     @Override
     public ResponseEntity<Void> tgChatIdDelete(Long id) {
-        tgChatService.unregister(id);
+        this.tgChatService.unregister(id);
         return ResponseEntity.ok().build();
     }
 
@@ -35,11 +33,11 @@ public class TgChatController implements TgChatApi {
         if (alreadyRegistered) {
             throw new AlreadyRegisteredException();
         }
-        tgChatService.register(id);
+        this.tgChatService.register(id);
         return ResponseEntity.ok().build();
     }
 
     private boolean checkIfAlreadyRegistered(Long id) {
-        return tgChatService.checkIfAlreadyRegistered(id);
+        return this.tgChatService.checkIfAlreadyRegistered(id);
     }
 }

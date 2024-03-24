@@ -9,5 +9,6 @@ public interface UserDAO {
     void removeUser(long chatId);
 
     List<UserDTO> findAllUsers();
+
     List<UserDTO> findUserById(long chatId);
 }

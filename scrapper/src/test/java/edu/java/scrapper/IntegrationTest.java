@@ -41,7 +41,8 @@ public abstract class IntegrationTest {
             .getInstance()
             .findCorrectDatabaseImplementation(new JdbcConnection(c.createConnection(""))
             )) {
-            Liquibase liquibase = new Liquibase("master.xml", new DirectoryResourceAccessor(path), database);
+            Liquibase liquibase =
+                new Liquibase("master.xml", new DirectoryResourceAccessor(path), database);
             liquibase.update();
         } catch (FileNotFoundException | LiquibaseException | SQLException e) {
             throw new RuntimeException(e);

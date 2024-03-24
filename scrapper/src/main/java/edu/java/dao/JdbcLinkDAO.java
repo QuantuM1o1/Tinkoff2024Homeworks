@@ -29,7 +29,7 @@ public class JdbcLinkDAO implements LinkDAO {
         Timestamp timestamp = Timestamp.valueOf(currentTime);
         Timestamp lastActivityStamp = Timestamp.from(lastActivity.toInstant());
 
-        jdbcTemplate.update(sql, url, timestamp, timestamp, lastActivityStamp, siteId);
+        this.jdbcTemplate.update(sql, url, timestamp, timestamp, lastActivityStamp, siteId);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class JdbcLinkDAO implements LinkDAO {
         LocalDateTime currentTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(currentTime);
 
-        jdbcTemplate.update(sql, timestamp, url);
+        this.jdbcTemplate.update(sql, timestamp, url);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class JdbcLinkDAO implements LinkDAO {
     public List<LinkDTO> findAllLinks() {
         String sql = "SELECT * FROM links WHERE deleted_at IS NULL";
 
-        return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
+        return this.jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
     }
 
     @Override
@@ -56,13 +56,13 @@ public class JdbcLinkDAO implements LinkDAO {
     public List<LinkDTO> findLinkByUrl(String url) {
         String sql = "SELECT * FROM links WHERE deleted_at IS NULL AND url = ?";
 
-        return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), url);
+        return this.jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), url);
     }
 
     @Override
     public List<LinkDTO> findNLinksLastUpdated(int n) {
         String sql = "SELECT * FROM links WHERE deleted_at IS NULL ORDER BY updated_at ASC LIMIT ?";
 
-        return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), n);
+        return this.jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), n);
     }
 }

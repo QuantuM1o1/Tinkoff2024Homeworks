@@ -4,12 +4,9 @@ import com.pengrad.telegrambot.model.Update;
 import dto.AddLinkRequest;
 import dto.LinkResponse;
 import edu.java.bot.client.LinksClient;
-import edu.java.bot.dto.ChatUser;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.Objects;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +55,6 @@ public class TrackCommand implements Command {
 
     private String getMessage(String stringUrl, long chatId) {
         if (this.isValidUrl(stringUrl)) {
-            URI url = URI.create(stringUrl);
             AddLinkRequest addLinkRequest = new AddLinkRequest();
             addLinkRequest.setLink(URI.create(stringUrl));
             LinkResponse response = this.client.addLink(chatId, addLinkRequest).block();

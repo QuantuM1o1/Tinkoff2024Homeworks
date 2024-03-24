@@ -18,6 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class JdbcLinkDAOTest extends IntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
     @Autowired
     private JdbcLinkDAO linkRepository;
 
@@ -33,8 +34,8 @@ public class JdbcLinkDAOTest extends IntegrationTest {
         String sql = "SELECT * FROM links";
 
         // when
-        linkRepository.addLink(url, lastActivity, siteId);
-        List<LinkDTO> answer = jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
+        this.linkRepository.addLink(url, lastActivity, siteId);
+        List<LinkDTO> answer = this.jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
 
         // then
         assertThat(answer.size()).isEqualTo(1);
@@ -57,11 +58,11 @@ public class JdbcLinkDAOTest extends IntegrationTest {
         String sqlAdd = "INSERT INTO links (url, added_at, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?, ?)";
 
         // when
-        jdbcTemplate.update(sqlAdd, url1, lastActivity, lastActivity, lastActivity, siteId);
-        jdbcTemplate.update(sqlAdd, url2, lastActivity, lastActivity, lastActivity, siteId);
-        linkRepository.removeLink(url1);
-        List<LinkDTO> answer = jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
-        List<LinkDTO> deleted = jdbcTemplate.query(sqlDeleted, new DataClassRowMapper<>(LinkDTO.class));
+        this.jdbcTemplate.update(sqlAdd, url1, lastActivity, lastActivity, lastActivity, siteId);
+        this.jdbcTemplate.update(sqlAdd, url2, lastActivity, lastActivity, lastActivity, siteId);
+        this.linkRepository.removeLink(url1);
+        List<LinkDTO> answer = this.jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
+        List<LinkDTO> deleted = this.jdbcTemplate.query(sqlDeleted, new DataClassRowMapper<>(LinkDTO.class));
 
         // then
         assertThat(answer.size()).isEqualTo(1);
@@ -85,9 +86,9 @@ public class JdbcLinkDAOTest extends IntegrationTest {
         String sqlAdd = "INSERT INTO links (url, added_at, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?, ?)";
 
         // when
-        jdbcTemplate.update(sqlAdd, url1, lastActivity, lastActivity, lastActivity, siteId);
-        jdbcTemplate.update(sqlAdd, url2, lastActivity, lastActivity, lastActivity, siteId);
-        List<LinkDTO> answer = linkRepository.findAllLinks();
+        this.jdbcTemplate.update(sqlAdd, url1, lastActivity, lastActivity, lastActivity, siteId);
+        this.jdbcTemplate.update(sqlAdd, url2, lastActivity, lastActivity, lastActivity, siteId);
+        List<LinkDTO> answer = this.linkRepository.findAllLinks();
 
         // then
         assertThat(answer.size()).isEqualTo(2);

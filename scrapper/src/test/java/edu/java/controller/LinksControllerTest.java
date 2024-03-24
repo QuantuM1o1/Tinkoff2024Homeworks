@@ -5,13 +5,12 @@ import dto.LinkResponse;
 import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
 import edu.java.apiException.LinkAlreadyExistsException;
+import edu.java.dto.LinkDTO;
+import edu.java.service.jdbc.JdbcLinkService;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import edu.java.dto.LinkDTO;
-import edu.java.service.LinkService;
-import edu.java.service.TgChatService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -33,7 +31,7 @@ public class LinksControllerTest {
     private final LinksController linksController = new LinksController();
 
     @Mock
-    LinkService mockLinkService;
+    JdbcLinkService mockLinkService;
 
     @BeforeEach
     public void setUp() {

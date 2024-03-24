@@ -60,7 +60,8 @@ public class LinksClientTest {
 
         // then
         assertThat(Objects.requireNonNull(answer.block()).getId()).isEqualTo(123);
-        assertThat(Objects.requireNonNull(answer.block()).getUrl().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).getUrl().toString())
+            .isEqualTo("https://www.google.com/");
     }
 
     @Test
@@ -79,7 +80,8 @@ public class LinksClientTest {
 
         // then
         assertThat(Objects.requireNonNull(answer.block()).getSize()).isEqualTo(1);
-        assertThat(Objects.requireNonNull(answer.block()).getLinks().getFirst().getUrl().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).getLinks().getFirst().getUrl().toString())
+            .isEqualTo("https://www.google.com/");
         assertThat(Objects.requireNonNull(answer.block()).getLinks().getFirst().getId()).isEqualTo(12);
     }
 
@@ -101,6 +103,7 @@ public class LinksClientTest {
 
         // then
         assertThat(Objects.requireNonNull(answer.block()).getId()).isEqualTo(123);
-        assertThat(Objects.requireNonNull(answer.block()).getUrl().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).getUrl().toString())
+            .isEqualTo("https://www.google.com/");
     }
 }

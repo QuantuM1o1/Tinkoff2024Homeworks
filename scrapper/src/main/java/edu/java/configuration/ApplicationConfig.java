@@ -1,6 +1,7 @@
 package edu.java.configuration;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -14,6 +15,9 @@ public record ApplicationConfig(
     String gitHubBaseUrl,
 
     @NotEmpty
-    String stackOverflowBaseUrl
+    String stackOverflowBaseUrl,
+
+    @NotNull
+    AccessType databaseAccessType
 ) {
 }

@@ -36,7 +36,7 @@ public class LinksController implements LinksApi {
 
     @Override
     public ResponseEntity<LinkResponse> linksDelete(Long tgChatId, RemoveLinkRequest removeLinkRequest) {
-        linkService.remove(tgChatId, removeLinkRequest.getLink().toString());
+        this.linkService.remove(tgChatId, removeLinkRequest.getLink().toString());
         LinkResponse response = new LinkResponse()
             .id(tgChatId)
             .url(removeLinkRequest.getLink());
@@ -45,7 +45,7 @@ public class LinksController implements LinksApi {
 
     @Override
     public ResponseEntity<ListLinksResponse> linksGet(Long tgChatId) {
-        Collection<LinkDTO> list = linkService.listAll(tgChatId);
+        Collection<LinkDTO> list = this.linkService.listAll(tgChatId);
         List<LinkResponse> responseList = new ArrayList<>();
         for (LinkDTO link : list) {
             LinkResponse linkResponse = new LinkResponse();
@@ -66,7 +66,7 @@ public class LinksController implements LinksApi {
         if (alreadyExists) {
             throw new LinkAlreadyExistsException();
         }
-        linkService.add(tgChatId, addLinkRequest.getLink().toString());
+        this.linkService.add(tgChatId, addLinkRequest.getLink().toString());
         LinkResponse response = new LinkResponse()
             .id(tgChatId)
             .url(addLinkRequest.getLink());
