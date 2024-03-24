@@ -66,7 +66,7 @@ public class LinksControllerTest {
     @DisplayName("Получить ссылки")
     public void getLinks() {
         // given
-        Long tgChatId = 1L;
+        long tgChatId = 1L;
         Collection<LinkDTO> collection = new ArrayList<>();
         when(mockLinkService.listAll(tgChatId)).thenReturn(collection);
 
