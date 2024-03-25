@@ -1,0 +1,5 @@
+ALTER TABLE links
+ADD IF NOT EXISTS answer_count INTEGER;
+
+ALTER TABLE links
+ADD IF NOT EXISTS comment_count INTEGER;

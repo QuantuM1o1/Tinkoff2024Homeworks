@@ -12,7 +12,9 @@ public record StackOverflowQuestionResponse(
         long id,
         @JsonProperty("last_activity_date")
         OffsetDateTime lastActivityDate,
-        String link
+        String link,
+        int commentCount,
+        int answerCount
     ) {
     }
 }
