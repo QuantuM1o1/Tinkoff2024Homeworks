@@ -1,6 +1,6 @@
 package edu.java.service.jdbc;
 
-import edu.java.dao.JdbcLinkDAO;
+import edu.java.dao.jdbc.JdbcLinkDAO;
 import edu.java.dto.LinkDTO;
 import edu.java.service.LinkUpdaterService;
 import java.util.List;

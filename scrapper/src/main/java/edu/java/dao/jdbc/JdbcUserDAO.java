@@ -1,5 +1,6 @@
-package edu.java.dao;
+package edu.java.dao.jdbc;
 
+import edu.java.dao.UserDAO;
 import edu.java.dto.UserDTO;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -50,6 +51,7 @@ public class JdbcUserDAO implements UserDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDTO> findUserById(long chatId) {
         String sql = "SELECT * FROM users WHERE deleted_at IS NULL AND chat_id = ?";
 

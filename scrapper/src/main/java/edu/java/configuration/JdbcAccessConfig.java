@@ -1,8 +1,8 @@
 package edu.java.configuration;
 
-import edu.java.dao.JdbcLinkDAO;
-import edu.java.dao.JdbcUserDAO;
-import edu.java.dao.JdbcUserLinkDAO;
+import edu.java.dao.jdbc.JdbcLinkDAO;
+import edu.java.dao.jdbc.JdbcUserDAO;
+import edu.java.dao.jdbc.JdbcUserLinkDAO;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdaterService;
 import edu.java.service.TgChatService;

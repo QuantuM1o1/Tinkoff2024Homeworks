@@ -1,4 +1,4 @@
-package edu.java.dao;
+package edu.java.dao.jdbc;
 
 import edu.java.dto.LinkDTO;
 import edu.java.scrapper.IntegrationTest;

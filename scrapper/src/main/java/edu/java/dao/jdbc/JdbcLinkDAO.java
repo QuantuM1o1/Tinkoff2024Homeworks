@@ -1,5 +1,6 @@
-package edu.java.dao;
+package edu.java.dao.jdbc;
 
+import edu.java.dao.LinkDAO;
 import edu.java.dto.LinkDTO;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -63,6 +64,7 @@ public class JdbcLinkDAO implements LinkDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<LinkDTO> findNLinksLastUpdated(int n) {
         String sql = "SELECT * FROM links WHERE deleted_at IS NULL ORDER BY updated_at ASC LIMIT ?";
 

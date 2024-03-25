@@ -1,5 +1,6 @@
-package edu.java.dao;
+package edu.java.dao.jdbc;
 
+import edu.java.dao.UserLinkDAO;
 import edu.java.dto.LinkDTO;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

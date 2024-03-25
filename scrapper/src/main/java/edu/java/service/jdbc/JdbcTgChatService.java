@@ -1,6 +1,6 @@
 package edu.java.service.jdbc;
 
-import edu.java.dao.JdbcUserDAO;
+import edu.java.dao.jdbc.JdbcUserDAO;
 import edu.java.service.TgChatService;
 
 public class JdbcTgChatService implements TgChatService {
@@ -24,5 +24,4 @@ public class JdbcTgChatService implements TgChatService {
     public boolean checkIfAlreadyRegistered(long tgChatId) {
         return !jdbcUserRepository.findUserById(tgChatId).isEmpty();
     }
-
 }
