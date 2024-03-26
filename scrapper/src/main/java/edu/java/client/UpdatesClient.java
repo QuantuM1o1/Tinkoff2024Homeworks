@@ -3,6 +3,7 @@ package edu.java.client;
 import dto.ApiErrorResponse;
 import dto.LinkUpdateRequest;
 import edu.java.configuration.ApplicationConfig;
+import exception.IncorrectRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -32,7 +33,8 @@ public class UpdatesClient {
             .onStatus(
                     HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
+                    .flatMap(errorResponse ->
+                        Mono.error(new IncorrectRequestException(errorResponse.exceptionMessage())))
             )
             .bodyToMono(Void.class);
     }

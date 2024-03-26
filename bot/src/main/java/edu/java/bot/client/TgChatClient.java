@@ -2,6 +2,8 @@ package edu.java.bot.client;
 
 import dto.ApiErrorResponse;
 import edu.java.bot.configuration.ApplicationConfig;
+import exception.ChatIsNotFoundException;
+import exception.IncorrectRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,7 +33,13 @@ public class TgChatClient {
             .onStatus(
                 HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
+                    .flatMap(errorResponse -> {
+                        if (errorResponse.code().equals("404")) {
+                            return Mono.error(new ChatIsNotFoundException(errorResponse.exceptionMessage()));
+                        } else {
+                            return Mono.error(new IncorrectRequestException(errorResponse.exceptionMessage()));
+                        }
+                    })
             )
             .bodyToMono(Void.class);
     }
@@ -43,7 +51,8 @@ public class TgChatClient {
             .onStatus(
                 HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
+                    .flatMap(errorResponse ->
+                        Mono.error(new IncorrectRequestException(errorResponse.exceptionMessage())))
             )
             .bodyToMono(Void.class);
     }

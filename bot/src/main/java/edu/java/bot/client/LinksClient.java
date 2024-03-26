@@ -6,6 +6,8 @@ import dto.LinkResponse;
 import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
 import edu.java.bot.configuration.ApplicationConfig;
+import exception.ChatIsNotFoundException;
+import exception.IncorrectRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,7 +41,13 @@ public class LinksClient {
             .onStatus(
                 HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
+                    .flatMap(errorResponse -> {
+                        if (errorResponse.code().equals("404")) {
+                            return Mono.error(new ChatIsNotFoundException(errorResponse.exceptionMessage()));
+                        } else {
+                            return Mono.error(new IncorrectRequestException(errorResponse.exceptionMessage()));
+                        }
+                    })
             )
             .bodyToMono(LinkResponse.class);
     }
@@ -52,7 +60,8 @@ public class LinksClient {
             .onStatus(
                 HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
+                    .flatMap(errorResponse ->
+                        Mono.error(new IncorrectRequestException(errorResponse.exceptionMessage())))
             )
             .bodyToMono(ListLinksResponse.class);
     }
@@ -66,7 +75,8 @@ public class LinksClient {
             .onStatus(
                 HttpStatusCode::is4xxClientError,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.exceptionMessage())))
+                    .flatMap(errorResponse ->
+                        Mono.error(new IncorrectRequestException(errorResponse.exceptionMessage())))
             )
             .bodyToMono(LinkResponse.class);
     }

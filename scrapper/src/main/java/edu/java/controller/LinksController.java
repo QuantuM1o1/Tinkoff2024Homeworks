@@ -21,10 +21,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,11 +38,11 @@ public class LinksController {
     /**
      * DELETE /links : Убрать отслеживание ссылки
      *
-     * @param tgChatId  (required)
-     * @param removeLinkRequest  (required)
+     * @param tgChatId          (required)
+     * @param removeLinkRequest (required)
      * @return Ссылка успешно убрана (status code 200)
-     *         or Некорректные параметры запроса (status code 400)
-     *         or Ссылка не найдена (status code 404)
+     *     or Некорректные параметры запроса (status code 400)
+     *     or Ссылка не найдена (status code 404)
      */
     @Operation(
         operationId = "linksDelete",
@@ -58,25 +59,25 @@ public class LinksController {
             })
         }
     )
-    @RequestMapping(
-        method = RequestMethod.DELETE,
+    @DeleteMapping(
         value = "/links",
-        produces = { "application/json" },
-        consumes = { "application/json" }
+        produces = {"application/json"},
+        consumes = {"application/json"}
     )
     @ResponseStatus(HttpStatus.OK)
     public LinkResponse deleteLinks(
         @NotNull
         @Parameter(
-        name = "Tg-Chat-Id",
-        required = true,
-        in = ParameterIn.HEADER)
-    @RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
+            name = "Tg-Chat-Id",
+            required = true,
+            in = ParameterIn.HEADER)
+        @RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
         @Parameter(
             name = "dto.RemoveLinkRequest",
             required = true)
         @Valid
-        @RequestBody RemoveLinkRequest removeLinkRequest) {
+        @RequestBody RemoveLinkRequest removeLinkRequest
+    ) {
         return new LinkResponse(
             tgChatId,
             removeLinkRequest.link()
@@ -86,9 +87,9 @@ public class LinksController {
     /**
      * GET /links : Получить все отслеживаемые ссылки
      *
-     * @param tgChatId  (required)
+     * @param tgChatId (required)
      * @return Ссылки успешно получены (status code 200)
-     *         or Некорректные параметры запроса (status code 400)
+     *     or Некорректные параметры запроса (status code 400)
      */
     @Operation(
         operationId = "linksGet",
@@ -102,20 +103,20 @@ public class LinksController {
             })
         }
     )
-    @RequestMapping(
-        method = RequestMethod.GET,
+    @GetMapping(
         value = "/links",
-        produces = { "application/json" }
+        produces = {"application/json"}
     )
     @ResponseStatus(HttpStatus.OK)
     public ListLinksResponse getLinks(
         @NotNull
-    @Parameter(
-        name = "Tg-Chat-Id",
-        required = true,
-        in = ParameterIn.HEADER)
-    @RequestHeader(value = "Tg-Chat-Id")
-        Long tgChatId) {
+        @Parameter(
+            name = "Tg-Chat-Id",
+            required = true,
+            in = ParameterIn.HEADER)
+        @RequestHeader(value = "Tg-Chat-Id")
+        Long tgChatId
+    ) {
         log.info("List all links for user " + tgChatId);
         return new ListLinksResponse(
             new ArrayList<>(),
@@ -126,10 +127,10 @@ public class LinksController {
     /**
      * POST /links : Добавить отслеживание ссылки
      *
-     * @param tgChatId  (required)
-     * @param addLinkRequest  (required)
+     * @param tgChatId       (required)
+     * @param addLinkRequest (required)
      * @return Ссылка успешно добавлена (status code 200)
-     *         or Некорректные параметры запроса (status code 400)
+     *     or Некорректные параметры запроса (status code 400)
      */
     @Operation(
         operationId = "linksPost",
@@ -146,27 +147,27 @@ public class LinksController {
             })
         }
     )
-    @RequestMapping(
-        method = RequestMethod.POST,
+    @PostMapping(
         value = "/links",
-        produces = { "application/json" },
-        consumes = { "application/json" }
+        produces = {"application/json"},
+        consumes = {"application/json"}
     )
     @ResponseStatus(HttpStatus.OK)
     public LinkResponse postLinks(
         @NotNull
-    @Parameter(
-        name = "Tg-Chat-Id",
-        required = true,
-        in = ParameterIn.HEADER)
-    @RequestHeader(value = "Tg-Chat-Id")
+        @Parameter(
+            name = "Tg-Chat-Id",
+            required = true,
+            in = ParameterIn.HEADER)
+        @RequestHeader(value = "Tg-Chat-Id")
         Long tgChatId,
         @Parameter(
             name = "dto.AddLinkRequest",
             required = true)
         @Valid
         @RequestBody
-        AddLinkRequest addLinkRequest) throws LinkAlreadyExistsException {
+        AddLinkRequest addLinkRequest
+    ) throws LinkAlreadyExistsException {
         boolean alreadyExists = checkIfLinkExists(tgChatId, addLinkRequest.link());
         if (alreadyExists) {
             throw new LinkAlreadyExistsException();
