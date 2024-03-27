@@ -11,6 +11,7 @@ public record ApplicationConfig(
     String gitHubBaseUrl,
 
     @NotEmpty
-    String stackOverflowBaseUrl
-) {
+    String stackOverflowBaseUrl,
+    @NotEmpty
+    String botUrl) {
 }
