@@ -6,7 +6,7 @@ import edu.java.configuration.ApplicationConfig;
 import exception.IncorrectRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -31,10 +31,10 @@ public class UpdatesClient {
             .body(BodyInserters.fromValue(linkUpdate))
             .retrieve()
             .onStatus(
-                    HttpStatusCode::is4xxClientError,
+                HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse ->
-                        Mono.error(new IncorrectRequestException(errorResponse.exceptionMessage())))
+                    .flatMap(apiErrorResponse ->
+                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
             )
             .bodyToMono(Void.class);
     }
