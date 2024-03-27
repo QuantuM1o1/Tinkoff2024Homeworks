@@ -3,6 +3,7 @@ package edu.java.client;
 import dto.ApiErrorResponse;
 import dto.LinkUpdateRequest;
 import edu.java.configuration.ApplicationConfig;
+import exception.ChatIsNotFoundException;
 import exception.IncorrectRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +36,12 @@ public class UpdatesClient {
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(apiErrorResponse ->
                         Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
+            )
+            .onStatus(
+                HttpStatus.NOT_FOUND::equals,
+                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
+                    .flatMap(apiErrorResponse ->
+                        Mono.error(new ChatIsNotFoundException(apiErrorResponse.exceptionMessage())))
             )
             .bodyToMono(Void.class);
     }
