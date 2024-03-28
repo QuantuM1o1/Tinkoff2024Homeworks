@@ -3,6 +3,7 @@ package edu.java.bot.controller;
 import dto.LinkUpdateRequest;
 import edu.java.bot.apiException.UserNotFoundException;
 import edu.java.bot.dto.ChatUser;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +27,21 @@ public class UpdatesControllerTest {
 
     @InjectMocks
     private UpdatesController updatesController;
+    private LinkUpdateRequest linkUpdateRequest;
 
     @BeforeEach
     public void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
+        List<Long> chatIds = new ArrayList<>();
+        chatIds.add(1L);
+        chatIds.add(2L);
+        when(usersMap.containsKey(1L)).thenReturn(true);
+        linkUpdateRequest = new LinkUpdateRequest(
+            123L,
+            URI.create("https://www.google.com/"),
+            "google",
+                chatIds
+        );
     }
 
     @AfterEach
@@ -41,16 +53,10 @@ public class UpdatesControllerTest {
     @DisplayName("Все пользователи получили обновление")
     public void allUsersWereNotified() throws UserNotFoundException {
         // given
-        List<Long> chatIds = new ArrayList<>();
-        chatIds.add(1L);
-        chatIds.add(2L);
-        when(usersMap.containsKey(1L)).thenReturn(true);
         when(usersMap.containsKey(2L)).thenReturn(true);
-        LinkUpdateRequest linkUpdateRequest = new LinkUpdateRequest();
-        linkUpdateRequest.setTgChatIds(chatIds);
 
         // when
-        ResponseEntity<Void> response = updatesController.updatesPost(linkUpdateRequest);
+        ResponseEntity<Void> response = updatesController.postUpdates(linkUpdateRequest);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -60,16 +66,10 @@ public class UpdatesControllerTest {
     @DisplayName("Один из пользователей не найден")
     public void oneUserNotFound() {
         // given
-        List<Long> chatIds = new ArrayList<>();
-        chatIds.add(1L);
-        chatIds.add(2L);
-        when(usersMap.containsKey(1L)).thenReturn(true);
-        LinkUpdateRequest linkUpdateRequest = new LinkUpdateRequest();
-        linkUpdateRequest.setTgChatIds(chatIds);
 
         // when
 
         // then
-        assertThrows(UserNotFoundException.class, () -> updatesController.updatesPost(linkUpdateRequest));
+        assertThrows(UserNotFoundException.class, () -> updatesController.postUpdates(linkUpdateRequest));
     }
 }

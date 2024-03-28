@@ -2,10 +2,12 @@ package edu.java.bot.client;
 
 import dto.ApiErrorResponse;
 import edu.java.bot.configuration.ApplicationConfig;
+import exception.ChatIsNotFoundException;
+import exception.IncorrectRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,9 +31,16 @@ public class TgChatClient {
             .uri(url, tgChatId)
             .retrieve()
             .onStatus(
-                HttpStatusCode::is4xxClientError,
+                HttpStatus.NOT_FOUND::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.getExceptionMessage())))
+                    .flatMap(apiErrorResponse ->
+                        Mono.error(new ChatIsNotFoundException(apiErrorResponse.exceptionMessage())))
+            )
+            .onStatus(
+                HttpStatus.BAD_REQUEST::equals,
+                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
+                    .flatMap(apiErrorResponse ->
+                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
             )
             .bodyToMono(Void.class);
     }
@@ -41,9 +50,10 @@ public class TgChatClient {
             .uri(url, tgChatId)
             .retrieve()
             .onStatus(
-                HttpStatusCode::is4xxClientError,
+                HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new Throwable(errorResponse.getExceptionMessage())))
+                    .flatMap(apiErrorResponse ->
+                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
             )
             .bodyToMono(Void.class);
     }

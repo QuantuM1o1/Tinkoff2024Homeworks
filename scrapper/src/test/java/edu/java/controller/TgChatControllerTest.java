@@ -40,7 +40,7 @@ public class TgChatControllerTest {
         Long tgChatId = 1L;
 
         // when
-        ResponseEntity<Void> response = controller.tgChatIdDelete(tgChatId);
+        ResponseEntity<Void> response = controller.deleteTgChatId(tgChatId);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -53,7 +53,7 @@ public class TgChatControllerTest {
         Long tgChatId = 1L;
 
         // when
-        ResponseEntity<Void> response = controller.tgChatIdPost(tgChatId);
+        ResponseEntity<Void> response = controller.postTgChatId(tgChatId);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

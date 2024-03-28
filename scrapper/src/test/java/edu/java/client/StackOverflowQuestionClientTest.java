@@ -1,4 +1,4 @@
-package edu.java.clients;
+package edu.java.client;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;

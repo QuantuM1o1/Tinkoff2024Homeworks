@@ -27,23 +27,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 public class LinksControllerTest {
-    private AutoCloseable closeable;
-
-    @InjectMocks
     private final LinksController linksController = new LinksController();
-
-    @Mock
-    LinkService mockLinkService;
-
-    @BeforeEach
-    public void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        closeable.close();
-    }
 
     @Test
     @DisplayName("Удалить ссылку")
@@ -51,17 +35,16 @@ public class LinksControllerTest {
         // given
         Long tgChatId = 1L;
         String link = "https://www.google.com/";
-        RemoveLinkRequest request = new RemoveLinkRequest();
-        request.setLink(URI.create(link));
-        doNothing().when(mockLinkService);
+        RemoveLinkRequest request = new RemoveLinkRequest(
+            URI.create(link)
+        );
 
         // when
-        ResponseEntity<LinkResponse> response = linksController.linksDelete(tgChatId, request);
+        LinkResponse response = linksController.deleteLinks(tgChatId, request);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(Objects.requireNonNull(response.getBody()).getId()).isEqualTo(tgChatId);
-        assertThat(response.getBody().getUrl().toString()).isEqualTo(link);
+        assertThat(Objects.requireNonNull(response).id()).isEqualTo(tgChatId);
+        assertThat(response.url().toString()).isEqualTo(link);
     }
 
     @Test
@@ -69,15 +52,12 @@ public class LinksControllerTest {
     public void getLinks() {
         // given
         Long tgChatId = 1L;
-        Collection<LinkDTO> collection = new ArrayList<>();
-        when(mockLinkService.listAll(tgChatId)).thenReturn(collection);
 
         // when
-        ResponseEntity<ListLinksResponse> response = linksController.linksGet(tgChatId);
+        ListLinksResponse response = linksController.getLinks(tgChatId);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(Objects.requireNonNull(response.getBody()).getSize()).isEqualTo(0);
+        assertThat(Objects.requireNonNull(response).size()).isEqualTo(0);
     }
 
     @Test
@@ -87,16 +67,13 @@ public class LinksControllerTest {
         // given
         Long tgChatId = 1L;
         String link = "https://www.google.com/";
-        AddLinkRequest request = new AddLinkRequest();
-        request.setLink(URI.create(link));
-        doNothing().when(mockLinkService);
+        AddLinkRequest request = new AddLinkRequest(URI.create(link));
 
         // when
-        ResponseEntity<LinkResponse> response = linksController.linksPost(tgChatId, request);
+        LinkResponse response = linksController.postLinks(tgChatId, request);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(Objects.requireNonNull(response.getBody()).getId()).isEqualTo(tgChatId);
-        assertThat(response.getBody().getUrl().toString()).isEqualTo(link);
+        assertThat(Objects.requireNonNull(response).id()).isEqualTo(tgChatId);
+        assertThat(response.url().toString()).isEqualTo(link);
     }
 }

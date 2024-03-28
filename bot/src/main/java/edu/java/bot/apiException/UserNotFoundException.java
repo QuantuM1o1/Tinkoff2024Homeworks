@@ -1,6 +1,5 @@
 package edu.java.bot.apiException;
 
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -9,10 +8,10 @@ import org.springframework.http.ProblemDetail;
 public class UserNotFoundException
     extends jakarta.servlet.ServletException
     implements org.springframework.web.ErrorResponse {
-    private final List<Long> usersList;
+    private final Long userId;
 
-    public UserNotFoundException(List<Long> usersList) {
-        this.usersList = usersList;
+    public UserNotFoundException(long userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -25,7 +24,7 @@ public class UserNotFoundException
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "User wasn't found");
     }
 
-    public List<Long> getIds() {
-        return usersList;
+    public long getId() {
+        return this.userId;
     }
 }

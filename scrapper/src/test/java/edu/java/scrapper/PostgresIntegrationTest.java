@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class PostgresIntegrationTest extends IntegrationTest {
     @Test
-    @DisplayName("Имя")
+    @DisplayName("База данных запущена")
     void name() {
         // given
 

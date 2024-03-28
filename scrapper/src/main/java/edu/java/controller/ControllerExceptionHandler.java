@@ -7,15 +7,16 @@ import edu.java.apiException.LinkAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(JsonMappingException.class)
-    public ResponseEntity<ApiErrorResponse> handleValidationException(JsonMappingException ex) {
+    public ApiErrorResponse handleValidationException(JsonMappingException ex) {
         List<String> errors = new ArrayList<>();
         List<String> fields = new ArrayList<>();
 
@@ -25,57 +26,56 @@ public class ControllerExceptionHandler {
             errors.add(message);
         });
 
-        ApiErrorResponse response = new ApiErrorResponse()
-            .description("Validation failed")
-            .code("400")
-            .stacktrace(errors)
-            .exceptionMessage("Couldn't read property of " + fields)
-            .exceptionName("Bad request");
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return new ApiErrorResponse(
+            "Validation failed",
+            "400",
+            "Bad request",
+            "Couldn't read property of " + fields,
+            errors
+        );
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleValidationException(NoResourceFoundException ex) {
+    public ApiErrorResponse handleValidationException(NoResourceFoundException ex) {
         List<String> errors = new ArrayList<>();
         errors.add(ex.getResourcePath());
 
-        ApiErrorResponse response = new ApiErrorResponse()
-            .description("Link was not found")
-            .code("404")
-            .stacktrace(errors)
-            .exceptionMessage("Couldn't find link")
-            .exceptionName("Not found");
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return new ApiErrorResponse(
+            "Link was not found",
+            "404",
+            "Not found",
+            "Couldn't find link",
+            errors
+        );
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(AlreadyRegisteredException.class)
-    public ResponseEntity<ApiErrorResponse> handleValidationException(AlreadyRegisteredException ex) {
+    public ApiErrorResponse handleValidationException(AlreadyRegisteredException ex) {
         List<String> errors = new ArrayList<>();
 
-        ApiErrorResponse response = new ApiErrorResponse()
-            .description("User with this id has already registered")
-            .code(String.valueOf(ex.getStatusCode().value()))
-            .stacktrace(errors)
-            .exceptionMessage("User has already registered")
-            .exceptionName("Conflict in user's id");
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        return new ApiErrorResponse(
+            "User with this id has already registered",
+            String.valueOf(ex.getStatusCode().value()),
+            "Conflict in user's id",
+            "User has already registered",
+            errors
+        );
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(LinkAlreadyExistsException.class)
-    public ResponseEntity<ApiErrorResponse> handleValidationException(LinkAlreadyExistsException ex) {
+    public ApiErrorResponse handleValidationException(LinkAlreadyExistsException ex) {
         List<String> errors = new ArrayList<>();
 
-        ApiErrorResponse response = new ApiErrorResponse()
-            .description("Link already exists for this user")
-            .code(String.valueOf(ex.getStatusCode().value()))
-            .stacktrace(errors)
-            .exceptionMessage("Link already exists")
-            .exceptionName("Conflict in link");
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        return new ApiErrorResponse(
+            "Link already exists for this user",
+            String.valueOf(ex.getStatusCode().value()),
+            "Conflict in link",
+            "Link already exists",
+            errors
+        );
     }
 }
 

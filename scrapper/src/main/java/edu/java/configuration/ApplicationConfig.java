@@ -8,12 +8,10 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
     @NotEmpty
-    String botUrl,
-
-    @NotEmpty
     String gitHubBaseUrl,
 
     @NotEmpty
-    String stackOverflowBaseUrl
-) {
+    String stackOverflowBaseUrl,
+    @NotEmpty
+    String botUrl) {
 }
