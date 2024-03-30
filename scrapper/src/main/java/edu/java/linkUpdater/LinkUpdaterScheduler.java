@@ -1,14 +1,15 @@
 package edu.java.linkUpdater;
 
 import dto.LinkUpdateRequest;
+import edu.java.client.GitHubRepositoriesClient;
+import edu.java.client.StackOverflowQuestionClient;
 import edu.java.client.UpdatesClient;
-import edu.java.clients.GitHubRepositoriesClient;
-import edu.java.clients.StackOverflowQuestionClient;
 import edu.java.dto.GitHubRepositoryResponse;
 import edu.java.dto.LinkDTO;
 import edu.java.dto.StackOverflowQuestionResponse;
 import edu.java.linkParser.GitHubRepositoryLinkParser;
 import edu.java.linkParser.StackOverflowQuestionLinkParser;
+import edu.java.service.LinkService;
 import edu.java.service.LinkUpdaterService;
 import java.net.URI;
 import java.util.List;
@@ -26,6 +27,9 @@ public class LinkUpdaterScheduler {
     @Autowired
     LinkUpdaterService updaterService;
 
+    @Autowired
+    LinkService linkService;
+
     @Autowired UpdatesClient client;
 
     @Autowired StackOverflowQuestionClient stackOverflowQuestionClient;
@@ -36,29 +40,37 @@ public class LinkUpdaterScheduler {
     @Scheduled(fixedDelayString = "#{@scheduler.interval}")
     public void update() {
         log.info("Updater works!");
-        List<LinkDTO> list = updaterService.findNLinksToUpdate(UPDATED_LINKS);
+        List<LinkDTO> list = this.updaterService.findNLinksToUpdate(UPDATED_LINKS);
         for (LinkDTO link : list) {
             switch (link.siteId()) {
                 case 1: {
-                    StackOverflowQuestionResponse response = stackOverflowQuestionClient
+                    StackOverflowQuestionResponse response = this.stackOverflowQuestionClient
                         .fetch(StackOverflowQuestionLinkParser.createRequest(link.url()))
                         .block();
                     if (Objects.requireNonNull(response).items().getFirst().lastActivityDate()
                         != link.lastActivity()) {
-                        LinkUpdateRequest request = new LinkUpdateRequest();
-                        request.setUrl(URI.create(link.url()));
-                        client.sendUpdate(request);
+                        LinkUpdateRequest request = new LinkUpdateRequest(
+                            link.linkId(),
+                            URI.create(link.url()),
+                            "New activity in GitHub repo",
+                            (List<Long>) this.linkService.findAllUsersForLink(link.linkId())
+                        );
+                        this.client.sendUpdate(request);
                     }
                     break;
                 }
                 case 2: {
-                    GitHubRepositoryResponse response = gitHubRepositoriesClient
+                    GitHubRepositoryResponse response = this.gitHubRepositoriesClient
                         .fetch(GitHubRepositoryLinkParser.createRequest(link.url()))
                         .block();
                     if (Objects.requireNonNull(response).updatedAt() != link.lastActivity()) {
-                        LinkUpdateRequest request = new LinkUpdateRequest();
-                        request.setUrl(URI.create(link.url()));
-                        client.sendUpdate(request);
+                        LinkUpdateRequest request = new LinkUpdateRequest(
+                            link.linkId(),
+                            URI.create(link.url()),
+                            "New activity in StackOverflow question",
+                            (List<Long>) this.linkService.findAllUsersForLink(link.linkId())
+                        );
+                        this.client.sendUpdate(request);
                     }
                     break;
                 }

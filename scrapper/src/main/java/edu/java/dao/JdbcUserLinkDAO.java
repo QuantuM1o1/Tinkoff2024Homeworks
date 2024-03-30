@@ -47,4 +47,14 @@ public class JdbcUserLinkDAO implements UserLinkDAO {
 
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), chatId);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Long> findAllUsersByLink(Long linkId) {
+        String sql = "SELECT u.chat_id FROM user_links ul "
+            + "INNER JOIN users u ON ul.user_id = u.chat_id "
+            + "WHERE ul.link_id = ? AND ul.deleted_at IS NULL";
+
+        return jdbcTemplate.query(sql, new DataClassRowMapper<>(Long.class), linkId);
+    }
 }

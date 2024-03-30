@@ -1,7 +1,7 @@
 package edu.java.service.jdbc;
 
-import edu.java.clients.GitHubRepositoriesClient;
-import edu.java.clients.StackOverflowQuestionClient;
+import edu.java.client.GitHubRepositoriesClient;
+import edu.java.client.StackOverflowQuestionClient;
 import edu.java.dao.JdbcLinkDAO;
 import edu.java.dao.JdbcUserLinkDAO;
 import edu.java.dto.GitHubRepositoryResponse;
@@ -29,14 +29,14 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public void add(long tgChatId, String url) {
-        if (linkRepository.findLinkByUrl(url).isEmpty()) {
+        if (this.linkRepository.findLinkByUrl(url).isEmpty()) {
             int siteId;
             if (url.startsWith("https://stackoverflow.com/")) {
                 siteId = 1;
                 StackOverflowQuestionResponse response = stackOverflowQuestionClient
                     .fetch(StackOverflowQuestionLinkParser.createRequest(url))
                     .block();
-                linkRepository.addLink(
+                this.linkRepository.addLink(
                     url,
                     Objects.requireNonNull(response).items().getFirst().lastActivityDate(),
                     siteId);
@@ -45,21 +45,26 @@ public class JdbcLinkService implements LinkService {
                 GitHubRepositoryResponse response = gitHubRepositoriesClient
                     .fetch(GitHubRepositoryLinkParser.createRequest(url))
                     .block();
-                linkRepository.addLink(url, Objects.requireNonNull(response).updatedAt(), siteId);
+                this.linkRepository.addLink(url, Objects.requireNonNull(response).updatedAt(), siteId);
             }
         }
-        long linkId = linkRepository.findLinkByUrl(url).getFirst().linkId();
-        userLinkRepository.addUserLink(tgChatId, linkId);
+        long linkId = this.linkRepository.findLinkByUrl(url).getFirst().linkId();
+        this.userLinkRepository.addUserLink(tgChatId, linkId);
     }
 
     @Override
     public void remove(long tgChatId, String url) {
         long linkId = linkRepository.findLinkByUrl(url).getFirst().linkId();
-        userLinkRepository.removeUserLink(tgChatId, linkId);
+        this.userLinkRepository.removeUserLink(tgChatId, linkId);
     }
 
     @Override
     public Collection<LinkDTO> listAll(long tgChatId) {
-        return userLinkRepository.findAllLinksByUser(tgChatId);
+        return this.userLinkRepository.findAllLinksByUser(tgChatId);
+    }
+
+    @Override
+    public Collection<Long> findAllUsersForLink(long linkId) {
+        return this.userLinkRepository.findAllUsersByLink(linkId);
     }
 }

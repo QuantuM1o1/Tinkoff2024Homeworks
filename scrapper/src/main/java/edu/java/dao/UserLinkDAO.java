@@ -9,4 +9,6 @@ public interface UserLinkDAO {
     void removeUserLink(Long chatId, Long linkId);
 
     List<LinkDTO> findAllLinksByUser(Long chatId);
+
+    List<Long> findAllUsersByLink(Long linkId);
 }

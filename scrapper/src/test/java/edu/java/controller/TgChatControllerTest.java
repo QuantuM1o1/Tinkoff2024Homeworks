@@ -17,20 +17,19 @@ import static org.mockito.Mockito.doNothing;
 public class TgChatControllerTest {
     private AutoCloseable closeable;
     @InjectMocks
-    private final TgChatController controller = new TgChatController();
+    private TgChatController controller;
 
     @Mock
     TgChatService mockChatService;
 
     @BeforeEach
     public void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
-        doNothing().when(mockChatService);
+        this.closeable = MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        closeable.close();
+        this.closeable.close();
     }
 
     @Test
@@ -40,7 +39,8 @@ public class TgChatControllerTest {
         Long tgChatId = 1L;
 
         // when
-        ResponseEntity<Void> response = controller.deleteTgChatId(tgChatId);
+        doNothing().when(this.mockChatService);
+        ResponseEntity<Void> response = this.controller.deleteTgChatId(tgChatId);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -53,7 +53,8 @@ public class TgChatControllerTest {
         Long tgChatId = 1L;
 
         // when
-        ResponseEntity<Void> response = controller.postTgChatId(tgChatId);
+        doNothing().when(this.mockChatService);
+        ResponseEntity<Void> response = this.controller.postTgChatId(tgChatId);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

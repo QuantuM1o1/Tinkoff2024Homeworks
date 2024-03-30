@@ -9,4 +9,6 @@ public interface LinkService {
     void remove(long tgChatId, String url);
 
     Collection<LinkDTO> listAll(long tgChatId);
+
+    Collection<Long> findAllUsersForLink(long linkId);
 }

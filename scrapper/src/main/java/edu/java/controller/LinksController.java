@@ -21,14 +21,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,6 +40,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @Tag(name = "links", description = "the links controller")
 public class LinksController {
+    @Autowired
+    LinkService linkService;
+
     /**
      * DELETE /links : Убрать отслеживание ссылки
      *
@@ -88,6 +86,8 @@ public class LinksController {
         @Valid
         @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
+        this.linkService.remove(tgChatId, removeLinkRequest.link().toString());
+
         return new LinkResponse(
             tgChatId,
             removeLinkRequest.link()
@@ -127,10 +127,18 @@ public class LinksController {
         @RequestHeader(value = "Tg-Chat-Id")
         Long tgChatId
     ) {
-        log.info("List all links for user " + tgChatId);
+        Collection<LinkDTO> list = linkService.listAll(tgChatId);
+        List<LinkResponse> responseList = new ArrayList<>();
+        for (LinkDTO link : list) {
+            LinkResponse linkResponse = new LinkResponse(
+                link.linkId(),
+                URI.create(link.url())
+            );
+            responseList.add(linkResponse);
+        }
         return new ListLinksResponse(
-            new ArrayList<>(),
-            0
+            responseList,
+            responseList.size()
         );
     }
 
@@ -182,6 +190,7 @@ public class LinksController {
         if (alreadyExists) {
             throw new LinkAlreadyExistsException();
         }
+        this.linkService.add(tgChatId, addLinkRequest.link().toString());
         return new LinkResponse(
             tgChatId,
             addLinkRequest.link()
