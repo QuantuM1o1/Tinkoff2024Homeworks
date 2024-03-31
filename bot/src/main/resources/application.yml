@@ -2,6 +2,12 @@ app:
   telegram-token: ${TELEGRAM_TOKEN}
   scrapper-url: "http://localhost:8080"
 
+  retry-type: constant
+  retry-attempts: 3
+  retry-backoff: 30s
+  retryHttpStatuses:
+    - not_found
+
 spring:
   application:
     name: bot

@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.configuration.ApplicationConfig;
 import edu.java.dto.StackOverflowQuestionRequest;
 import edu.java.dto.StackOverflowQuestionResponse;
+import java.time.Duration;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,9 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -36,7 +39,8 @@ public class StackOverflowQuestionClientTest {
         request = new StackOverflowQuestionRequest("stackoverflow", 3615006L);
         ApplicationConfig mockConfig = Mockito.mock(ApplicationConfig.class);
         when(mockConfig.stackOverflowBaseUrl()).thenReturn("http://localhost:8080");
-        stackOverflowQuestionClient = new StackOverflowQuestionClient(mockConfig);
+        stackOverflowQuestionClient
+            = new StackOverflowQuestionClient(mockConfig, Retry.fixedDelay(1, Duration.ZERO));
     }
 
     @AfterEach
@@ -53,15 +57,20 @@ public class StackOverflowQuestionClientTest {
                 .withStatus(HttpStatus.OK.value())
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .withBody(
-                    "{\"items\":[{\"last_activity_date\":1283320547,\"question_id\":3615006,\"link\":\"https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package\"}]}")));
+                    "{\"items\":[{\"last_activity_date\":1283320547,\"question_id\":3615006,"
+                        + "\"link\":\"https://stackoverflow.com"
+                        + "/questions/3615006/unit-tests-must-locate-in-the-same-package\"}]}")));
 
         // when
         Mono<StackOverflowQuestionResponse> answer = stackOverflowQuestionClient.fetch(request);
 
         // then
-        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().lastActivityDate()).isEqualTo("2010-09-01T05:55:47Z");
+        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().lastActivityDate())
+            .isEqualTo("2010-09-01T05:55:47Z");
         assertThat(Objects.requireNonNull(answer.block()).items().getFirst().id()).isEqualTo(3615006);
-        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().link()).isEqualTo("https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package");
+        assertThat(Objects.requireNonNull(answer.block()).items().getFirst().link())
+            .isEqualTo("https://stackoverflow.com"
+                + "/questions/3615006/unit-tests-must-locate-in-the-same-package");
     }
 
     @Test
@@ -76,10 +85,7 @@ public class StackOverflowQuestionClientTest {
         Mono<StackOverflowQuestionResponse> answer = stackOverflowQuestionClient.fetch(request);
 
         // then
-        WebClientResponseException exception = assertThrows(
-            WebClientResponseException.class,
-                answer::block
-        );
-        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        Exception exception = assertThrows(RuntimeException .class, answer::block);
+        assertThat(exception.getMessage()).contains("Retries exhausted");
     }
 }

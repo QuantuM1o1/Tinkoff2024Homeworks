@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.Objects;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -38,7 +40,8 @@ public class GitHubRepositoriesClientTest {
         request = new GitHubRepositoryRequest("octocat", "Hello-World");
         ApplicationConfig mockConfig = Mockito.mock(ApplicationConfig.class);
         when(mockConfig.gitHubBaseUrl()).thenReturn("http://localhost:8080");
-        gitHubRepositoriesClient = new GitHubRepositoriesClient(mockConfig);
+        gitHubRepositoriesClient
+            = new GitHubRepositoriesClient(mockConfig, Retry.fixedDelay(1, Duration.ZERO));
     }
 
     @AfterEach
@@ -78,10 +81,7 @@ public class GitHubRepositoriesClientTest {
         Mono<GitHubRepositoryResponse> answer = gitHubRepositoriesClient.fetch(request);
 
         // then
-        WebClientResponseException exception = assertThrows(
-            WebClientResponseException.class,
-                answer::block
-        );
-        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        Exception exception = assertThrows(RuntimeException .class, answer::block);
+        assertThat(exception.getMessage()).contains("Retries exhausted");
     }
 }

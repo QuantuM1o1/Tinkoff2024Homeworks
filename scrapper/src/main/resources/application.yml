@@ -3,6 +3,12 @@ app:
   github-baseurl: "https://api.github.com"
   stackoverflow-baseurl: "https://api.stackexchange.com/2.3"
 
+  retry-type: constant
+  retry-attempts: 3
+  retry-backoff: 30s
+  retryHttpStatuses:
+    - not_found
+
 scheduler:
   enable: true
   interval: 10s
