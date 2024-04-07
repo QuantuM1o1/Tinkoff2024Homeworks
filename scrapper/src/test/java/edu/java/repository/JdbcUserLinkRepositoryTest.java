@@ -61,11 +61,11 @@ public class JdbcUserLinkRepositoryTest extends IntegrationTest {
         OffsetDateTime lastActivity = OffsetDateTime.now();
         int siteId = 1;
         linkRepository.addLink(url1, lastActivity, siteId);
-        Long linkId1 = linkRepository.findLinkByUrl(url1).getFirst().linkId();
+        long linkId1 = linkRepository.findLinkByUrl(url1).getFirst().linkId();
 
         String url2 = "https://guessthe.game/";
         linkRepository.addLink(url2, lastActivity, siteId);
-        Long linkId2 = linkRepository.findLinkByUrl(url2).getFirst().linkId();
+        long linkId2 = linkRepository.findLinkByUrl(url2).getFirst().linkId();
 
         // when
         userLinkRepository.addUserLink(chatId, linkId1);
