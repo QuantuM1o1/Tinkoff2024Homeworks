@@ -12,6 +12,13 @@ public record ApplicationConfig(
 
     @NotEmpty
     String stackOverflowBaseUrl,
+
     @NotEmpty
-    String botUrl) {
+    String botUrl,
+
+    @NotEmpty
+    String kafkaUrl,
+
+    boolean useQueue
+) {
 }
