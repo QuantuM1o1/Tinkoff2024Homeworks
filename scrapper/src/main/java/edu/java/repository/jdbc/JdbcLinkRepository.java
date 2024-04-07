@@ -1,6 +1,7 @@
-package edu.java.dao;
+package edu.java.repository.jdbc;
 
 import edu.java.dto.LinkDTO;
+import edu.java.repository.LinkRepository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -9,19 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class JdbcLinkDAO implements LinkDAO {
+public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JdbcLinkDAO(JdbcTemplate jdbcTemplate) {
+    public JdbcLinkRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
-    @Transactional
     public void addLink(String url, OffsetDateTime lastActivity, int siteId) {
         String sql = "INSERT INTO links (url, added_at, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?, ?)";
 
@@ -33,7 +32,6 @@ public class JdbcLinkDAO implements LinkDAO {
     }
 
     @Override
-    @Transactional
     public void removeLink(String url) {
         String sql = "UPDATE links SET deleted_at = ? WHERE url = ?";
 
@@ -44,25 +42,34 @@ public class JdbcLinkDAO implements LinkDAO {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<LinkDTO> findAllLinks() {
-        String sql = "SELECT * FROM links WHERE deleted_at IS NULL";
+        String sql = "SELECT * FROM links l INNER JOIN links_sites ls ON l.site_id = ls.id WHERE deleted_at IS NULL";
 
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<LinkDTO> findLinkByUrl(String url) {
-        String sql = "SELECT * FROM links WHERE deleted_at IS NULL AND url = ?";
+        String sql = "SELECT * FROM links l INNER JOIN links_sites ls ON l.site_id = ls.id "
+            + "WHERE deleted_at IS NULL AND url = ?";
 
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), url);
     }
 
     @Override
     public List<LinkDTO> findNLinksLastUpdated(int n) {
-        String sql = "SELECT * FROM links WHERE deleted_at IS NULL ORDER BY updated_at ASC LIMIT ?";
+        String sql = "SELECT * FROM links l INNER JOIN links_sites ls ON l.site_id = ls.id WHERE deleted_at IS NULL "
+            + "ORDER BY updated_at ASC LIMIT ?";
 
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), n);
+    }
+
+    @Override
+    public void setUpdatedAt(String url, OffsetDateTime updatedAt) {
+        String sql = "UPDATE links SET updated_at = ? WHERE url = ?";
+
+        Timestamp timestamp = Timestamp.valueOf(updatedAt.toLocalDateTime());
+
+        jdbcTemplate.update(sql, timestamp, url);
     }
 }

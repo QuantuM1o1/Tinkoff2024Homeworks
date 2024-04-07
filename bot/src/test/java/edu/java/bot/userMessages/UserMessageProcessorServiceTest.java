@@ -4,15 +4,32 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.commands.Command;
+import edu.java.bot.commands.HelpCommand;
+import edu.java.bot.commands.ListCommand;
+import edu.java.bot.commands.StartCommand;
+import edu.java.bot.commands.TrackCommand;
+import edu.java.bot.commands.UntrackCommand;
+import edu.java.bot.dao.UsersMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = {
+    HelpCommand.class,
+    ListCommand.class,
+    StartCommand.class,
+    TrackCommand.class,
+    UntrackCommand.class,
+    UsersMap.class,
+    UserMessageProcessorService.class
+})
 public class UserMessageProcessorServiceTest {
     @Autowired
     private UserMessageProcessor userMessageProcessor;

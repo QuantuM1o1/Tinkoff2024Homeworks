@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TgChatController {
     @Autowired
-    TgChatService tgChatService;
+    private TgChatService tgChatService;
 
     /**
      * DELETE /tg-chat/{id} : Удалить чат
@@ -91,18 +91,8 @@ public class TgChatController {
         @Parameter(name = "id", required = true, in = ParameterIn.PATH)
         @PathVariable("id")
         Long id) throws AlreadyRegisteredException {
-        boolean alreadyRegistered = checkIfAlreadyRegistered(id);
-        if (alreadyRegistered) {
-            throw new AlreadyRegisteredException();
-        }
         this.tgChatService.register(id);
 
         return ResponseEntity.ok().build();
-    }
-
-    private boolean checkIfAlreadyRegistered(Long id) {
-        log.info("Checking for previous registration");
-
-        return false;
     }
 }

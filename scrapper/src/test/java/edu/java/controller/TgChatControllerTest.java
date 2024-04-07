@@ -1,62 +1,66 @@
 package edu.java.controller;
 
-import edu.java.apiException.AlreadyRegisteredException;
 import edu.java.service.TgChatService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.mockito.Mockito.doNothing;
 
+@WebMvcTest(TgChatController.class)
+@AutoConfigureMockMvc
 public class TgChatControllerTest {
-    private AutoCloseable closeable;
-    @InjectMocks
-    private TgChatController controller;
+    private AutoCloseable mocks;
 
-    @Mock
+    @MockBean
     TgChatService mockChatService;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
     public void setUp() {
-        this.closeable = MockitoAnnotations.openMocks(this);
+        this.mocks = MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        this.closeable.close();
+        this.mocks.close();
     }
 
     @Test
     @DisplayName("Удалить чат")
-    public void deleteChat() {
+    public void deleteChat() throws Exception {
         // given
-        Long tgChatId = 1L;
+        long chatId = 1L;
 
         // when
         doNothing().when(this.mockChatService);
-        ResponseEntity<Void> response = this.controller.deleteTgChatId(tgChatId);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/tg-chat/{id}", chatId))
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     @DisplayName("Добавить чат")
-    public void addChat() throws AlreadyRegisteredException {
+    public void addChat() throws Exception {
         // given
-        Long tgChatId = 1L;
+        long chatId = 1L;
 
         // when
         doNothing().when(this.mockChatService);
-        ResponseEntity<Void> response = this.controller.postTgChatId(tgChatId);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        mockMvc.perform(MockMvcRequestBuilders.post("/tg-chat/{id}", chatId))
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

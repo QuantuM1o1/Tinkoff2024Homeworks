@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "links", description = "the links controller")
 public class LinksController {
     @Autowired
-    LinkService linkService;
+    private LinkService linkService;
 
     /**
      * DELETE /links : Убрать отслеживание ссылки
@@ -186,20 +186,11 @@ public class LinksController {
         @RequestBody
         AddLinkRequest addLinkRequest
     ) throws LinkAlreadyExistsException {
-        boolean alreadyExists = checkIfLinkExists(tgChatId, addLinkRequest.link());
-        if (alreadyExists) {
-            throw new LinkAlreadyExistsException();
-        }
-        this.linkService.add(tgChatId, addLinkRequest.link().toString());
+        this.linkService.add(tgChatId, addLinkRequest.link().toString(), addLinkRequest.link().getHost());
         return new LinkResponse(
             tgChatId,
             addLinkRequest.link()
         );
     }
 
-    private boolean checkIfLinkExists(Long id, URI url) {
-        log.info("Checking if user already added this link before");
-
-        return false;
-    }
 }

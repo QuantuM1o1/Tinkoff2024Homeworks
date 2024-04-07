@@ -1,6 +1,9 @@
-package edu.java.dao;
+package edu.java.repository;
 
 import edu.java.dto.LinkDTO;
+import edu.java.repository.jdbc.JdbcLinkRepository;
+import edu.java.repository.jdbc.JdbcUserLinkRepository;
+import edu.java.repository.jdbc.JdbcUserRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -8,23 +11,24 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-public class JdbcUserLinkDAOTest extends IntegrationTest {
+@Transactional
+public class JdbcUserLinkRepositoryTest extends IntegrationTest {
+
     @Autowired
-    private JdbcUserLinkDAO userLinkRepository;
+    private JdbcUserLinkRepository userLinkRepository;
+
     @Autowired
-    private JdbcUserDAO userRepository;
+    private JdbcUserRepository userRepository;
+
     @Autowired
-    private JdbcLinkDAO linkRepository;
+    private JdbcLinkRepository linkRepository;
 
     @Test
     @DisplayName("Добавление связи пользователь-ссылка в таблицу")
-    @Transactional
-    @Rollback
     void addTest() {
         // given
         long chatId = 123L;
@@ -48,8 +52,6 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
 
     @Test
     @DisplayName("Удаление одной из связей из таблицы")
-    @Transactional
-    @Rollback
     void removeTest() {
         // given
         long chatId = 123L;
@@ -59,11 +61,11 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
         OffsetDateTime lastActivity = OffsetDateTime.now();
         int siteId = 1;
         linkRepository.addLink(url1, lastActivity, siteId);
-        Long linkId1 = linkRepository.findAllLinks().getLast().linkId();
+        Long linkId1 = linkRepository.findLinkByUrl(url1).getFirst().linkId();
 
         String url2 = "https://guessthe.game/";
         linkRepository.addLink(url2, lastActivity, siteId);
-        Long linkId2 = linkRepository.findAllLinks().getLast().linkId();
+        Long linkId2 = linkRepository.findLinkByUrl(url2).getFirst().linkId();
 
         // when
         userLinkRepository.addUserLink(chatId, linkId1);
@@ -78,8 +80,6 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
 
     @Test
     @DisplayName("Чтение из таблицы")
-    @Transactional
-    @Rollback
     void findAllTest() {
         // given
         long chatId = 123L;
@@ -89,11 +89,11 @@ public class JdbcUserLinkDAOTest extends IntegrationTest {
         OffsetDateTime lastActivity = OffsetDateTime.now();
         int siteId = 1;
         linkRepository.addLink(url1, lastActivity, siteId);
-        Long linkId1 = linkRepository.findAllLinks().getLast().linkId();
+        long linkId1 = linkRepository.findLinkByUrl(url1).getFirst().linkId();
 
         String url2 = "https://guessthe.game/";
         linkRepository.addLink(url2, lastActivity, siteId);
-        Long linkId2 = linkRepository.findAllLinks().getLast().linkId();
+        long linkId2 = linkRepository.findLinkByUrl(url2).getFirst().linkId();
 
 
         // when

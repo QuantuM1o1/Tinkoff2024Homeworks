@@ -8,6 +8,6 @@ public record LinkDTO(
     OffsetDateTime addedAt,
     OffsetDateTime updatedAt,
     OffsetDateTime lastActivity,
-    int siteId
+    String domainName
 ) {
 }

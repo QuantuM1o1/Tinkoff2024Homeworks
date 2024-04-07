@@ -2,6 +2,7 @@ package edu.java.bot.client;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import edu.java.bot.configuration.ApplicationConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,10 +18,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@SpringBootTest
 public class TgChatClientTest {
     private WireMockServer wireMockServer;
-    @Autowired
+
     private TgChatClient tgChatClient;
 
     @BeforeEach
@@ -28,6 +28,8 @@ public class TgChatClientTest {
         wireMockServer = new WireMockServer(8080);
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
+        ApplicationConfig applicationConfig = new ApplicationConfig("http://localhost:8080", "token");
+        tgChatClient = new TgChatClient(applicationConfig);
     }
 
     @AfterEach

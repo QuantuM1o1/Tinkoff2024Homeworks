@@ -1,6 +1,7 @@
-package edu.java.dao;
+package edu.java.repository;
 
 import edu.java.dto.UserDTO;
+import edu.java.repository.jdbc.JdbcUserRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -10,21 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-public class JdbcUserDAOTest extends IntegrationTest {
+@Transactional
+public class JdbcUserRepositoryTest extends IntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private JdbcUserDAO userRepository;
+    private JdbcUserRepository userRepository;
 
     @Test
     @DisplayName("Добавление пользователя в таблицу")
-    @Transactional
-    @Rollback
     void addTest() {
         // given
         long chatId = 123L;
@@ -41,8 +40,6 @@ public class JdbcUserDAOTest extends IntegrationTest {
 
     @Test
     @DisplayName("Удаление пользователя из таблицы")
-    @Transactional
-    @Rollback
     void removeTest() {
         // given
         long chatId1 = 123L;
@@ -68,8 +65,6 @@ public class JdbcUserDAOTest extends IntegrationTest {
 
     @Test
     @DisplayName("Чтение из таблицы")
-    @Transactional
-    @Rollback
     void findAllTest() {
         // given
         long chatId1 = 123L;
