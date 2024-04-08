@@ -3,7 +3,7 @@ package edu.java.bot.controller;
 import dto.ApiErrorResponse;
 import dto.LinkUpdateRequest;
 import edu.java.bot.apiException.UserNotFoundException;
-import edu.java.bot.dto.ChatUser;
+import edu.java.bot.service.UpdateNotifier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,9 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UpdatesController {
     @Autowired
-    Map<Long, ChatUser> usersMap;
+    private UpdateNotifier updateNotifier;
 
     /**
      * POST /updates : Отправить обновление
@@ -62,23 +59,10 @@ public class UpdatesController {
         @Valid
         @RequestBody
         LinkUpdateRequest linkUpdate) throws UserNotFoundException {
-        Optional<Long> checkAvailability = checkChats(linkUpdate.tgChatIds());
-        if (checkAvailability.isEmpty()) {
-            log.info("All users are notified!");
-        } else {
-            log.info("Couldn't find user with id " + checkAvailability);
-            throw new UserNotFoundException(checkAvailability.get());
+        for (long id : linkUpdate.tgChatIds()) {
+            this.updateNotifier.notifyUser(id, linkUpdate.description(), linkUpdate.url());
         }
 
         return ResponseEntity.ok().build();
-    }
-
-    private Optional<Long> checkChats(List<Long> chatIds) {
-        for (long id : chatIds) {
-            if (!usersMap.containsKey(id)) {
-                return Optional.of(id);
-            }
-        }
-        return Optional.empty();
     }
 }

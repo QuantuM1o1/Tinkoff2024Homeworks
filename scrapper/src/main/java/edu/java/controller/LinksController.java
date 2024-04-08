@@ -6,6 +6,8 @@ import dto.LinkResponse;
 import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
 import edu.java.apiException.LinkAlreadyExistsException;
+import edu.java.dto.LinkDTO;
+import edu.java.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -17,8 +19,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,6 +40,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @Tag(name = "links", description = "the links controller")
 public class LinksController {
+    @Autowired
+    private LinkService linkService;
+
     /**
      * DELETE /links : Убрать отслеживание ссылки
      *
@@ -78,6 +86,8 @@ public class LinksController {
         @Valid
         @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
+        this.linkService.remove(tgChatId, removeLinkRequest.link().toString());
+
         return new LinkResponse(
             tgChatId,
             removeLinkRequest.link()
@@ -117,10 +127,18 @@ public class LinksController {
         @RequestHeader(value = "Tg-Chat-Id")
         Long tgChatId
     ) {
-        log.info("List all links for user " + tgChatId);
+        Collection<LinkDTO> list = linkService.listAll(tgChatId);
+        List<LinkResponse> responseList = new ArrayList<>();
+        for (LinkDTO link : list) {
+            LinkResponse linkResponse = new LinkResponse(
+                link.linkId(),
+                URI.create(link.url())
+            );
+            responseList.add(linkResponse);
+        }
         return new ListLinksResponse(
-            new ArrayList<>(),
-            0
+            responseList,
+            responseList.size()
         );
     }
 
@@ -168,19 +186,11 @@ public class LinksController {
         @RequestBody
         AddLinkRequest addLinkRequest
     ) throws LinkAlreadyExistsException {
-        boolean alreadyExists = checkIfLinkExists(tgChatId, addLinkRequest.link());
-        if (alreadyExists) {
-            throw new LinkAlreadyExistsException();
-        }
+        this.linkService.add(tgChatId, addLinkRequest.link().toString(), addLinkRequest.link().getHost());
         return new LinkResponse(
             tgChatId,
             addLinkRequest.link()
         );
     }
 
-    private boolean checkIfLinkExists(Long id, URI url) {
-        log.info("Checking if user already added this link before");
-
-        return false;
-    }
 }

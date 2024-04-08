@@ -6,14 +6,13 @@ import dto.AddLinkRequest;
 import dto.LinkResponse;
 import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
+import edu.java.bot.configuration.ApplicationConfig;
 import java.net.URI;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
@@ -25,10 +24,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@SpringBootTest
 public class LinksClientTest {
     private WireMockServer wireMockServer;
-    @Autowired
+
     private LinksClient linksClient;
 
     @BeforeEach
@@ -36,6 +34,8 @@ public class LinksClientTest {
         wireMockServer = new WireMockServer(8080);
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
+        ApplicationConfig applicationConfig = new ApplicationConfig("http://localhost:8080", "token");
+        linksClient = new LinksClient(applicationConfig);
     }
 
     @AfterEach

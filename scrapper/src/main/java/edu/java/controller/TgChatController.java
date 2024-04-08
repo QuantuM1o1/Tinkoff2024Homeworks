@@ -2,6 +2,7 @@ package edu.java.controller;
 
 import dto.ApiErrorResponse;
 import edu.java.apiException.AlreadyRegisteredException;
+import edu.java.service.TgChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class TgChatController {
+    @Autowired
+    private TgChatService tgChatService;
+
     /**
      * DELETE /tg-chat/{id} : Удалить чат
      *
@@ -53,7 +58,7 @@ public class TgChatController {
         @Parameter(name = "id", required = true, in = ParameterIn.PATH)
         @PathVariable("id")
         Long id) {
-        log.info("Deleted chat with id " + id);
+        this.tgChatService.unregister(id);
 
         return ResponseEntity.ok().build();
     }
@@ -86,18 +91,8 @@ public class TgChatController {
         @Parameter(name = "id", required = true, in = ParameterIn.PATH)
         @PathVariable("id")
         Long id) throws AlreadyRegisteredException {
-        boolean alreadyRegistered = checkIfAlreadyRegistered(id);
-        if (alreadyRegistered) {
-            throw new AlreadyRegisteredException();
-        }
-        log.info("Added chat with id " + id);
+        this.tgChatService.register(id);
 
         return ResponseEntity.ok().build();
-    }
-
-    private boolean checkIfAlreadyRegistered(Long id) {
-        log.info("Checking for previous registration");
-
-        return false;
     }
 }
