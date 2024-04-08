@@ -97,7 +97,7 @@ public class GithubUpdateCheckerTest {
         when(mockClient.fetch(mockRequest)).thenReturn(mockMono);
         when(mockMono.block()).thenReturn(mockResponse);
         when(resourcesConfig.supportedResources()).thenReturn(mockMap);
-        OffsetDateTime answer = updateChecker.getLastActivity(url, "domain");
+        OffsetDateTime answer = updateChecker.getLastActivity(url);
 
         // then
         assertThat(answer).isEqualTo(test);

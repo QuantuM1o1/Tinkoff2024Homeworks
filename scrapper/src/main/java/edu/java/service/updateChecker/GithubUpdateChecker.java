@@ -5,7 +5,6 @@ import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
 import edu.java.dto.LinkDTO;
-import edu.java.property.SupportedResource;
 import edu.java.repository.LinkRepository;
 import edu.java.service.UpdateChecker;
 import java.time.OffsetDateTime;
@@ -22,19 +21,21 @@ public class GithubUpdateChecker implements UpdateChecker {
     private GitHubRepositoriesClient gitHubRepositoriesClient;
 
     @Autowired
-    private ResourcesConfig resourcesConfig;
+    private LinkRepository linkRepository;
+
+    private final Pattern pattern;
 
     @Autowired
-    private LinkRepository linkRepository;
+    public GithubUpdateChecker(ResourcesConfig resourcesConfig) {
+        String patternString = resourcesConfig.supportedResources().get("github.com").urlPattern();
+        this.pattern = Pattern.compile(patternString);
+    }
 
     @Override
     public Optional<String> description(String url) {
         LinkDTO link = this.linkRepository.findLinkByUrl(url).getFirst();
         GitHubRepositoryResponse response = this.gitHubRepositoriesClient
-            .fetch(this.createResourceRequest(
-                link.url(),
-                this.resourcesConfig.supportedResources().get(link.domainName())
-            ))
+            .fetch(this.createResourceRequest(link.url()))
             .block();
         if (Objects.requireNonNull(response).updatedAt() != link.updatedAt()) {
             this.linkRepository.setUpdatedAt(url, response.updatedAt());
@@ -45,23 +46,22 @@ public class GithubUpdateChecker implements UpdateChecker {
     }
 
     @Override
-    public OffsetDateTime getLastActivity(String url, String domain) {
+    public OffsetDateTime getLastActivity(String url) {
         return Objects.requireNonNull(this.gitHubRepositoriesClient
-                .fetch(this.createResourceRequest(url, this.resourcesConfig.supportedResources().get(domain)))
+                .fetch(this.createResourceRequest(url))
                 .block())
             .updatedAt();
     }
 
-    private GitHubRepositoryRequest createResourceRequest(String url, SupportedResource resource) {
-        String patternString = resource.urlPattern();
-        Pattern pattern = Pattern.compile(patternString);
-        Matcher matcher = pattern.matcher(url);
+    private GitHubRepositoryRequest createResourceRequest(String url) {
+        Matcher matcher = this.pattern.matcher(url);
         String owner = "";
         String repoName = "";
         if (matcher.find()) {
             owner = matcher.group(1);
             repoName = matcher.group(2);
         }
+
         return new GitHubRepositoryRequest(owner, repoName);
     }
 }
