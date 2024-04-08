@@ -105,7 +105,7 @@ public class StackOverflowUpdateCheckerTest {
         when(mockClient.fetch(mockRequest)).thenReturn(mockMono);
         when(mockMono.block()).thenReturn(mockResponse);
         when(resourcesConfig.supportedResources()).thenReturn(mockMap);
-        OffsetDateTime answer = updateChecker.getLastActivity(url);
+        OffsetDateTime answer = updateChecker.getLastActivity(url, "domain");
 
         // then
         assertThat(answer).isEqualTo(test);

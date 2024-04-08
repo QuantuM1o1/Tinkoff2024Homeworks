@@ -6,5 +6,5 @@ import java.util.Optional;
 public interface UpdateChecker {
     Optional<String> description(String url);
 
-    OffsetDateTime getLastActivity(String url);
+    OffsetDateTime getLastActivity(String url, String domain);
 }

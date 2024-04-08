@@ -5,6 +5,7 @@ import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.LinkDTO;
 import edu.java.dto.StackOverflowQuestionRequest;
 import edu.java.dto.StackOverflowQuestionResponse;
+import edu.java.property.SupportedResource;
 import edu.java.repository.LinkRepository;
 import edu.java.service.UpdateChecker;
 import java.time.OffsetDateTime;
@@ -23,19 +24,14 @@ public class StackOverflowUpdateChecker implements UpdateChecker {
     @Autowired
     private LinkRepository linkRepository;
 
-    private final Pattern pattern;
-
     @Autowired
-    public StackOverflowUpdateChecker(ResourcesConfig resourcesConfig) {
-        String patternString = resourcesConfig.supportedResources().get("stackoverflow.com").urlPattern();
-        this.pattern = Pattern.compile(patternString);
-    }
+    private ResourcesConfig resourcesConfig;
 
     @Override
     public Optional<String> description(String url) {
         LinkDTO link = this.linkRepository.findLinkByUrl(url).getFirst();
         StackOverflowQuestionResponse response = this.stackOverflowQuestionClient
-            .fetch(this.createResourceRequest(url))
+            .fetch(this.createResourceRequest(url, this.resourcesConfig.supportedResources().get(link.domainName())))
             .block();
         if (link.updatedAt() != response.items().getFirst().lastActivityDate()) {
             return Optional.of("New answer in StackOverflowQuestion");
@@ -45,17 +41,19 @@ public class StackOverflowUpdateChecker implements UpdateChecker {
     }
 
     @Override
-    public OffsetDateTime getLastActivity(String url) {
+    public OffsetDateTime getLastActivity(String url, String domain) {
         return Objects.requireNonNull(this.stackOverflowQuestionClient
-                .fetch(this.createResourceRequest(url))
+                .fetch(this.createResourceRequest(url, this.resourcesConfig.supportedResources().get(domain)))
                 .block())
             .items()
             .getFirst()
             .lastActivityDate();
     }
 
-    private StackOverflowQuestionRequest createResourceRequest(String url) {
-        Matcher matcher = this.pattern.matcher(url);
+    private StackOverflowQuestionRequest createResourceRequest(String url, SupportedResource resource) {
+        String patternString = resource.urlPattern();
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(url);
         long questionId = 0;
         if (matcher.find()) {
             questionId = Long.parseLong(matcher.group(1));
