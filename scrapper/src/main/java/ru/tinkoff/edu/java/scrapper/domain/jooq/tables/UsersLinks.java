@@ -3,11 +3,14 @@
  */
 package ru.tinkoff.edu.java.scrapper.domain.jooq.tables;
 
+
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+
 import javax.annotation.processing.Generated;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Field;
@@ -27,6 +30,7 @@ import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
 import ru.tinkoff.edu.java.scrapper.domain.jooq.DefaultSchema;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.Keys;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records.UsersLinksRecord;

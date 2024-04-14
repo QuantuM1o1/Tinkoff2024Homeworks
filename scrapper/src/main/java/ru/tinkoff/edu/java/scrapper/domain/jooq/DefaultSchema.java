@@ -3,13 +3,17 @@
  */
 package ru.tinkoff.edu.java.scrapper.domain.jooq;
 
+
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.processing.Generated;
+
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Catalog;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
+
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Links;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.LinksSites;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Users;

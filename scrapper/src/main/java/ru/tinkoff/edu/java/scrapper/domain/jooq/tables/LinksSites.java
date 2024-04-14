@@ -3,8 +3,11 @@
  */
 package ru.tinkoff.edu.java.scrapper.domain.jooq.tables;
 
+
 import java.util.function.Function;
+
 import javax.annotation.processing.Generated;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Field;
@@ -23,6 +26,7 @@ import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
 import ru.tinkoff.edu.java.scrapper.domain.jooq.DefaultSchema;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.Keys;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records.LinksSitesRecord;
@@ -63,9 +67,9 @@ public class LinksSites extends TableImpl<LinksSitesRecord> {
     public final TableField<LinksSitesRecord, Integer> ID = createField(DSL.name("ID"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>LINKS_SITES.SITE_NAME</code>.
+     * The column <code>LINKS_SITES.DOMAIN_NAME</code>.
      */
-    public final TableField<LinksSitesRecord, String> SITE_NAME = createField(DSL.name("SITE_NAME"), SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<LinksSitesRecord, String> DOMAIN_NAME = createField(DSL.name("DOMAIN_NAME"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     private LinksSites(Name alias, Table<LinksSitesRecord> aliased) {
         this(alias, aliased, null);

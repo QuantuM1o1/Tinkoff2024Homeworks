@@ -56,7 +56,7 @@ public class JooqLinkRepository extends Links implements LinkRepository {
             .fetchInto(LinksRecord.class);
         List<LinkDTO> list = new ArrayList<>();
         for (LinksRecord linksRecord : records) {
-            String domain = this.dslContext.select(LINKS.linksSites().SITE_NAME)
+            String domain = this.dslContext.select(LINKS.linksSites().DOMAIN_NAME)
                 .from(LINKS.linksSites())
                 .where(LINKS.linksSites().ID.eq(linksRecord.getSiteId()))
                 .fetchOneInto(String.class);
@@ -83,7 +83,7 @@ public class JooqLinkRepository extends Links implements LinkRepository {
             .fetchInto(LinksRecord.class);
         List<LinkDTO> list = new ArrayList<>();
         for (LinksRecord linksRecord : records) {
-            String domain = this.dslContext.select(LINKS.linksSites().SITE_NAME)
+            String domain = this.dslContext.select(LINKS.linksSites().DOMAIN_NAME)
                 .from(LINKS.linksSites())
                 .where(LINKS.linksSites().ID.eq(linksRecord.getSiteId()))
                 .fetchOneInto(String.class);
@@ -112,7 +112,7 @@ public class JooqLinkRepository extends Links implements LinkRepository {
             .fetchInto(LinksRecord.class);
         List<LinkDTO> list = new ArrayList<>();
         for (LinksRecord linksRecord : records) {
-            String domain = this.dslContext.select(LINKS.linksSites().SITE_NAME)
+            String domain = this.dslContext.select(LINKS.linksSites().DOMAIN_NAME)
                 .from(LINKS.linksSites())
                 .where(LINKS.linksSites().ID.eq(linksRecord.getSiteId()))
                 .fetchOneInto(String.class);

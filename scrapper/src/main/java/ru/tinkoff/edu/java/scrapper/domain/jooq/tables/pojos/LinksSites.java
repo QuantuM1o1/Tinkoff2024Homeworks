@@ -3,10 +3,14 @@
  */
 package ru.tinkoff.edu.java.scrapper.domain.jooq.tables.pojos;
 
+
 import jakarta.validation.constraints.Size;
+
 import java.beans.ConstructorProperties;
 import java.io.Serializable;
+
 import javax.annotation.processing.Generated;
+
 import org.jetbrains.annotations.NotNull;
 
 
@@ -26,22 +30,22 @@ public class LinksSites implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private String siteName;
+    private String domainName;
 
     public LinksSites() {}
 
     public LinksSites(LinksSites value) {
         this.id = value.id;
-        this.siteName = value.siteName;
+        this.domainName = value.domainName;
     }
 
-    @ConstructorProperties({ "id", "siteName" })
+    @ConstructorProperties({ "id", "domainName" })
     public LinksSites(
         @NotNull Integer id,
-        @NotNull String siteName
+        @NotNull String domainName
     ) {
         this.id = id;
-        this.siteName = siteName;
+        this.domainName = domainName;
     }
 
     /**
@@ -61,20 +65,20 @@ public class LinksSites implements Serializable {
     }
 
     /**
-     * Getter for <code>LINKS_SITES.SITE_NAME</code>.
+     * Getter for <code>LINKS_SITES.DOMAIN_NAME</code>.
      */
     @jakarta.validation.constraints.NotNull
     @Size(max = 255)
     @NotNull
-    public String getSiteName() {
-        return this.siteName;
+    public String getDomainName() {
+        return this.domainName;
     }
 
     /**
-     * Setter for <code>LINKS_SITES.SITE_NAME</code>.
+     * Setter for <code>LINKS_SITES.DOMAIN_NAME</code>.
      */
-    public void setSiteName(@NotNull String siteName) {
-        this.siteName = siteName;
+    public void setDomainName(@NotNull String domainName) {
+        this.domainName = domainName;
     }
 
     @Override
@@ -92,11 +96,11 @@ public class LinksSites implements Serializable {
         }
         else if (!this.id.equals(other.id))
             return false;
-        if (this.siteName == null) {
-            if (other.siteName != null)
+        if (this.domainName == null) {
+            if (other.domainName != null)
                 return false;
         }
-        else if (!this.siteName.equals(other.siteName))
+        else if (!this.domainName.equals(other.domainName))
             return false;
         return true;
     }
@@ -106,7 +110,7 @@ public class LinksSites implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.siteName == null) ? 0 : this.siteName.hashCode());
+        result = prime * result + ((this.domainName == null) ? 0 : this.domainName.hashCode());
         return result;
     }
 
@@ -115,7 +119,7 @@ public class LinksSites implements Serializable {
         StringBuilder sb = new StringBuilder("LinksSites (");
 
         sb.append(id);
-        sb.append(", ").append(siteName);
+        sb.append(", ").append(domainName);
 
         sb.append(")");
         return sb.toString();

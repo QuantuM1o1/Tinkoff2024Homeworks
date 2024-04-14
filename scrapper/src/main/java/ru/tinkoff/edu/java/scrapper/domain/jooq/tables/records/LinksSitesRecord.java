@@ -3,15 +3,20 @@
  */
 package ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records;
 
+
 import jakarta.validation.constraints.Size;
+
 import java.beans.ConstructorProperties;
+
 import javax.annotation.processing.Generated;
+
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Row2;
 import org.jooq.impl.UpdatableRecordImpl;
+
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.LinksSites;
 
 
@@ -47,19 +52,19 @@ public class LinksSitesRecord extends UpdatableRecordImpl<LinksSitesRecord> impl
     }
 
     /**
-     * Setter for <code>LINKS_SITES.SITE_NAME</code>.
+     * Setter for <code>LINKS_SITES.DOMAIN_NAME</code>.
      */
-    public void setSiteName(@NotNull String value) {
+    public void setDomainName(@NotNull String value) {
         set(1, value);
     }
 
     /**
-     * Getter for <code>LINKS_SITES.SITE_NAME</code>.
+     * Getter for <code>LINKS_SITES.DOMAIN_NAME</code>.
      */
     @jakarta.validation.constraints.NotNull
     @Size(max = 255)
     @NotNull
-    public String getSiteName() {
+    public String getDomainName() {
         return (String) get(1);
     }
 
@@ -98,7 +103,7 @@ public class LinksSitesRecord extends UpdatableRecordImpl<LinksSitesRecord> impl
     @Override
     @NotNull
     public Field<String> field2() {
-        return LinksSites.LINKS_SITES.SITE_NAME;
+        return LinksSites.LINKS_SITES.DOMAIN_NAME;
     }
 
     @Override
@@ -110,7 +115,7 @@ public class LinksSitesRecord extends UpdatableRecordImpl<LinksSitesRecord> impl
     @Override
     @NotNull
     public String component2() {
-        return getSiteName();
+        return getDomainName();
     }
 
     @Override
@@ -122,7 +127,7 @@ public class LinksSitesRecord extends UpdatableRecordImpl<LinksSitesRecord> impl
     @Override
     @NotNull
     public String value2() {
-        return getSiteName();
+        return getDomainName();
     }
 
     @Override
@@ -135,7 +140,7 @@ public class LinksSitesRecord extends UpdatableRecordImpl<LinksSitesRecord> impl
     @Override
     @NotNull
     public LinksSitesRecord value2(@NotNull String value) {
-        setSiteName(value);
+        setDomainName(value);
         return this;
     }
 
@@ -161,12 +166,12 @@ public class LinksSitesRecord extends UpdatableRecordImpl<LinksSitesRecord> impl
     /**
      * Create a detached, initialised LinksSitesRecord
      */
-    @ConstructorProperties({ "id", "siteName" })
-    public LinksSitesRecord(@NotNull Integer id, @NotNull String siteName) {
+    @ConstructorProperties({ "id", "domainName" })
+    public LinksSitesRecord(@NotNull Integer id, @NotNull String domainName) {
         super(LinksSites.LINKS_SITES);
 
         setId(id);
-        setSiteName(siteName);
+        setDomainName(domainName);
         resetChangedOnNotNull();
     }
 
@@ -178,7 +183,7 @@ public class LinksSitesRecord extends UpdatableRecordImpl<LinksSitesRecord> impl
 
         if (value != null) {
             setId(value.getId());
-            setSiteName(value.getSiteName());
+            setDomainName(value.getDomainName());
             resetChangedOnNotNull();
         }
     }

@@ -3,7 +3,9 @@
  */
 package ru.tinkoff.edu.java.scrapper.domain.jooq;
 
+
 import javax.annotation.processing.Generated;
+
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Links;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.LinksSites;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Users;
