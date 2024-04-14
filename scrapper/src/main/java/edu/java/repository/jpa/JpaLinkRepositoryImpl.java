@@ -81,7 +81,7 @@ public class JpaLinkRepositoryImpl implements LinkRepository {
                 linkEntities.get(i).getLastActivity(),
                 linkEntities.get(i).getAnswerCount(),
                 linkEntities.get(i).getCommentCount(),
-                this.jpaLinksSitesRepository.getReferenceById(linkEntity.getId()).getDomainName()
+                this.jpaLinksSitesRepository.getReferenceById(linkEntities.get(i).getId()).getDomainName()
             ));
         }
 
