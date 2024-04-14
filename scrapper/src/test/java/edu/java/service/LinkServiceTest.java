@@ -1,11 +1,13 @@
 package edu.java.service;
 
+import dto.ListLinksResponse;
 import edu.java.apiException.LinkAlreadyExistsException;
 import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.LinkDTO;
 import edu.java.property.SupportedResource;
 import edu.java.repository.jdbc.JdbcUserLinkRepository;
 import edu.java.scrapper.IntegrationTest;
+import java.net.URI;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -118,12 +120,11 @@ public class LinkServiceTest extends IntegrationTest {
         jdbcTemplate.update(addLink, url, timestamp, timestamp, timestamp, 1);
         List<LinkDTO> links = jdbcTemplate.query(selectLink, new DataClassRowMapper<>(LinkDTO.class));
         userLinkRepository.addUserLink(id, links.getFirst().linkId());
-        List<LinkDTO> answer = (List<LinkDTO>) linkService.listAll(id);
+        ListLinksResponse answer = linkService.listAll(id);
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().url()).isEqualTo(url);
-        assertThat(answer.getFirst().domainName()).isEqualTo(domain);
+        assertThat(answer.links().getFirst().url()).isEqualTo(URI.create(url));
     }
 
     @Test

@@ -1,13 +1,12 @@
 package edu.java.controller;
 
-import edu.java.dto.LinkDTO;
+import dto.ListLinksResponse;
 import edu.java.service.LinkService;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -63,10 +62,10 @@ public class LinksControllerTest {
     public void getLinks() throws Exception {
         // given
         long tgChatId = 1L;
-        Collection<LinkDTO> collection = new ArrayList<>();
+        ListLinksResponse mockResponse = Mockito.mock(ListLinksResponse.class);
 
         // when
-        when(mockLinkService.listAll(tgChatId)).thenReturn(collection);
+        when(mockLinkService.listAll(tgChatId)).thenReturn(mockResponse);
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.get("/links")

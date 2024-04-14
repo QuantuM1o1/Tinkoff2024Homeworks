@@ -1,12 +1,17 @@
 package edu.java.service;
 
+import dto.LinkResponse;
+import dto.ListLinksResponse;
 import edu.java.apiException.LinkAlreadyExistsException;
 import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.LinkDTO;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.UserLinkRepository;
+import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,8 +67,21 @@ public class LinkService {
         this.userLinkRepository.removeUserLink(tgChatId, linkId);
     }
 
-    public Collection<LinkDTO> listAll(long tgChatId) {
-        return this.userLinkRepository.findAllLinksByUser(tgChatId);
+    public ListLinksResponse listAll(long tgChatId) {
+        List<LinkDTO> list =  this.userLinkRepository.findAllLinksByUser(tgChatId);
+        List<LinkResponse> responseList = new ArrayList<>();
+        for (LinkDTO link : list) {
+            LinkResponse linkResponse = new LinkResponse(
+                link.linkId(),
+                URI.create(link.url())
+            );
+            responseList.add(linkResponse);
+        }
+
+        return new ListLinksResponse(
+            responseList,
+            responseList.size()
+        );
     }
 
     public Collection<Long> findAllUsersForLink(long linkId) {

@@ -124,19 +124,7 @@ public class LinksController {
         @RequestHeader(value = "Tg-Chat-Id")
         Long tgChatId
     ) {
-        Collection<LinkDTO> list = linkService.listAll(tgChatId);
-        List<LinkResponse> responseList = new ArrayList<>();
-        for (LinkDTO link : list) {
-            LinkResponse linkResponse = new LinkResponse(
-                link.linkId(),
-                URI.create(link.url())
-            );
-            responseList.add(linkResponse);
-        }
-        return new ListLinksResponse(
-            responseList,
-            responseList.size()
-        );
+        return this.linkService.listAll(tgChatId);
     }
 
     /**
