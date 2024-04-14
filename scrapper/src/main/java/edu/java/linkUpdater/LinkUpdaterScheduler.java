@@ -41,15 +41,17 @@ public class LinkUpdaterScheduler {
         log.info("Updater works!");
         List<LinkDTO> list = this.updaterService.findNLinksToUpdate(this.applicationConfig.linksToUpdate());
         for (LinkDTO link : list) {
-            Optional<String> optionalDescription = this.updateCheckerMap
-                .get(link.domainName())
-                .description(link.url());
-            optionalDescription.ifPresent(description -> this.client.sendUpdate(new LinkUpdateRequest(
-                link.linkId(),
-                URI.create(link.url()),
-                description,
-                (List<Long>) this.linkService.findAllUsersForLink(link.linkId())
-            )));
+            if (this.updateCheckerMap.containsKey(link.domainName())) {
+                Optional<String> optionalDescription = this.updateCheckerMap
+                    .get(link.domainName())
+                    .description(link.url());
+                optionalDescription.ifPresent(description -> this.client.sendUpdate(new LinkUpdateRequest(
+                    link.linkId(),
+                    URI.create(link.url()),
+                    description,
+                    (List<Long>) this.linkService.findAllUsersForLink(link.linkId())
+                )));
+            }
         }
     }
 }
