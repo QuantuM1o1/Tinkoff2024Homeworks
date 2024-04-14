@@ -3,12 +3,14 @@ package edu.java.client;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import dto.LinkUpdateRequest;
+import edu.java.configuration.AccessType;
+import edu.java.configuration.ApplicationConfig;
+import java.net.URI;
+import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
@@ -19,18 +21,28 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
-public class UpdatesClientTest
-{
+public class UpdatesClientTest {
+
     private WireMockServer wireMockServer;
-    @Autowired
+
     private UpdatesClient updatesClient;
+
+    private LinkUpdateRequest request;
 
     @BeforeEach
     public void setUp() {
         wireMockServer = new WireMockServer(8090);
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
+        request = new LinkUpdateRequest(
+            123L,
+            URI.create("https://www.google.com/"),
+            "google",
+            new ArrayList<>()
+        );
+        ApplicationConfig applicationConfig = new ApplicationConfig(
+            "http://localhost:8090", "url", "http://localhost:8090", AccessType.JDBC, 1);
+        updatesClient = new UpdatesClient(applicationConfig);
     }
 
     @AfterEach
@@ -42,7 +54,6 @@ public class UpdatesClientTest
     @DisplayName("Отправка update")
     public void sendUpdates() {
         // given
-        LinkUpdateRequest request = new LinkUpdateRequest();
         stubFor(post(urlPathEqualTo("/updates"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())));
@@ -58,7 +69,6 @@ public class UpdatesClientTest
     @DisplayName("Ответ 404 от сервера")
     public void userNotFound() {
         // given
-        LinkUpdateRequest request = new LinkUpdateRequest();
         stubFor(post(urlPathEqualTo("/updates"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.NOT_FOUND.value())

@@ -1,14 +1,13 @@
 package edu.java.configuration;
 
-import edu.java.dao.jooq.JooqLinkDAO;
-import edu.java.dao.jooq.JooqUserDAO;
-import edu.java.dao.jooq.JooqUserLinkDAO;
+import edu.java.repository.jooq.JooqLinkRepository;
+import edu.java.repository.jooq.JooqUserLinkRepository;
+import edu.java.repository.jooq.JooqUserRepository;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdaterService;
 import edu.java.service.TgChatService;
-import edu.java.service.jooq.JooqLinkService;
-import edu.java.service.jooq.JooqLinkUpdaterService;
-import edu.java.service.jooq.JooqTgChatService;
+import edu.java.service.updateChecker.GithubUpdateChecker;
+import edu.java.service.updateChecker.StackOverflowUpdateChecker;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,23 +17,37 @@ import org.springframework.context.annotation.Configuration;
 public class JooqAccessConfig {
     @Bean
     public LinkService linkService(
-        JooqLinkDAO linkRepository,
-        JooqUserLinkDAO userLinkRepository
+        JooqLinkRepository linkRepository,
+        JooqUserLinkRepository userLinkRepository
     ) {
-        return new JooqLinkService(linkRepository, userLinkRepository);
+        return new LinkService(linkRepository, userLinkRepository);
     }
 
     @Bean
     public LinkUpdaterService linkUpdaterService(
-        JooqLinkDAO linkRepository
+        JooqLinkRepository linkRepository
     ) {
-        return new JooqLinkUpdaterService(linkRepository);
+        return new LinkUpdaterService(linkRepository);
     }
 
     @Bean
     public TgChatService tgChatService(
-        JooqUserDAO userRepository
+        JooqUserRepository userRepository
     ) {
-        return new JooqTgChatService(userRepository);
+        return new TgChatService(userRepository);
+    }
+
+    @Bean(name = "github.com")
+    public GithubUpdateChecker githubUpdateChecker(
+        JooqLinkRepository linkRepository
+    ) {
+        return new GithubUpdateChecker(linkRepository);
+    }
+
+    @Bean(name = "stackoverflow.com")
+    public StackOverflowUpdateChecker stackOverflowUpdateChecker(
+        JooqLinkRepository linkRepository
+    ) {
+        return new StackOverflowUpdateChecker(linkRepository);
     }
 }

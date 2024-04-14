@@ -55,9 +55,10 @@ public class ListCommandTest {
     void CallToEmptyList() {
         // given
         long chatId = 123456L;
-        ListLinksResponse list = new ListLinksResponse();
-        list.setSize(0);
-        list.setLinks(new ArrayList<>());
+        ListLinksResponse list = new ListLinksResponse(
+            new ArrayList<>(),
+            0
+        );
         Mono<ListLinksResponse> mockMono = Mono.just(list);
         when(mockClient.getLinks(chatId)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);
@@ -80,13 +81,13 @@ public class ListCommandTest {
         // given
         String test = "https://edu.tinkoff.ru";
         List<LinkResponse> listLinks = new ArrayList<>();
-        LinkResponse linkResponse = new LinkResponse();
-        linkResponse.setUrl(URI.create(test));
+        LinkResponse linkResponse = new LinkResponse(1L, URI.create(test));
         listLinks.add(linkResponse);
         long chatId = 123456L;
-        ListLinksResponse list = new ListLinksResponse();
-        list.setSize(1);
-        list.setLinks(listLinks);
+        ListLinksResponse list = new ListLinksResponse(
+            listLinks,
+            listLinks.size()
+        );
         Mono<ListLinksResponse> mockMono = Mono.just(list);
         when(mockClient.getLinks(chatId)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);

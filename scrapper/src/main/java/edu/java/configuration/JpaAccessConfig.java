@@ -1,13 +1,13 @@
 package edu.java.configuration;
 
-import edu.java.repository.JpaLinkRepository;
-import edu.java.repository.JpaUserRepository;
+import edu.java.repository.jpa.JpaLinkRepositoryImpl;
+import edu.java.repository.jpa.JpaUserLinkRepositoryImpl;
+import edu.java.repository.jpa.JpaUserRepositoryImpl;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdaterService;
 import edu.java.service.TgChatService;
-import edu.java.service.jpa.JpaLinkService;
-import edu.java.service.jpa.JpaLinkUpdaterService;
-import edu.java.service.jpa.JpaTgChatService;
+import edu.java.service.updateChecker.GithubUpdateChecker;
+import edu.java.service.updateChecker.StackOverflowUpdateChecker;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,23 +17,37 @@ import org.springframework.context.annotation.Configuration;
 public class JpaAccessConfig {
     @Bean
     public LinkService linkService(
-        JpaLinkRepository linkRepository,
-        JpaUserRepository userRepository
+        JpaLinkRepositoryImpl linkRepository,
+        JpaUserLinkRepositoryImpl userLinkRepository
     ) {
-        return new JpaLinkService(linkRepository, userRepository);
+        return new LinkService(linkRepository, userLinkRepository);
     }
 
     @Bean
     public LinkUpdaterService linkUpdaterService(
-        JpaLinkRepository linkRepository
+        JpaLinkRepositoryImpl linkRepository
     ) {
-        return new JpaLinkUpdaterService(linkRepository);
+        return new LinkUpdaterService(linkRepository);
     }
 
     @Bean
     public TgChatService tgChatService(
-        JpaUserRepository userRepository
+        JpaUserRepositoryImpl userRepository
     ) {
-        return new JpaTgChatService(userRepository);
+        return new TgChatService(userRepository);
+    }
+
+    @Bean(name = "github.com")
+    public GithubUpdateChecker githubUpdateChecker(
+        JpaLinkRepositoryImpl linkRepository
+    ) {
+        return new GithubUpdateChecker(linkRepository);
+    }
+
+    @Bean(name = "stackoverflow.com")
+    public StackOverflowUpdateChecker stackOverflowUpdateChecker(
+        JpaLinkRepositoryImpl linkRepository
+    ) {
+        return new StackOverflowUpdateChecker(linkRepository);
     }
 }

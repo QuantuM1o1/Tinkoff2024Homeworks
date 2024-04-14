@@ -18,6 +18,9 @@ public record ApplicationConfig(
     String stackOverflowBaseUrl,
 
     @NotNull
-    AccessType databaseAccessType
+    AccessType databaseAccessType,
+
+    @NotNull
+    int linksToUpdate
 ) {
 }

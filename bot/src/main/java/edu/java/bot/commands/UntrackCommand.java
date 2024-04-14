@@ -7,9 +7,9 @@ import edu.java.bot.client.LinksClient;
 import java.net.URI;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class UntrackCommand implements Command {
     @Autowired
     private LinksClient client;
@@ -44,9 +44,8 @@ public class UntrackCommand implements Command {
     }
 
     private String getMessage(String stringUrl, long chatId) {
-        RemoveLinkRequest request = new RemoveLinkRequest();
-        request.setLink(URI.create(stringUrl));
+        RemoveLinkRequest request = new RemoveLinkRequest(URI.create(stringUrl));
         LinkResponse response = this.client.deleteLink(chatId, request).block();
-        return Objects.requireNonNull(response).getUrl() + " has been removed from your tracked URLs list.";
+        return Objects.requireNonNull(response).url() + " has been removed from your tracked URLs list.";
     }
 }

@@ -1,75 +1,55 @@
 package edu.java.bot.controller;
 
-import dto.LinkUpdateRequest;
-import edu.java.bot.apiException.UserNotFoundException;
-import edu.java.bot.dto.ChatUser;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import edu.java.bot.service.UpdateNotifier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.mockito.Mockito.doNothing;
 
+@WebMvcTest(UpdatesController.class)
+@AutoConfigureMockMvc
 public class UpdatesControllerTest {
-    private AutoCloseable closeable;
-    @Mock
-    private Map<Long, ChatUser> usersMap;
+    private AutoCloseable mocks;
 
-    @InjectMocks
-    private UpdatesController updatesController;
+    @MockBean
+    private UpdateNotifier mockNotifier;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
     public void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        closeable.close();
+        mocks.close();
     }
 
     @Test
     @DisplayName("Все пользователи получили обновление")
-    public void allUsersWereNotified() throws UserNotFoundException {
+    public void allUsersWereNotified() throws Exception {
         // given
-        List<Long> chatIds = new ArrayList<>();
-        chatIds.add(1L);
-        chatIds.add(2L);
-        when(usersMap.containsKey(1L)).thenReturn(true);
-        when(usersMap.containsKey(2L)).thenReturn(true);
-        LinkUpdateRequest linkUpdateRequest = new LinkUpdateRequest();
-        linkUpdateRequest.setTgChatIds(chatIds);
+        String body = "{\"id\":\"1\",\"url\":\"https://stackoverflow.com/\",\"description\":\"something new\",\"tgChatIds\":[1]}";
 
         // when
-        ResponseEntity<Void> response = updatesController.updatesPost(linkUpdateRequest);
+        doNothing().when(mockNotifier);
 
         // then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
-
-    @Test
-    @DisplayName("Один из пользователей не найден")
-    public void oneUserNotFound() {
-        // given
-        List<Long> chatIds = new ArrayList<>();
-        chatIds.add(1L);
-        chatIds.add(2L);
-        when(usersMap.containsKey(1L)).thenReturn(true);
-        LinkUpdateRequest linkUpdateRequest = new LinkUpdateRequest();
-        linkUpdateRequest.setTgChatIds(chatIds);
-
-        // when
-
-        // then
-        assertThrows(UserNotFoundException.class, () -> updatesController.updatesPost(linkUpdateRequest));
+        mockMvc.perform(MockMvcRequestBuilders.post("/updates")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

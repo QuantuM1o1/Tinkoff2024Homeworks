@@ -3,20 +3,15 @@
  */
 package ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records;
 
-
 import jakarta.validation.constraints.Size;
-
 import java.beans.ConstructorProperties;
-
 import javax.annotation.processing.Generated;
-
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Row2;
 import org.jooq.impl.UpdatableRecordImpl;
-
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.LinksSites;
 
 

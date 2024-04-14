@@ -8,8 +8,8 @@ public record LinkDTO(
     OffsetDateTime addedAt,
     OffsetDateTime updatedAt,
     OffsetDateTime lastActivity,
-    int siteId,
     Integer answerCount,
-    Integer commentCount
+    Integer commentCount,
+    String domainName
 ) {
 }

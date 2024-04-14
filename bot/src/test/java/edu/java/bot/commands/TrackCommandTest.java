@@ -55,10 +55,8 @@ public class TrackCommandTest {
         String name = "Name";
         String test = "https://edu.tinkoff.ru";
         long chatId = 123456L;
-        AddLinkRequest addLinkRequest = new AddLinkRequest();
-        addLinkRequest.setLink(URI.create(test));
-        LinkResponse response = new LinkResponse();
-        response.setUrl(URI.create(test));
+        AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(test));
+        LinkResponse response = new LinkResponse(1L, URI.create(test));
         Mono<LinkResponse> mockMono = Mono.just(response);
         when(mockClient.addLink(chatId, addLinkRequest)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);

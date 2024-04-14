@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface JpaLinkRepository extends JpaRepository<LinkEntity, Long> {
-    boolean existsByUrl(String url);
-
     LinkEntity getByUrl(String url);
 
     List<LinkEntity> findAllByOrderByUpdatedAt();

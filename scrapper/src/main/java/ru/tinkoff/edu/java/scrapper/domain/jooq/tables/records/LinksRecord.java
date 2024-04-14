@@ -3,14 +3,10 @@
  */
 package ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records;
 
-
 import jakarta.validation.constraints.Size;
-
 import java.beans.ConstructorProperties;
 import java.time.OffsetDateTime;
-
 import javax.annotation.processing.Generated;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Field;
@@ -18,7 +14,6 @@ import org.jooq.Record1;
 import org.jooq.Record9;
 import org.jooq.Row9;
 import org.jooq.impl.UpdatableRecordImpl;
-
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Links;
 
 

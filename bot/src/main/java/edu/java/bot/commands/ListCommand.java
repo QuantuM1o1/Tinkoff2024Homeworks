@@ -7,9 +7,9 @@ import edu.java.bot.client.LinksClient;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class ListCommand implements Command {
     @Autowired
     private LinksClient client;
@@ -30,8 +30,8 @@ public class ListCommand implements Command {
     public String handle(Update update) {
         long chatId = update.message().chat().id();
         ListLinksResponse response = this.client.getLinks(chatId).block();
-        if (!Objects.requireNonNull(response).getLinks().isEmpty()) {
-            return this.trackedURLs(response.getLinks());
+        if (!Objects.requireNonNull(response).links().isEmpty()) {
+            return this.trackedURLs(response.links());
         } else {
             return "You are not tracking any URLs.";
         }
@@ -45,7 +45,7 @@ public class ListCommand implements Command {
     private String trackedURLs(List<LinkResponse> trackedURLs) {
         StringBuilder messageText = new StringBuilder("Tracked URLs:\n");
         for (LinkResponse linkResponse : trackedURLs) {
-            messageText.append("- ").append(linkResponse.getUrl()).append("\n");
+            messageText.append("- ").append(linkResponse.url()).append("\n");
         }
         return messageText.toString();
     }

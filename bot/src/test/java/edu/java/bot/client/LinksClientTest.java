@@ -6,13 +6,13 @@ import dto.AddLinkRequest;
 import dto.LinkResponse;
 import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
+import edu.java.bot.configuration.ApplicationConfig;
+import java.net.URI;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
@@ -24,10 +24,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@SpringBootTest
 public class LinksClientTest {
     private WireMockServer wireMockServer;
-    @Autowired
+
     private LinksClient linksClient;
 
     @BeforeEach
@@ -35,6 +34,8 @@ public class LinksClientTest {
         wireMockServer = new WireMockServer(8080);
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
+        ApplicationConfig applicationConfig = new ApplicationConfig("http://localhost:8080", "token");
+        linksClient = new LinksClient(applicationConfig);
     }
 
     @AfterEach
@@ -47,7 +48,10 @@ public class LinksClientTest {
     public void deleteLink() {
         // given
         Long chatId = 123L;
-        RemoveLinkRequest request = new RemoveLinkRequest();
+        String url = "https://www.google.com/";
+        RemoveLinkRequest request = new RemoveLinkRequest(
+            URI.create(url)
+        );
         stubFor(delete(urlPathEqualTo("/links"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
@@ -59,9 +63,8 @@ public class LinksClientTest {
         Mono<LinkResponse> answer = linksClient.deleteLink(chatId, request);
 
         // then
-        assertThat(Objects.requireNonNull(answer.block()).getId()).isEqualTo(123);
-        assertThat(Objects.requireNonNull(answer.block()).getUrl().toString())
-            .isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).id()).isEqualTo(123);
+        assertThat(Objects.requireNonNull(answer.block()).url().toString()).isEqualTo("https://www.google.com/");
     }
 
     @Test
@@ -79,10 +82,9 @@ public class LinksClientTest {
         Mono<ListLinksResponse> answer = linksClient.getLinks(chatId);
 
         // then
-        assertThat(Objects.requireNonNull(answer.block()).getSize()).isEqualTo(1);
-        assertThat(Objects.requireNonNull(answer.block()).getLinks().getFirst().getUrl().toString())
-            .isEqualTo("https://www.google.com/");
-        assertThat(Objects.requireNonNull(answer.block()).getLinks().getFirst().getId()).isEqualTo(12);
+        assertThat(Objects.requireNonNull(answer.block()).size()).isEqualTo(1);
+        assertThat(Objects.requireNonNull(answer.block()).links().getFirst().url().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).links().getFirst().id()).isEqualTo(12);
     }
 
     @Test
@@ -90,7 +92,8 @@ public class LinksClientTest {
     public void addLink() {
         // given
         Long chatId = 123L;
-        AddLinkRequest request = new AddLinkRequest();
+        String link = "https://www.google.com/";
+        AddLinkRequest request = new AddLinkRequest(URI.create(link));
         stubFor(post(urlPathEqualTo("/links"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
@@ -102,8 +105,7 @@ public class LinksClientTest {
         Mono<LinkResponse> answer = linksClient.addLink(chatId, request);
 
         // then
-        assertThat(Objects.requireNonNull(answer.block()).getId()).isEqualTo(123);
-        assertThat(Objects.requireNonNull(answer.block()).getUrl().toString())
-            .isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).id()).isEqualTo(123);
+        assertThat(Objects.requireNonNull(answer.block()).url().toString()).isEqualTo("https://www.google.com/");
     }
 }

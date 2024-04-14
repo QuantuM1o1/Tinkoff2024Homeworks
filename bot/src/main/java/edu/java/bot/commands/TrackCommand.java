@@ -8,9 +8,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class TrackCommand implements Command {
     @Autowired
     private LinksClient client;
@@ -55,10 +55,9 @@ public class TrackCommand implements Command {
 
     private String getMessage(String stringUrl, long chatId) {
         if (this.isValidUrl(stringUrl)) {
-            AddLinkRequest addLinkRequest = new AddLinkRequest();
-            addLinkRequest.setLink(URI.create(stringUrl));
+            AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(stringUrl));
             LinkResponse response = this.client.addLink(chatId, addLinkRequest).block();
-            return Objects.requireNonNull(response).getUrl() + " has been added to your tracked URLs list.";
+            return Objects.requireNonNull(response).url() + " has been added to your tracked URLs list.";
         } else {
             return "Invalid URL format. Please provide a valid URL.";
         }

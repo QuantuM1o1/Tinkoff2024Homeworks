@@ -1,43 +1,94 @@
 package edu.java.controller;
 
-import edu.java.api.TgChatApi;
+import dto.ApiErrorResponse;
 import edu.java.apiException.AlreadyRegisteredException;
 import edu.java.service.TgChatService;
-import java.util.Optional;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.NativeWebRequest;
 
+@Log4j2
+@Validated
+@Tag(name = "tg-chat", description = "the tg-chat API")
 @RestController
 @RequiredArgsConstructor
-public class TgChatController implements TgChatApi {
+public class TgChatController {
     @Autowired
-    TgChatService tgChatService;
+    private TgChatService tgChatService;
 
-    @Override
-    public Optional<NativeWebRequest> getRequest() {
-        return TgChatApi.super.getRequest();
-    }
-
-    @Override
-    public ResponseEntity<Void> tgChatIdDelete(Long id) {
-        this.tgChatService.unregister(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @Override
-    public ResponseEntity<Void> tgChatIdPost(Long id) throws AlreadyRegisteredException {
-        boolean alreadyRegistered = checkIfAlreadyRegistered(id);
-        if (alreadyRegistered) {
-            throw new AlreadyRegisteredException();
+    /**
+     * DELETE /tg-chat/{id} : Удалить чат
+     *
+     * @param id (required)
+     */
+    @Operation(
+        operationId = "tgChatIdDelete",
+        summary = "Удалить чат",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Чат успешно удалён"),
+            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Чат не существует", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            })
         }
-        this.tgChatService.register(id);
-        return ResponseEntity.ok().build();
+    )
+    @DeleteMapping(
+        value = "/tg-chat/{id}",
+        produces = {"application/json"}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTgChatId(
+        @Parameter(name = "id", required = true, in = ParameterIn.PATH)
+        @PathVariable("id")
+        Long id
+    ) {
+        this.tgChatService.unregister(id);
     }
 
-    private boolean checkIfAlreadyRegistered(Long id) {
-        return this.tgChatService.checkIfAlreadyRegistered(id);
+    /**
+     * POST /tg-chat/{id} : Зарегистрировать чат
+     *
+     * @param id (required)
+     */
+    @Operation(
+        operationId = "tgChatIdPost",
+        summary = "Зарегистрировать чат",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Чат зарегистрирован"),
+            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "409", description = "Повторная регистрация", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            })
+        }
+    )
+    @PostMapping(
+        value = "/tg-chat/{id}",
+        produces = {"application/json"}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public void postTgChatId(
+        @Parameter(name = "id", required = true, in = ParameterIn.PATH)
+        @PathVariable("id")
+        Long id
+    ) throws AlreadyRegisteredException {
+        this.tgChatService.register(id);
     }
 }

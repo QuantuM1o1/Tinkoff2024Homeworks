@@ -3,11 +3,12 @@ app:
   github-baseurl: "https://api.github.com"
   stackoverflow-baseurl: "https://api.stackexchange.com/2.3"
   database-access-type: JDBC
+  links-to-update: 2
 
 scheduler:
   enable: true
   interval: 10m
-  force-check-delay: 10m
+  force-check-delay: 60m
 
 spring:
   application:
@@ -32,3 +33,14 @@ springdoc:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+resources:
+  supported-resources:
+    "[stackoverflow.com]":
+      id: 1
+      base-url: https://api.stackexchange.com/2.3
+      url-pattern: ^https?://stackoverflow\.com/.*/(.*)/.*$
+    "[github.com]":
+      id: 2
+      base-url: https://api.github.com
+      url-pattern: ^https?://github\.com/(.*)/(.*)$

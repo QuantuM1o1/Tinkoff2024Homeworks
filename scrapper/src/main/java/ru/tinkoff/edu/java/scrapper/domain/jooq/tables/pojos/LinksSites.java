@@ -3,14 +3,10 @@
  */
 package ru.tinkoff.edu.java.scrapper.domain.jooq.tables.pojos;
 
-
 import jakarta.validation.constraints.Size;
-
 import java.beans.ConstructorProperties;
 import java.io.Serializable;
-
 import javax.annotation.processing.Generated;
-
 import org.jetbrains.annotations.NotNull;
 
 

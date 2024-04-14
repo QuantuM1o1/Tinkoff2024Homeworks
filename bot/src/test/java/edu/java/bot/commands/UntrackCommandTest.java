@@ -55,10 +55,8 @@ public class UntrackCommandTest {
         String test = "https://edu.tinkoff.ru";
         String name = "Name";
         long chatId = 123456L;
-        RemoveLinkRequest request = new RemoveLinkRequest();
-        request.setLink(URI.create(test));
-        LinkResponse response = new LinkResponse();
-        response.setUrl(URI.create(test));
+        RemoveLinkRequest request = new RemoveLinkRequest(URI.create(test));
+        LinkResponse response = new LinkResponse(1L, URI.create(test));
         Mono<LinkResponse> mockMono = Mono.just(response);
         when(mockClient.deleteLink(chatId, request)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);
@@ -81,10 +79,11 @@ public class UntrackCommandTest {
     @DisplayName("Пустое сообщение")
     void callWithoutMessage() {
         // given
+        String test = "https://edu.tinkoff.ru";
         String name = "Name";
         long chatId = 123456L;
-        RemoveLinkRequest request = new RemoveLinkRequest();
-        LinkResponse response = new LinkResponse();
+        RemoveLinkRequest request = new RemoveLinkRequest(URI.create(test));
+        LinkResponse response = new LinkResponse(1L, URI.create(test));
         Mono<LinkResponse> mockMono = Mono.just(response);
         when(mockClient.deleteLink(chatId, request)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);
