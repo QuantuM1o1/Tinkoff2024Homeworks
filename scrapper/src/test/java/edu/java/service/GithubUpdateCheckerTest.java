@@ -1,7 +1,6 @@
 package edu.java.service;
 
 import edu.java.client.GitHubRepositoriesClient;
-import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
 import edu.java.dto.LinkDTO;

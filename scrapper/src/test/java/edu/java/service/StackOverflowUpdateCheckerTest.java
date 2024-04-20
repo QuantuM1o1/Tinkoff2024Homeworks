@@ -1,7 +1,6 @@
 package edu.java.service;
 
 import edu.java.client.StackOverflowQuestionClient;
-import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.LinkDTO;
 import edu.java.dto.StackOverflowQuestionRequest;
 import edu.java.dto.StackOverflowQuestionResponse;

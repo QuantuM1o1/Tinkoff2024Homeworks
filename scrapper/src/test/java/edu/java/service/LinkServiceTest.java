@@ -39,25 +39,17 @@ public class LinkServiceTest extends IntegrationTest {
 
     private String domain;
 
-    private int siteId;
-
-    private int answers;
-
-    private int comments;
-
-    private OffsetDateTime time;
-
     @BeforeEach
     void setUp() {
         this.id = 123L;
         this.url = "https://stackoverflow.com/questions/31322043/project-euler-8-answer-fails-to-be-true";
         this.domain = "stackoverflow.com";
-        this.siteId = 1;
-        this.answers = 2;
-        this.comments = 3;
-        this.time = OffsetDateTime.now();
+        int siteId = 1;
+        int answers = 2;
+        int comments = 3;
+        OffsetDateTime time = OffsetDateTime.now();
         this.userRepository.addUser(this.id);
-        this.linkRepository.addLink(this.url, this.time, this.siteId, this.answers, this.comments);
+        this.linkRepository.addLink(this.url, time, siteId, answers, comments);
     }
 
     @Test
