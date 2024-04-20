@@ -22,7 +22,7 @@ public class HelpCommandTest {
         // given
 
         // when
-        String answer = new HelpCommand(commands).name();
+        String answer = new HelpCommand(this.commands).name();
 
         // then
         assertThat(answer).isEqualTo("/help");
@@ -43,7 +43,7 @@ public class HelpCommandTest {
         Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
-        Command helpCommand = new HelpCommand(commands);
+        Command helpCommand = new HelpCommand(this.commands);
 
         // when
         String answer = helpCommand.handle(mockUpdate);

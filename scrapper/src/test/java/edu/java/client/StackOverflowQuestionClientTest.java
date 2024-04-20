@@ -25,18 +25,20 @@ import static org.mockito.Mockito.when;
 
 public class StackOverflowQuestionClientTest {
     private WireMockServer wireMockServer;
+
     private StackOverflowQuestionRequest request;
+
     private StackOverflowQuestionClient stackOverflowQuestionClient;
 
     @BeforeEach
     public void setUp() {
-        wireMockServer = new WireMockServer();
-        wireMockServer.start();
-        WireMock.configureFor(wireMockServer.port());
-        request = new StackOverflowQuestionRequest("stackoverflow", 3615006L);
+        this.wireMockServer = new WireMockServer();
+        this.wireMockServer.start();
+        WireMock.configureFor(this.wireMockServer.port());
+        this.request = new StackOverflowQuestionRequest("stackoverflow", 3615006L);
         ApplicationConfig mockConfig = Mockito.mock(ApplicationConfig.class);
         when(mockConfig.stackOverflowBaseUrl()).thenReturn("http://localhost:8080");
-        stackOverflowQuestionClient = new StackOverflowQuestionClient(mockConfig);
+        this.stackOverflowQuestionClient = new StackOverflowQuestionClient(mockConfig);
     }
 
     @AfterEach
@@ -48,7 +50,7 @@ public class StackOverflowQuestionClientTest {
     @DisplayName("Сбор данных в соответствующий DTO")
     public void fetchDataIntoDTO() {
         // given
-        stubFor(get(urlPathEqualTo("/questions/" + request.questionId()))
+        stubFor(get(urlPathEqualTo("/questions/" + this.request.questionId()))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
@@ -61,7 +63,7 @@ public class StackOverflowQuestionClientTest {
                         "\"link\": \"https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package\"     }   ] }")));
 
         // when
-        Mono<StackOverflowQuestionResponse> answer = stackOverflowQuestionClient.fetch(request);
+        Mono<StackOverflowQuestionResponse> answer = this.stackOverflowQuestionClient.fetch(this.request);
 
         // then
         assertThat(Objects.requireNonNull(answer.block()).items().getFirst().lastActivityDate())
@@ -76,12 +78,12 @@ public class StackOverflowQuestionClientTest {
     @DisplayName("Ответ 404 от сервера")
     public void questionNotFound() {
         // given
-        stubFor(get(urlPathEqualTo("/questions/" + request.questionId()))
+        stubFor(get(urlPathEqualTo("/questions/" + this.request.questionId()))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.NOT_FOUND.value())));
 
         // when
-        Mono<StackOverflowQuestionResponse> answer = stackOverflowQuestionClient.fetch(request);
+        Mono<StackOverflowQuestionResponse> answer = this.stackOverflowQuestionClient.fetch(this.request);
 
         // then
         WebClientResponseException exception = assertThrows(

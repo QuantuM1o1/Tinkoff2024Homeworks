@@ -20,20 +20,22 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 public class UntrackCommandTest {
-    private AutoCloseable closeable;
+    private AutoCloseable mocks;
+
     @Mock
     private LinksClient mockClient;
+
     @InjectMocks
-    private final UntrackCommand untrackCommand = new UntrackCommand();
+    private UntrackCommand untrackCommand;
 
     @BeforeEach
     public void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
+        this.mocks = MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        closeable.close();
+        this.mocks.close();
     }
 
     @Test
@@ -42,7 +44,7 @@ public class UntrackCommandTest {
         // given
 
         // when
-        String answer = untrackCommand.name();
+        String answer = this.untrackCommand.name();
 
         // then
         assertThat(answer).isEqualTo("/untrack");
@@ -58,18 +60,19 @@ public class UntrackCommandTest {
         RemoveLinkRequest request = new RemoveLinkRequest(URI.create(test));
         LinkResponse response = new LinkResponse(1L, URI.create(test));
         Mono<LinkResponse> mockMono = Mono.just(response);
-        when(mockClient.deleteLink(chatId, request)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
+        Chat mockChat = Mockito.mock(Chat.class);
+
+        // when
+        when(this.mockClient.deleteLink(chatId, request)).thenReturn(mockMono);
         when(mockUpdate.message()).thenReturn(mockMessage);
         when(mockUpdate.message().text()).thenReturn("/untrack " + test);
-        Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
         when(mockUpdate.message().chat().firstName()).thenReturn(name);
 
-        // when
-        String answer = untrackCommand.handle(mockUpdate);
+        String answer = this.untrackCommand.handle(mockUpdate);
 
         // then
         assertThat(answer).contains(test);
@@ -85,18 +88,19 @@ public class UntrackCommandTest {
         RemoveLinkRequest request = new RemoveLinkRequest(URI.create(test));
         LinkResponse response = new LinkResponse(1L, URI.create(test));
         Mono<LinkResponse> mockMono = Mono.just(response);
-        when(mockClient.deleteLink(chatId, request)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
+        Chat mockChat = Mockito.mock(Chat.class);
+
+        // when
+        when(this.mockClient.deleteLink(chatId, request)).thenReturn(mockMono);
         when(mockUpdate.message()).thenReturn(mockMessage);
         when(mockUpdate.message().text()).thenReturn("/untrack");
-        Chat mockChat = Mockito.mock(Chat.class);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
         when(mockUpdate.message().chat().firstName()).thenReturn(name);
 
-        // when
-        String answer = untrackCommand.handle(mockUpdate);
+        String answer = this.untrackCommand.handle(mockUpdate);
 
         // then
         assertThat(answer).isEqualTo("Invalid command format. Please use '/untrack \"url\"'.");

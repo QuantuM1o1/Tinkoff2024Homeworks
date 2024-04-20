@@ -39,15 +39,15 @@ public class JpaAccessConfig {
 
     @Bean(name = "github.com")
     public GithubUpdateChecker githubUpdateChecker(
-        JpaLinkRepositoryImpl linkRepository
+        JpaLinkRepositoryImpl linkRepository, ResourcesConfig resourcesConfig
     ) {
-        return new GithubUpdateChecker(linkRepository);
+        return new GithubUpdateChecker(linkRepository, resourcesConfig);
     }
 
     @Bean(name = "stackoverflow.com")
     public StackOverflowUpdateChecker stackOverflowUpdateChecker(
-        JpaLinkRepositoryImpl linkRepository
+        JpaLinkRepositoryImpl linkRepository, ResourcesConfig resourcesConfig
     ) {
-        return new StackOverflowUpdateChecker(linkRepository);
+        return new StackOverflowUpdateChecker(linkRepository, resourcesConfig);
     }
 }

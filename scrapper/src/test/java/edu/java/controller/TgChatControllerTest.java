@@ -21,14 +21,17 @@ public class TgChatControllerTest {
     private AutoCloseable mocks;
 
     @MockBean
-    TgChatService mockChatService;
+    private TgChatService mockChatService;
 
     @Autowired
     private MockMvc mockMvc;
 
+    private long chatId;
+
     @BeforeEach
     public void setUp() {
         this.mocks = MockitoAnnotations.openMocks(this);
+        this.chatId = 1L;
     }
 
     @AfterEach
@@ -40,13 +43,12 @@ public class TgChatControllerTest {
     @DisplayName("Удалить чат")
     public void deleteChat() throws Exception {
         // given
-        long chatId = 1L;
 
         // when
         doNothing().when(this.mockChatService);
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.delete("/tg-chat/{id}", chatId))
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/tg-chat/{id}", this.chatId))
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -54,13 +56,12 @@ public class TgChatControllerTest {
     @DisplayName("Добавить чат")
     public void addChat() throws Exception {
         // given
-        long chatId = 1L;
 
         // when
         doNothing().when(this.mockChatService);
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.post("/tg-chat/{id}", chatId))
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/tg-chat/{id}", this.chatId))
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

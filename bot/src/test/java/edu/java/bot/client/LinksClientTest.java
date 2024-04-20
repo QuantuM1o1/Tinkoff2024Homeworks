@@ -29,13 +29,16 @@ public class LinksClientTest {
 
     private LinksClient linksClient;
 
+    private long chatId;
+
     @BeforeEach
     public void setUp() {
-        wireMockServer = new WireMockServer(8080);
-        wireMockServer.start();
+        this.wireMockServer = new WireMockServer(8080);
+        this.wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
         ApplicationConfig applicationConfig = new ApplicationConfig("http://localhost:8080", "token");
-        linksClient = new LinksClient(applicationConfig);
+        this.linksClient = new LinksClient(applicationConfig);
+        this.chatId = 123L;
     }
 
     @AfterEach
@@ -47,11 +50,8 @@ public class LinksClientTest {
     @DisplayName("Удалить ссылку")
     public void deleteLink() {
         // given
-        Long chatId = 123L;
         String url = "https://www.google.com/";
-        RemoveLinkRequest request = new RemoveLinkRequest(
-            URI.create(url)
-        );
+        RemoveLinkRequest request = new RemoveLinkRequest(URI.create(url));
         stubFor(delete(urlPathEqualTo("/links"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
@@ -60,18 +60,17 @@ public class LinksClientTest {
                     "\"id\":\"123\"}")));
 
         // when
-        Mono<LinkResponse> answer = linksClient.deleteLink(chatId, request);
+        Mono<LinkResponse> answer = this.linksClient.deleteLink(this.chatId, request);
 
         // then
         assertThat(Objects.requireNonNull(answer.block()).id()).isEqualTo(123);
-        assertThat(Objects.requireNonNull(answer.block()).url().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).url().toString()).isEqualTo(url);
     }
 
     @Test
     @DisplayName("Получить ссылки")
     public void getLinks() {
         // given
-        Long chatId = 123L;
         stubFor(get(urlPathEqualTo("/links"))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
@@ -79,11 +78,12 @@ public class LinksClientTest {
                 .withBody("{\"links\":[{\"url\":\"https://www.google.com/\", \"id\":12}],\"size\":1}")));
 
         // when
-        Mono<ListLinksResponse> answer = linksClient.getLinks(chatId);
+        Mono<ListLinksResponse> answer = this.linksClient.getLinks(this.chatId);
 
         // then
         assertThat(Objects.requireNonNull(answer.block()).size()).isEqualTo(1);
-        assertThat(Objects.requireNonNull(answer.block()).links().getFirst().url().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).links().getFirst().url().toString())
+            .isEqualTo("https://www.google.com/");
         assertThat(Objects.requireNonNull(answer.block()).links().getFirst().id()).isEqualTo(12);
     }
 
@@ -91,7 +91,6 @@ public class LinksClientTest {
     @DisplayName("Добавить ссылку")
     public void addLink() {
         // given
-        Long chatId = 123L;
         String link = "https://www.google.com/";
         AddLinkRequest request = new AddLinkRequest(URI.create(link));
         stubFor(post(urlPathEqualTo("/links"))
@@ -102,10 +101,10 @@ public class LinksClientTest {
                     "\"id\":\"123\"}")));
 
         // when
-        Mono<LinkResponse> answer = linksClient.addLink(chatId, request);
+        Mono<LinkResponse> answer = this.linksClient.addLink(this.chatId, request);
 
         // then
         assertThat(Objects.requireNonNull(answer.block()).id()).isEqualTo(123);
-        assertThat(Objects.requireNonNull(answer.block()).url().toString()).isEqualTo("https://www.google.com/");
+        assertThat(Objects.requireNonNull(answer.block()).url().toString()).isEqualTo(link);
     }
 }

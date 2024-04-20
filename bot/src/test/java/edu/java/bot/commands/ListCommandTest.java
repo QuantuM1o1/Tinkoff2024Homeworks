@@ -22,20 +22,22 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 public class ListCommandTest {
-    private AutoCloseable closeable;
+    private AutoCloseable mocks;
+
     @Mock
     private LinksClient mockClient;
+
     @InjectMocks
-    private final ListCommand listCommand = new ListCommand();
+    private ListCommand listCommand;
 
     @BeforeEach
     public void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
+        this.mocks = MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        closeable.close();
+        this.mocks.close();
     }
 
     @Test
@@ -44,7 +46,7 @@ public class ListCommandTest {
         // given
 
         // when
-        String answer = listCommand.name();
+        String answer = this.listCommand.name();
 
         // then
         assertThat(answer).isEqualTo("/list");
@@ -60,16 +62,17 @@ public class ListCommandTest {
             0
         );
         Mono<ListLinksResponse> mockMono = Mono.just(list);
-        when(mockClient.getLinks(chatId)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
-        when(mockUpdate.message()).thenReturn(mockMessage);
         Chat mockChat = Mockito.mock(Chat.class);
+
+        // when
+        when(this.mockClient.getLinks(chatId)).thenReturn(mockMono);
+        when(mockUpdate.message()).thenReturn(mockMessage);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(123456L);
 
-        // when
-        String answer = listCommand.handle(mockUpdate);
+        String answer = this.listCommand.handle(mockUpdate);
 
         // then
         assertThat(answer).isEqualTo("You are not tracking any URLs.");
@@ -89,16 +92,16 @@ public class ListCommandTest {
             listLinks.size()
         );
         Mono<ListLinksResponse> mockMono = Mono.just(list);
-        when(mockClient.getLinks(chatId)).thenReturn(mockMono);
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
-        when(mockUpdate.message()).thenReturn(mockMessage);
         Chat mockChat = Mockito.mock(Chat.class);
-        when(mockUpdate.message().chat()).thenReturn(mockChat);
-        when(mockUpdate.message().chat().id()).thenReturn(123456L);
 
         // when
-        String answer = listCommand.handle(mockUpdate);
+        when(this.mockClient.getLinks(chatId)).thenReturn(mockMono);
+        when(mockUpdate.message()).thenReturn(mockMessage);
+        when(mockUpdate.message().chat()).thenReturn(mockChat);
+        when(mockUpdate.message().chat().id()).thenReturn(123456L);
+        String answer = this.listCommand.handle(mockUpdate);
 
         // then
         assertThat(answer).contains(test);
