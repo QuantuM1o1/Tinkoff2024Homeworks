@@ -29,7 +29,7 @@ public class LinkUpdaterServiceTest {
         int n = 10;
         List<LinkDTO> mockList = new ArrayList<>();
         LinkDTO mockLink = Mockito.mock(LinkDTO.class);
-        IntStream.range(1, n).forEach (i ->
+        IntStream.range(0, n).forEach (i ->
             mockList.add(mockLink)
         );
 

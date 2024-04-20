@@ -72,7 +72,7 @@ public class JpaLinkRepositoryImpl implements LinkRepository {
     public List<LinkDTO> findNLinksLastUpdated(int n) {
         List<LinkEntity> linkEntities = this.jpaLinkRepository.findAllByOrderByUpdatedAt();
         List<LinkDTO> list = new ArrayList<>();
-        IntStream.range(1, n).forEach(i -> list.add(new LinkDTO(
+        IntStream.range(0, n).forEach(i -> list.add(new LinkDTO(
             linkEntities.get(i).getId(),
             linkEntities.get(i).getUrl(),
             linkEntities.get(i).getAddedAt(),

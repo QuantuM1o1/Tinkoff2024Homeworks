@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 public class ListCommand implements Command {
     @Autowired
     private LinksClient client;
+
     private static final String COMMAND_NAME = "/list";
+
     private static final String COMMAND_DESCRIPTION = "List all tracked URLs";
 
     @Override

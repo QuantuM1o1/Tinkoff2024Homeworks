@@ -21,7 +21,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class LinksClient {
     private final WebClient webClient;
+
     private final String url = "/links";
+
     private final String header = "Tg-Chat-Id";
 
     @Autowired
