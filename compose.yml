@@ -28,6 +28,24 @@ services:
     networks:
       - backend
 
+  bot:
+    image: ghcr.io/quantum1o1/tinkoff2024homeworks/bot:pr-11
+    hostname: bot
+    container_name: bot
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env
+
+  scrapper:
+    image: ghcr.io/quantum1o1/tinkoff2024homeworks/scrapper:pr-11
+    hostname: scrapper
+    container_name: scrapper
+    depends_on:
+      - postgresql
+    ports:
+      - "8080:8080"
+
 volumes:
   postgresql: { }
 
