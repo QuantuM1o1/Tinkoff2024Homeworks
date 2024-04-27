@@ -6,7 +6,10 @@ import dto.LinkUpdateRequest;
 import edu.java.configuration.AccessType;
 import edu.java.configuration.ApplicationConfig;
 import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
+import edu.java.configuration.RetryType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -41,8 +45,17 @@ public class UpdatesClientTest {
             new ArrayList<>()
         );
         ApplicationConfig applicationConfig = new ApplicationConfig(
-            "http://localhost:8090", "url", "http://localhost:8090", AccessType.JDBC, 1);
-        updatesClient = new UpdatesClient(applicationConfig);
+            "http://localhost:8090",
+            "url",
+            "http://localhost:8090",
+            AccessType.JDBC,
+            1,
+            RetryType.CONSTANT,
+            1,
+            Duration.ZERO,
+            new HashSet<>()
+        );
+        updatesClient = new UpdatesClient(applicationConfig, Retry.fixedDelay(1, Duration.ZERO));
     }
 
     @AfterEach
@@ -88,6 +101,6 @@ public class UpdatesClientTest {
             Throwable.class,
             answer::block
         );
-        assertThat(exception.getMessage()).contains("Couldn't find users with ids [1]");
+        assertThat(exception.getMessage()).contains("Retries exhausted");
     }
 }

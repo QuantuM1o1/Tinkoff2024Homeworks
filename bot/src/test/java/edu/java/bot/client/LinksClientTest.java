@@ -8,7 +8,10 @@ import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
 import edu.java.bot.configuration.ApplicationConfig;
 import java.net.URI;
+import java.time.Duration;
+import java.util.HashSet;
 import java.util.Objects;
+import edu.java.bot.configuration.RetryType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -36,8 +40,15 @@ public class LinksClientTest {
         this.wireMockServer = new WireMockServer(8080);
         this.wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
-        ApplicationConfig applicationConfig = new ApplicationConfig("http://localhost:8080", "token");
-        this.linksClient = new LinksClient(applicationConfig);
+        ApplicationConfig applicationConfig = new ApplicationConfig(
+            "http://localhost:8080",
+            "token",
+            RetryType.CONSTANT,
+            1,
+            Duration.ZERO,
+            new HashSet<>()
+        );
+        this.linksClient = new LinksClient(applicationConfig, Retry.fixedDelay(1, Duration.ZERO));
         this.chatId = 123L;
     }
 

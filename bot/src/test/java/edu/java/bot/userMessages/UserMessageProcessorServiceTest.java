@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import reactor.util.retry.Retry;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
@@ -42,6 +43,9 @@ public class UserMessageProcessorServiceTest {
 
     @MockBean
     private ApplicationConfig applicationConfig;
+
+    @MockBean
+    private Retry retry;
 
     private Update mockUpdate;
 

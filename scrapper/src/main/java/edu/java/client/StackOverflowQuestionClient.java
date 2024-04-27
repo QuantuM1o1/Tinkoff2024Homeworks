@@ -7,28 +7,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+import java.util.function.Supplier;
 
 @Component
 public class StackOverflowQuestionClient
     implements AsyncClient<StackOverflowQuestionResponse, StackOverflowQuestionRequest> {
     private final org.springframework.web.reactive.function.client.WebClient webClient;
+
     private static final String FILTER = "!-n0mNLma4chtannAgOY)MkBGDj9yiIQ)RB95je_QbNupq2le4kUCYa";
 
+    private final Retry retry;
+
     @Autowired
-    public StackOverflowQuestionClient(ApplicationConfig applicationConfig) {
+    public StackOverflowQuestionClient(ApplicationConfig applicationConfig, Retry retry) {
         this.webClient = WebClient
             .builder()
             .baseUrl(applicationConfig.stackOverflowBaseUrl())
             .build();
+        this.retry = retry;
     }
 
     @Override
     public Mono<StackOverflowQuestionResponse> fetch(StackOverflowQuestionRequest request) {
-        return this.webClient
+        return this.executeWithRetry(() ->
+            this.webClient
             .get()
             .uri("/questions/{questionId}?site={site}&filter={filter}",
                 request.questionId(), request.site(), FILTER)
             .retrieve()
-            .bodyToMono(StackOverflowQuestionResponse.class);
+            .bodyToMono(StackOverflowQuestionResponse.class));
+    }
+
+    private <T> Mono<T> executeWithRetry(Supplier<Mono<T>> supplier) {
+        return Mono.defer(supplier).retryWhen(this.retry);
     }
 }

@@ -13,6 +13,7 @@ import reactor.util.retry.Retry;
 @Component
 public class GitHubRepositoriesClient implements AsyncClient<GitHubRepositoryResponse, GitHubRepositoryRequest> {
     private final WebClient webClient;
+
     private final Retry retry;
 
     @Autowired

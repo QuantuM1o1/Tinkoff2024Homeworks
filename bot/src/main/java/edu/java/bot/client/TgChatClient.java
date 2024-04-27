@@ -18,7 +18,9 @@ import reactor.util.retry.Retry;
 @Component
 public class TgChatClient {
     private final WebClient webClient;
+
     private final String url = "/tg-chat/{tgChatId}";
+
     private final Retry retry;
 
     @Autowired

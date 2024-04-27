@@ -19,6 +19,7 @@ import reactor.util.retry.Retry;
 @Component
 public class UpdatesClient {
     private final WebClient webClient;
+
     private final Retry retry;
 
     @Autowired
