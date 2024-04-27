@@ -8,6 +8,7 @@ import dto.RemoveLinkRequest;
 import edu.java.bot.configuration.ApplicationConfig;
 import exception.ChatIsNotFoundException;
 import exception.IncorrectRequestException;
+import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,7 +19,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
-import java.util.function.Supplier;
 
 @Component
 public class LinksClient {
