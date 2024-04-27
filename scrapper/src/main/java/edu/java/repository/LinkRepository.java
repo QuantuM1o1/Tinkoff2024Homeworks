@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface LinkRepository {
-    void addLink(String url, OffsetDateTime lastActivity, int siteId);
+    void addLink(String url, OffsetDateTime lastActivity, int siteId, int answerCount, int commentCount);
 
     void removeLink(String url);
 

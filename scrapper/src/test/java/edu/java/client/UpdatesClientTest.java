@@ -3,6 +3,7 @@ package edu.java.client;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import dto.LinkUpdateRequest;
+import edu.java.configuration.AccessType;
 import edu.java.configuration.ApplicationConfig;
 import java.net.URI;
 import java.util.ArrayList;
@@ -39,7 +40,8 @@ public class UpdatesClientTest {
             "google",
             new ArrayList<>()
         );
-        ApplicationConfig applicationConfig = new ApplicationConfig("url", "url", "http://localhost:8090", 1);
+        ApplicationConfig applicationConfig = new ApplicationConfig(
+            "http://localhost:8090", "url", "http://localhost:8090", AccessType.JDBC, 1);
         updatesClient = new UpdatesClient(applicationConfig);
     }
 

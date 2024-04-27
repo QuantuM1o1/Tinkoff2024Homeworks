@@ -1,5 +1,6 @@
 package edu.java.repository.jdbc;
 
+
 import edu.java.dto.UserDTO;
 import edu.java.repository.UserRepository;
 import java.sql.Timestamp;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class JdbcUserRepository implements UserRepository {
@@ -20,7 +22,8 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public void addUser(Long chatId) {
+    @Transactional
+    public void addUser(long chatId) {
         String sql = "INSERT INTO users (chat_id, added_at) VALUES (?, ?)";
 
         LocalDateTime currentTime = LocalDateTime.now();
@@ -30,7 +33,8 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public void removeUser(Long chatId) {
+    @Transactional
+    public void removeUser(long chatId) {
         String sql = "UPDATE users SET deleted_at = ? WHERE chat_id = ?";
 
         LocalDateTime currentTime = LocalDateTime.now();
@@ -47,6 +51,7 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDTO> findUserById(long chatId) {
         String sql = "SELECT * FROM users WHERE deleted_at IS NULL AND chat_id = ?";
 

@@ -1,15 +1,15 @@
 package edu.java.service;
 
 import edu.java.apiException.AlreadyRegisteredException;
-import edu.java.repository.jdbc.JdbcUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import edu.java.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 public class TgChatService {
-    @Autowired
-    private JdbcUserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public TgChatService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     public void register(long tgChatId) throws AlreadyRegisteredException {

@@ -1,15 +1,15 @@
 package edu.java.service;
 
 import edu.java.dto.LinkDTO;
-import edu.java.repository.jdbc.JdbcLinkRepository;
+import edu.java.repository.LinkRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
 public class LinkUpdaterService {
-    @Autowired
-    private JdbcLinkRepository linkRepository;
+    private final LinkRepository linkRepository;
+
+    public LinkUpdaterService(LinkRepository linkRepository) {
+        this.linkRepository = linkRepository;
+    }
 
     public List<LinkDTO> findNLinksToUpdate(int n) {
         return this.linkRepository.findNLinksLastUpdated(n);

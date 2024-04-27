@@ -1,23 +1,22 @@
 package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.dto.ChatUser;
-import java.net.URI;
+import dto.LinkResponse;
+import dto.ListLinksResponse;
+import edu.java.bot.client.LinksClient;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class ListCommand implements Command {
     @Autowired
-    private final Map<Long, ChatUser> usersMap;
-    private static final String COMMAND_NAME = "/list";
-    private static final String COMMAND_DESCRIPTION = "List all tracked URLs";
+    private LinksClient client;
 
-    public ListCommand(Map<Long, ChatUser> usersMap) {
-        this.usersMap = usersMap;
-    }
+    private static final String COMMAND_NAME = "/list";
+
+    private static final String COMMAND_DESCRIPTION = "List all tracked URLs";
 
     @Override
     public String name() {
@@ -32,9 +31,9 @@ public class ListCommand implements Command {
     @Override
     public String handle(Update update) {
         long chatId = update.message().chat().id();
-        ChatUser user = this.usersMap.get(chatId);
-        if (user != null && !user.trackedURLs().isEmpty()) {
-            return this.trackedURLs(user.trackedURLs());
+        ListLinksResponse response = this.client.getLinks(chatId).block();
+        if (!Objects.requireNonNull(response).links().isEmpty()) {
+            return this.trackedURLs(response.links());
         } else {
             return "You are not tracking any URLs.";
         }
@@ -42,13 +41,13 @@ public class ListCommand implements Command {
 
     @Override
     public Command getInstance() {
-        return new ListCommand(usersMap);
+        return new ListCommand();
     }
 
-    private String trackedURLs(List<URI> trackedURLs) {
+    private String trackedURLs(List<LinkResponse> trackedURLs) {
         StringBuilder messageText = new StringBuilder("Tracked URLs:\n");
-        for (URI url : trackedURLs) {
-            messageText.append("- ").append(url).append("\n");
+        for (LinkResponse linkResponse : trackedURLs) {
+            messageText.append("- ").append(linkResponse.url()).append("\n");
         }
         return messageText.toString();
     }

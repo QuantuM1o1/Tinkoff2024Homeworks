@@ -1,23 +1,20 @@
 package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.dto.ChatUser;
+import dto.LinkResponse;
+import dto.RemoveLinkRequest;
+import edu.java.bot.client.LinksClient;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class UntrackCommand implements Command {
     @Autowired
-    private final Map<Long, ChatUser> usersMap;
+    private LinksClient client;
     private static final String COMMAND_NAME = "/untrack";
     private static final String COMMAND_DESCRIPTION = "Untrack a URL";
-
-    public UntrackCommand(Map<Long, ChatUser> usersMap) {
-        this.usersMap = usersMap;
-    }
 
     @Override
     public String name() {
@@ -43,22 +40,12 @@ public class UntrackCommand implements Command {
 
     @Override
     public Command getInstance() {
-        return new UntrackCommand(usersMap);
+        return new UntrackCommand();
     }
 
     private String getMessage(String stringUrl, long chatId) {
-        ChatUser user = this.usersMap.get(chatId);
-        if (user == null) {
-            return "You need to register first";
-        }
-        try {
-            if (user.trackedURLs().remove(new URI(stringUrl))) {
-                return stringUrl + " has been removed from your tracked URLs list.";
-            } else {
-                return stringUrl + " is not in your tracked URLs list.";
-            }
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Invalid URL format");
-        }
+        RemoveLinkRequest request = new RemoveLinkRequest(URI.create(stringUrl));
+        LinkResponse response = this.client.deleteLink(chatId, request).block();
+        return Objects.requireNonNull(response).url() + " has been removed from your tracked URLs list.";
     }
 }

@@ -1,10 +1,10 @@
-package edu.java.repository;
+package edu.java.repository.jdbc;
 
 import edu.java.dto.LinkDTO;
-import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.time.OffsetDateTime;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,65 +23,74 @@ public class JdbcLinkRepositoryTest extends IntegrationTest {
     @Autowired
     private JdbcLinkRepository linkRepository;
 
+    private String url;
+
+    private OffsetDateTime lastActivity;
+
+    private int siteId;
+
+    @BeforeEach
+    void setUp() {
+        this.url = "https://www.google.com/";
+        this.lastActivity = OffsetDateTime.now();
+        this.siteId = 1;
+    }
+
     @Test
     @DisplayName("Добавление ссылки в таблицу")
     void addTest() {
         // given
-        String url = "https://www.google.com/";
-        OffsetDateTime lastActivity = OffsetDateTime.now();
-        int siteId = 1;
         String sql = "SELECT * FROM links l INNER JOIN links_sites ls ON l.site_id = ls.id";
 
         // when
-        linkRepository.addLink(url, lastActivity, siteId);
-        List<LinkDTO> answer = jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
+        this.linkRepository.addLink(this.url, this.lastActivity, this.siteId, 0, 0);
+
+        List<LinkDTO> answer = this.jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().url()).isEqualTo(url);
+        assertThat(answer.getFirst().url()).isEqualTo(this.url);
     }
 
     @Test
     @DisplayName("Удаление ссылки из таблицы")
     void removeTest() {
         // given
-        String url1 = "https://www.google.com/";
         String url2 = "https://guessthe.game/";
-        OffsetDateTime lastActivity = OffsetDateTime.now();
-        int siteId = 1;
         String sql = "SELECT * FROM links l INNER JOIN links_sites ls ON l.site_id = ls.id WHERE deleted_at IS NULL";
         String sqlDeleted = "SELECT * FROM links l INNER JOIN links_sites ls ON l.site_id = ls.id "
             + "WHERE deleted_at IS NOT NULL";
         String sqlAdd = "INSERT INTO links (url, added_at, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?, ?)";
 
         // when
-        jdbcTemplate.update(sqlAdd, url1, lastActivity, lastActivity, lastActivity, siteId);
-        jdbcTemplate.update(sqlAdd, url2, lastActivity, lastActivity, lastActivity, siteId);
-        linkRepository.removeLink(url1);
-        List<LinkDTO> answer = jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
-        List<LinkDTO> deleted = jdbcTemplate.query(sqlDeleted, new DataClassRowMapper<>(LinkDTO.class));
+        this.jdbcTemplate
+            .update(sqlAdd, this.url, this.lastActivity, this.lastActivity, this.lastActivity, this.siteId);
+        this.jdbcTemplate.update(sqlAdd, url2, this.lastActivity, this.lastActivity, this.lastActivity, this.siteId);
+        this.linkRepository.removeLink(this.url);
+
+        List<LinkDTO> answer = this.jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
+        List<LinkDTO> deleted = this.jdbcTemplate.query(sqlDeleted, new DataClassRowMapper<>(LinkDTO.class));
 
         // then
         assertThat(answer.size()).isEqualTo(1);
         assertThat(answer.getFirst().url()).isEqualTo(url2);
         assertThat(deleted.size()).isEqualTo(1);
-        assertThat(deleted.getFirst().url()).isEqualTo(url1);
+        assertThat(deleted.getFirst().url()).isEqualTo(this.url);
     }
 
     @Test
     @DisplayName("Чтение из таблицы")
     void findAllTest() {
         // given
-        String url1 = "https://www.google.com/";
         String url2 = "https://guessthe.game/";
-        OffsetDateTime lastActivity = OffsetDateTime.now();
-        int siteId = 1;
         String sqlAdd = "INSERT INTO links (url, added_at, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?, ?)";
 
         // when
-        jdbcTemplate.update(sqlAdd, url1, lastActivity, lastActivity, lastActivity, siteId);
-        jdbcTemplate.update(sqlAdd, url2, lastActivity, lastActivity, lastActivity, siteId);
-        List<LinkDTO> answer = linkRepository.findAllLinks();
+        this.jdbcTemplate
+            .update(sqlAdd, this.url, this.lastActivity, this.lastActivity, this.lastActivity, this.siteId);
+        this.jdbcTemplate.update(sqlAdd, url2, this.lastActivity, this.lastActivity, this.lastActivity, this.siteId);
+
+        List<LinkDTO> answer = this.linkRepository.findAllLinks();
 
         // then
         assertThat(answer.size()).isEqualTo(2);

@@ -21,14 +21,14 @@ public class JdbcUserLinkRepository implements UserLinkRepository {
 
     @Override
     public void addUserLink(long chatId, long linkId) {
-        String sql = "INSERT INTO user_links (user_id, link_id) VALUES (?, ?)";
+        String sql = "INSERT INTO users_links (user_id, link_id) VALUES (?, ?)";
 
         jdbcTemplate.update(sql, chatId, linkId);
     }
 
     @Override
     public void removeUserLink(long chatId, long linkId) {
-        String sql = "UPDATE user_links SET deleted_at = ? WHERE user_id = ? AND link_id = ?";
+        String sql = "UPDATE users_links SET deleted_at = ? WHERE user_id = ? AND link_id = ?";
 
         LocalDateTime currentTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(currentTime);
@@ -38,7 +38,7 @@ public class JdbcUserLinkRepository implements UserLinkRepository {
 
     @Override
     public List<LinkDTO> findAllLinksByUser(long chatId) {
-        String sql = "SELECT * FROM user_links ul INNER JOIN links l ON ul.link_id = l.link_id "
+        String sql = "SELECT * FROM users_links ul INNER JOIN links l ON ul.link_id = l.link_id "
             + "INNER JOIN links_sites ls ON l.site_id = ls.id WHERE ul.user_id = ? AND ul.deleted_at IS NULL";
 
         return jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class), chatId);
@@ -46,7 +46,7 @@ public class JdbcUserLinkRepository implements UserLinkRepository {
 
     @Override
     public List<Long> findAllUsersByLink(long linkId) {
-        String sql = "SELECT u.chat_id FROM user_links ul INNER JOIN users u ON ul.user_id = u.chat_id "
+        String sql = "SELECT u.chat_id FROM users_links ul INNER JOIN users u ON ul.user_id = u.chat_id "
             + "WHERE ul.link_id = ? AND ul.deleted_at IS NULL";
 
         return jdbcTemplate.queryForList(sql, Long.class, linkId);
@@ -54,7 +54,7 @@ public class JdbcUserLinkRepository implements UserLinkRepository {
 
     @Override
     public List<Long> findUserLink(long chatId, long linkId) {
-        String sql = "SELECT * FROM user_links WHERE user_id = ? AND link_id = ? AND deleted_at IS NULL";
+        String sql = "SELECT * FROM users_links WHERE user_id = ? AND link_id = ? AND deleted_at IS NULL";
 
         return jdbcTemplate.queryForList(sql, Long.class, chatId, linkId);
     }

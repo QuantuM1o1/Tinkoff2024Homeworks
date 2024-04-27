@@ -29,12 +29,12 @@ public class UpdatesControllerTest {
 
     @BeforeEach
     public void setUp() {
-        mocks = MockitoAnnotations.openMocks(this);
+        this.mocks = MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        mocks.close();
+        this.mocks.close();
     }
 
     @Test
@@ -44,10 +44,10 @@ public class UpdatesControllerTest {
         String body = "{\"id\":\"1\",\"url\":\"https://stackoverflow.com/\",\"description\":\"something new\",\"tgChatIds\":[1]}";
 
         // when
-        doNothing().when(mockNotifier);
+        doNothing().when(this.mockNotifier);
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.post("/updates")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/updates")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
             .andExpect(MockMvcResultMatchers.status().isOk());

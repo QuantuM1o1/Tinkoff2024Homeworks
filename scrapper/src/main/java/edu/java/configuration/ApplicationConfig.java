@@ -9,12 +9,16 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
     @NotEmpty
+    String botUrl,
+
+    @NotEmpty
     String gitHubBaseUrl,
 
     @NotEmpty
     String stackOverflowBaseUrl,
-    @NotEmpty
-    String botUrl,
+
+    @NotNull
+    AccessType databaseAccessType,
 
     @NotNull
     int linksToUpdate

@@ -5,63 +5,53 @@ import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
 import edu.java.dto.LinkDTO;
-import edu.java.property.SupportedResource;
+import edu.java.dto.UpdateCheckerResponse;
 import edu.java.repository.LinkRepository;
 import edu.java.service.UpdateChecker;
 import java.time.OffsetDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service("github.com")
 public class GithubUpdateChecker implements UpdateChecker {
     @Autowired
     private GitHubRepositoriesClient gitHubRepositoriesClient;
 
-    @Autowired
-    private ResourcesConfig resourcesConfig;
+    private final LinkRepository linkRepository;
 
-    @Autowired
-    private LinkRepository linkRepository;
+    private final Pattern pattern;
+
+    public GithubUpdateChecker(LinkRepository linkRepository, ResourcesConfig resourcesConfig) {
+        this.linkRepository = linkRepository;
+        String patternString = resourcesConfig.supportedResources().get("github.com").urlPattern();
+        this.pattern = Pattern.compile(patternString);
+    }
 
     @Override
-    public Optional<String> description(String url) {
+    public UpdateCheckerResponse updateLink(String url) {
         LinkDTO link = this.linkRepository.findLinkByUrl(url).getFirst();
         GitHubRepositoryResponse response = this.gitHubRepositoriesClient
-            .fetch(this.createResourceRequest(
-                link.url(),
-                this.resourcesConfig.supportedResources().get(link.domainName())
-            ))
+            .fetch(this.createResourceRequest(url))
             .block();
-        if (Objects.requireNonNull(response).updatedAt() != link.updatedAt()) {
-            this.linkRepository.setUpdatedAt(url, response.updatedAt());
-            return Optional.of("New activity in GitHub repo");
-        } else {
-            return Optional.empty();
+        Optional<String> description = Optional.empty();
+        if (link.updatedAt() != response.updatedAt()) {
+            description = Optional.of("New activity in GitHub repo");
         }
+        OffsetDateTime lastActivity = response.updatedAt();
+
+        return new UpdateCheckerResponse(description, lastActivity, 0, 0);
     }
 
-    @Override
-    public OffsetDateTime getLastActivity(String url, String domain) {
-        return Objects.requireNonNull(this.gitHubRepositoriesClient
-                .fetch(this.createResourceRequest(url, this.resourcesConfig.supportedResources().get(domain)))
-                .block())
-            .updatedAt();
-    }
-
-    private GitHubRepositoryRequest createResourceRequest(String url, SupportedResource resource) {
-        String patternString = resource.urlPattern();
-        Pattern pattern = Pattern.compile(patternString);
-        Matcher matcher = pattern.matcher(url);
+    private GitHubRepositoryRequest createResourceRequest(String url) {
+        Matcher matcher = this.pattern.matcher(url);
         String owner = "";
         String repoName = "";
         if (matcher.find()) {
             owner = matcher.group(1);
             repoName = matcher.group(2);
         }
+
         return new GitHubRepositoryRequest(owner, repoName);
     }
 }
