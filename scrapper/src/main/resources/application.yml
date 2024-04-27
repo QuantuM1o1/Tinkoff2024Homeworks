@@ -2,6 +2,8 @@ app:
   bot-url: "http://localhost:8090"
   github-baseurl: "https://api.github.com"
   stackoverflow-baseurl: "https://api.stackexchange.com/2.3"
+  database-access-type: JDBC
+  links-to-update: 2
 
   retry-type: constant
   retry-attempts: 3
@@ -11,14 +13,22 @@ app:
 
 scheduler:
   enable: true
-  interval: 10s
-  force-check-delay: 10000
+  interval: 10m
+  force-check-delay: 60m
 
 spring:
   application:
     name: scrapper
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scrapper
+    username: postgres
+    password: postgres
+  liquibase:
+    enabled: false
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
   port: 8080
@@ -29,3 +39,14 @@ springdoc:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+resources:
+  supported-resources:
+    "[stackoverflow.com]":
+      id: 1
+      base-url: https://api.stackexchange.com/2.3
+      url-pattern: ^https?://stackoverflow\.com/.*/(.*)/.*$
+    "[github.com]":
+      id: 2
+      base-url: https://api.github.com
+      url-pattern: ^https?://github\.com/(.*)/(.*)$
