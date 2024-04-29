@@ -1,15 +1,32 @@
 app:
-  bot-url: "http://localhost:8090"
-  github-baseurl: "https://api.github.com"
-  stackoverflow-baseurl: "https://api.stackexchange.com/2.3"
+  bot-url: http://localhost:8090
   database-access-type: JDBC
   links-to-update: 2
 
-  retry-type: constant
-  retry-attempts: 3
-  retry-backoff: 30s
-  retryHttpStatuses:
-    - not_found
+  retry-policy:
+    type: constant
+    attempts: 3
+    backoff: 30s
+    httpStatusCodes:
+      - 404
+
+github-client:
+  base-url: https://api.github.com
+  retry-policy:
+    type: constant
+    attempts: 3
+    backoff: 30s
+    httpStatusCodes:
+      - 404
+
+stackoverflow-client:
+  base-url: https://api.stackexchange.com/2.3
+  retry-policy:
+    type: constant
+    attempts: 3
+    backoff: 30s
+    httpStatusCodes:
+      - 404
 
 scheduler:
   enable: true
@@ -46,6 +63,7 @@ resources:
       id: 1
       base-url: https://api.stackexchange.com/2.3
       url-pattern: ^https?://stackoverflow\.com/.*/(.*)/.*$
+
     "[github.com]":
       id: 2
       base-url: https://api.github.com

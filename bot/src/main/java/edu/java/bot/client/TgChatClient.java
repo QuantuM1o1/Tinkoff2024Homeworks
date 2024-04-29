@@ -6,6 +6,7 @@ import exception.ChatIsNotFoundException;
 import exception.IncorrectRequestException;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -24,12 +25,12 @@ public class TgChatClient {
     private final Retry retry;
 
     @Autowired
-    public TgChatClient(ApplicationConfig applicationConfig, Retry retry) {
+    public TgChatClient(ApplicationConfig applicationConfig, @Qualifier("scrapperRetry") Retry scrapperRetry) {
         this.webClient = WebClient.builder()
             .baseUrl(applicationConfig.scrapperUrl())
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
-        this.retry = retry;
+        this.retry = scrapperRetry;
     }
 
     public Mono<Void> deleteChat(Long tgChatId) {

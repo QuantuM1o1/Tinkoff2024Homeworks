@@ -1,12 +1,13 @@
 app:
   telegram-token: ${TELEGRAM_TOKEN}
-  scrapper-url: "http://localhost:8080"
+  scrapper-url: http://localhost:8080
 
-  retry-type: constant
-  retry-attempts: 3
-  retry-backoff: 30s
-  retryHttpStatuses:
-    - not_found
+  retry-policy:
+    type: constant
+    attempts: 3
+    backoff: 30s
+    httpStatusCodes:
+      - 404
 
 spring:
   application:

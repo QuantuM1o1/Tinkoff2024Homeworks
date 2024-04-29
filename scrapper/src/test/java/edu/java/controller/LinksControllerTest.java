@@ -1,13 +1,8 @@
 package edu.java.controller;
 
-import dto.ListLinksResponse;
 import edu.java.service.LinkService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,38 +11,22 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class LinksControllerTest {
-    private AutoCloseable mocks;
-
     @MockBean
     private LinkService mockLinkService;
 
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeEach
-    public void setUp() {
-        mocks = MockitoAnnotations.openMocks(this);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        mocks.close();
-    }
-
     @Test
     @DisplayName("Удалить ссылку")
     public void deleteLink() throws Exception {
         // given
 
-
         // when
-        doNothing().when(mockLinkService);
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.delete("/links")
@@ -61,11 +40,8 @@ public class LinksControllerTest {
     @DisplayName("Получить ссылки")
     public void getLinks() throws Exception {
         // given
-        long tgChatId = 1L;
-        ListLinksResponse mockResponse = Mockito.mock(ListLinksResponse.class);
 
         // when
-        when(mockLinkService.listAll(tgChatId)).thenReturn(mockResponse);
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.get("/links")
@@ -80,7 +56,6 @@ public class LinksControllerTest {
         // given
 
         // when
-        doNothing().when(mockLinkService);
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.post("/links")

@@ -7,6 +7,7 @@ import exception.ChatIsNotFoundException;
 import exception.IncorrectRequestException;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +24,7 @@ public class UpdatesClient {
     private final Retry retry;
 
     @Autowired
-    public UpdatesClient(ApplicationConfig applicationConfig, Retry retry) {
+    public UpdatesClient(ApplicationConfig applicationConfig, @Qualifier("botRetry") Retry retry) {
         this.webClient = WebClient.builder()
             .baseUrl(applicationConfig.botUrl())
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

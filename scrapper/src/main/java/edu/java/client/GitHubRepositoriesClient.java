@@ -1,10 +1,11 @@
 package edu.java.client;
 
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.GithubClientConfig;
 import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -17,10 +18,10 @@ public class GitHubRepositoriesClient implements AsyncClient<GitHubRepositoryRes
     private final Retry retry;
 
     @Autowired
-    public GitHubRepositoriesClient(ApplicationConfig applicationConfig, Retry retry) {
+    public GitHubRepositoriesClient(GithubClientConfig githubClientConfig, @Qualifier("githubRetry") Retry retry) {
         this.webClient = WebClient
             .builder()
-            .baseUrl(applicationConfig.gitHubBaseUrl())
+            .baseUrl(githubClientConfig.baseUrl())
             .build();
         this.retry = retry;
     }

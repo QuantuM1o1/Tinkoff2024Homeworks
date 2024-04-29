@@ -2,7 +2,7 @@ package edu.java.client;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.GithubClientConfig;
 import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
 import java.time.Duration;
@@ -31,15 +31,18 @@ public class GitHubRepositoriesClientTest {
 
     private GitHubRepositoriesClient gitHubRepositoriesClient;
 
+    private int retryAttempts;
+
     @BeforeEach
     public void setUp() {
         this.wireMockServer = new WireMockServer();
         this.wireMockServer.start();
         WireMock.configureFor(this.wireMockServer.port());
         this.request = new GitHubRepositoryRequest("octocat", "Hello-World");
-        ApplicationConfig mockConfig = Mockito.mock(ApplicationConfig.class);
-        when(mockConfig.gitHubBaseUrl()).thenReturn("http://localhost:8080");
-        gitHubRepositoriesClient = new GitHubRepositoriesClient(mockConfig, Retry.fixedDelay(1, Duration.ZERO));
+        GithubClientConfig mockConfig = Mockito.mock(GithubClientConfig.class);
+        when(mockConfig.baseUrl()).thenReturn("http://localhost:8080");
+        this.retryAttempts = 2;
+        gitHubRepositoriesClient = new GitHubRepositoriesClient(mockConfig, Retry.fixedDelay(this.retryAttempts, Duration.ZERO));
     }
 
     @AfterEach
@@ -68,18 +71,18 @@ public class GitHubRepositoriesClientTest {
     }
 
     @Test
-    @DisplayName("Ответ 404 от сервера")
-    public void repositoryNotFound() {
+    @DisplayName("Проверка ретраев")
+    public void retryCheck() {
         // given
         stubFor(get(urlPathEqualTo("/repos/" + this.request.owner() + "/" + this.request.repoName()))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.NOT_FOUND.value())));
+            .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
 
         // when
         Mono<GitHubRepositoryResponse> answer = this.gitHubRepositoriesClient.fetch(this.request);
 
         // then
-        Exception exception = assertThrows(RuntimeException .class, answer::block);
+        Exception exception = assertThrows(RuntimeException.class, answer::block);
         assertThat(exception.getMessage()).contains("Retries exhausted");
+        assertThat(exception.getMessage()).contains(String.valueOf(this.retryAttempts));
     }
 }

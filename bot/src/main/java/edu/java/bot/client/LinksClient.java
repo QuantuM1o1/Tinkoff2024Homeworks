@@ -10,6 +10,7 @@ import exception.ChatIsNotFoundException;
 import exception.IncorrectRequestException;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,12 @@ public class LinksClient {
     private final Retry retry;
 
     @Autowired
-    public LinksClient(ApplicationConfig applicationConfig, Retry retry) {
+    public LinksClient(ApplicationConfig applicationConfig, @Qualifier("scrapperRetry") Retry scrapperRetry) {
         this.webClient = WebClient.builder()
             .baseUrl(applicationConfig.scrapperUrl())
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
-        this.retry = retry;
+        this.retry = scrapperRetry;
     }
 
     public Mono<LinkResponse> deleteLink(Long tgChatId, RemoveLinkRequest removeLinkRequest) {

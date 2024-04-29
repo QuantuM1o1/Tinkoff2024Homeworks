@@ -19,6 +19,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.TOO_MANY_REQUESTS;
 @Component
 public class RateLimitingFilter extends OncePerRequestFilter {
     private final int numberOfTokens = 10;
+
     private final Map<String, Bucket> ipBuckets = new ConcurrentHashMap<>();
 
     private final Bandwidth limit = Bandwidth.builder()

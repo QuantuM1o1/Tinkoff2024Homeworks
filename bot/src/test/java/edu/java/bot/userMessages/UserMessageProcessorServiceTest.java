@@ -12,7 +12,6 @@ import edu.java.bot.commands.StartCommand;
 import edu.java.bot.commands.TrackCommand;
 import edu.java.bot.commands.UntrackCommand;
 
-import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.dao.UsersMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +20,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import reactor.util.retry.Retry;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
@@ -34,18 +32,16 @@ import static org.mockito.Mockito.when;
     UntrackCommand.class,
     UsersMap.class,
     UserMessageProcessorService.class,
-    LinksClient.class,
-    TgChatClient.class
 })
 public class UserMessageProcessorServiceTest {
     @Autowired
     private UserMessageProcessorService userMessageProcessor;
 
     @MockBean
-    private ApplicationConfig applicationConfig;
+    private LinksClient linksClient;
 
     @MockBean
-    private Retry retry;
+    private TgChatClient tgChatClient;
 
     private Update mockUpdate;
 
