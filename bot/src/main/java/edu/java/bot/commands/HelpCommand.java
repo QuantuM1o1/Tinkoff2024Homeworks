@@ -2,9 +2,9 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import java.util.List;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class HelpCommand implements Command {
     private final List<Command> commands;
     private static final String COMMAND_NAME = "/help";

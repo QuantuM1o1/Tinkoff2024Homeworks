@@ -9,11 +9,11 @@ import java.util.List;
 public interface BotService extends AutoCloseable, UpdatesListener {
     <T extends BaseRequest<T, R>, R extends BaseResponse> void execute(BaseRequest<T, R> request);
 
-    @Override
     int process(List<Update> updates);
+
+    void sendMessage(long chatId, String message);
 
     void start();
 
-    @Override
     void close();
 }

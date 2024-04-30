@@ -2,6 +2,7 @@ package edu.java.controller;
 
 import dto.ApiErrorResponse;
 import edu.java.apiException.AlreadyRegisteredException;
+import edu.java.service.TgChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -11,11 +12,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
@@ -24,13 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class TgChatController {
+    @Autowired
+    private TgChatService tgChatService;
+
     /**
      * DELETE /tg-chat/{id} : Удалить чат
      *
-     * @param id  (required)
-     * @return Чат успешно удалён (status code 200)
-     *         or Некорректные параметры запроса (status code 400)
-     *         or Чат не существует (status code 404)
+     * @param id (required)
      */
     @Operation(
         operationId = "tgChatIdDelete",
@@ -47,23 +50,21 @@ public class TgChatController {
     )
     @DeleteMapping(
         value = "/tg-chat/{id}",
-        produces = { "application/json" }
+        produces = {"application/json"}
     )
-    public ResponseEntity<Void> deleteTgChatId(
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTgChatId(
         @Parameter(name = "id", required = true, in = ParameterIn.PATH)
         @PathVariable("id")
-        Long id) {
-        log.info("Deleted chat with id " + id);
-
-        return ResponseEntity.ok().build();
+        Long id
+    ) {
+        this.tgChatService.unregister(id);
     }
 
     /**
      * POST /tg-chat/{id} : Зарегистрировать чат
      *
-     * @param id  (required)
-     * @return Чат зарегистрирован (status code 200)
-     *         or Некорректные параметры запроса (status code 400)
+     * @param id (required)
      */
     @Operation(
         operationId = "tgChatIdPost",
@@ -80,24 +81,14 @@ public class TgChatController {
     )
     @PostMapping(
         value = "/tg-chat/{id}",
-        produces = { "application/json" }
+        produces = {"application/json"}
     )
-    public ResponseEntity<Void> postTgChatId(
+    @ResponseStatus(HttpStatus.OK)
+    public void postTgChatId(
         @Parameter(name = "id", required = true, in = ParameterIn.PATH)
         @PathVariable("id")
-        Long id) throws AlreadyRegisteredException {
-        boolean alreadyRegistered = checkIfAlreadyRegistered(id);
-        if (alreadyRegistered) {
-            throw new AlreadyRegisteredException();
-        }
-        log.info("Added chat with id " + id);
-
-        return ResponseEntity.ok().build();
-    }
-
-    private boolean checkIfAlreadyRegistered(Long id) {
-        log.info("Checking for previous registration");
-
-        return false;
+        Long id
+    ) throws AlreadyRegisteredException {
+        this.tgChatService.register(id);
     }
 }

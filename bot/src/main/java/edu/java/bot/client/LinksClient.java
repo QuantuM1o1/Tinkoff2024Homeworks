@@ -21,7 +21,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class LinksClient {
     private final WebClient webClient;
+
     private final String url = "/links";
+
     private final String header = "Tg-Chat-Id";
 
     @Autowired
@@ -34,8 +36,8 @@ public class LinksClient {
 
     public Mono<LinkResponse> deleteLink(Long tgChatId, RemoveLinkRequest removeLinkRequest) {
         return this.webClient.method(HttpMethod.DELETE)
-            .uri(url)
-            .headers(headers -> headers.set(header, String.valueOf(tgChatId)))
+            .uri(this.url)
+            .headers(headers -> headers.set(this.header, String.valueOf(tgChatId)))
             .body(BodyInserters.fromValue(removeLinkRequest))
             .retrieve()
             .onStatus(
@@ -55,8 +57,8 @@ public class LinksClient {
 
     public Mono<ListLinksResponse> getLinks(Long tgChatId) {
         return this.webClient.get()
-            .uri(url)
-            .headers(headers -> headers.set(header, String.valueOf(tgChatId)))
+            .uri(this.url)
+            .headers(headers -> headers.set(this.header, String.valueOf(tgChatId)))
             .retrieve()
             .onStatus(
                 HttpStatus.BAD_REQUEST::equals,
@@ -69,8 +71,8 @@ public class LinksClient {
 
     public Mono<LinkResponse> addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
         return this.webClient.post()
-            .uri(url)
-            .headers(headers -> headers.set(header, String.valueOf(tgChatId)))
+            .uri(this.url)
+            .headers(headers -> headers.set(this.header, String.valueOf(tgChatId)))
             .body(BodyInserters.fromValue(addLinkRequest))
             .retrieve()
             .onStatus(

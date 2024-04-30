@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 public class StackOverflowQuestionClient
     implements AsyncClient<StackOverflowQuestionResponse, StackOverflowQuestionRequest> {
     private final org.springframework.web.reactive.function.client.WebClient webClient;
+    private static final String FILTER = "!-n0mNLma4chtannAgOY)MkBGDj9yiIQ)RB95je_QbNupq2le4kUCYa";
 
     @Autowired
     public StackOverflowQuestionClient(ApplicationConfig applicationConfig) {
@@ -25,7 +26,8 @@ public class StackOverflowQuestionClient
     public Mono<StackOverflowQuestionResponse> fetch(StackOverflowQuestionRequest request) {
         return this.webClient
             .get()
-            .uri("/questions/{questionId}?site={site}", request.questionId(), request.site())
+            .uri("/questions/{questionId}?site={site}&filter={filter}",
+                request.questionId(), request.site(), FILTER)
             .retrieve()
             .bodyToMono(StackOverflowQuestionResponse.class);
     }

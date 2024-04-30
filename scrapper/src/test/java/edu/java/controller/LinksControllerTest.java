@@ -1,64 +1,92 @@
 package edu.java.controller;
 
-import dto.AddLinkRequest;
-import dto.LinkResponse;
 import dto.ListLinksResponse;
-import dto.RemoveLinkRequest;
-import edu.java.apiException.LinkAlreadyExistsException;
-import java.net.URI;
-import java.util.Objects;
+import edu.java.service.LinkService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 public class LinksControllerTest {
-    private final LinksController linksController = new LinksController();
+    private AutoCloseable mocks;
+
+    @MockBean
+    private LinkService mockLinkService;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    public void setUp() {
+        mocks = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mocks.close();
+    }
 
     @Test
     @DisplayName("Удалить ссылку")
-    public void deleteLink() {
+    public void deleteLink() throws Exception {
         // given
-        Long tgChatId = 1L;
-        String link = "https://www.google.com/";
-        RemoveLinkRequest request = new RemoveLinkRequest(
-            URI.create(link)
-        );
+
 
         // when
-        LinkResponse response = linksController.deleteLinks(tgChatId, request);
+        doNothing().when(mockLinkService);
 
         // then
-        assertThat(Objects.requireNonNull(response).id()).isEqualTo(tgChatId);
-        assertThat(response.url().toString()).isEqualTo(link);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Tg-Chat-Id", 1)
+                .content("{\"link\":\"https://www.google.com/\"}"))
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     @DisplayName("Получить ссылки")
-    public void getLinks() {
+    public void getLinks() throws Exception {
         // given
-        Long tgChatId = 1L;
+        long tgChatId = 1L;
+        ListLinksResponse mockResponse = Mockito.mock(ListLinksResponse.class);
 
         // when
-        ListLinksResponse response = linksController.getLinks(tgChatId);
+        when(mockLinkService.listAll(tgChatId)).thenReturn(mockResponse);
 
         // then
-        assertThat(Objects.requireNonNull(response).size()).isEqualTo(0);
+        mockMvc.perform(MockMvcRequestBuilders.get("/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Tg-Chat-Id", 1))
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     @DisplayName("Добавить ссылку")
-    public void addLink() throws LinkAlreadyExistsException
-    {
+    public void addLink() throws Exception {
         // given
-        Long tgChatId = 1L;
-        String link = "https://www.google.com/";
-        AddLinkRequest request = new AddLinkRequest(URI.create(link));
 
         // when
-        LinkResponse response = linksController.postLinks(tgChatId, request);
+        doNothing().when(mockLinkService);
 
         // then
-        assertThat(Objects.requireNonNull(response).id()).isEqualTo(tgChatId);
-        assertThat(response.url().toString()).isEqualTo(link);
+        mockMvc.perform(MockMvcRequestBuilders.post("/links")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Tg-Chat-Id", 1)
+                    .content("{\"link\":\"https://www.google.com/\"}"))
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

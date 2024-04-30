@@ -1,22 +1,16 @@
 package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.dto.ChatUser;
-import java.util.ArrayList;
-import java.util.Map;
+import edu.java.bot.client.TgChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class StartCommand implements Command {
     @Autowired
-    private final Map<Long, ChatUser> usersMap;
+    private TgChatClient client;
     private static final String COMMAND_NAME = "/start";
     private static final String COMMAND_DESCRIPTION = "Start command";
-
-    public StartCommand(Map<Long, ChatUser> usersMap) {
-        this.usersMap = usersMap;
-    }
 
     @Override
     public String name() {
@@ -32,15 +26,16 @@ public class StartCommand implements Command {
     public String handle(Update update) {
         long chatId = update.message().chat().id();
         String userName = update.message().chat().firstName();
-        if (this.usersMap.putIfAbsent(chatId, new ChatUser(chatId, userName, new ArrayList<>())) == null) {
+        try {
+            this.client.addChat(chatId).block();
             return "Hello, " + userName + "! Welcome to the notification Telegram bot.";
-        } else {
-            return "Hello again, " + userName + "! You have already started the bot.";
+        } catch (Exception e) {
+            return e.getCause().getMessage();
         }
     }
 
     @Override
     public Command getInstance() {
-        return new StartCommand(usersMap);
+        return new StartCommand();
     }
 }
