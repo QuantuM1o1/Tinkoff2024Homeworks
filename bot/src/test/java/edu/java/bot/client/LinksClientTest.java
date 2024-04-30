@@ -36,7 +36,7 @@ public class LinksClientTest {
         this.wireMockServer = new WireMockServer(8080);
         this.wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
-        ApplicationConfig applicationConfig = new ApplicationConfig("http://localhost:8080", "token");
+        ApplicationConfig applicationConfig = new ApplicationConfig("http://localhost:8080", "token", "url");
         this.linksClient = new LinksClient(applicationConfig);
         this.chatId = 123L;
     }

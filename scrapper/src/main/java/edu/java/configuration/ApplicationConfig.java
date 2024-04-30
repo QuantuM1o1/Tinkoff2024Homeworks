@@ -21,11 +21,7 @@ public record ApplicationConfig(
     AccessType databaseAccessType,
 
     @NotNull
-    int linksToUpdate
-) {
-
-    @NotEmpty
-    String botUrl,
+    int linksToUpdate,
 
     @NotEmpty
     String kafkaUrl,

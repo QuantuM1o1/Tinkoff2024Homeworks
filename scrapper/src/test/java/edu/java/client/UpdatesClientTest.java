@@ -41,7 +41,13 @@ public class UpdatesClientTest {
             new ArrayList<>()
         );
         ApplicationConfig applicationConfig = new ApplicationConfig(
-            "http://localhost:8090", "url", "http://localhost:8090", AccessType.JDBC, 1);
+            "http://localhost:8090",
+            "url",
+            "http://localhost:8090",
+            AccessType.JDBC,
+            1,
+            "url",
+            false);
         updatesClient = new UpdatesClient(applicationConfig);
     }
 
