@@ -56,6 +56,8 @@ public class UpdatesClientTest {
             "http://localhost:8090",
             AccessType.JDBC,
             1,
+            "kafka",
+            false,
             retryPolicy
         );
         this.updatesClient = new UpdatesClient(applicationConfig, Retry.fixedDelay(this.retryAttempts, Duration.ZERO));

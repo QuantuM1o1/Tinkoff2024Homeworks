@@ -8,14 +8,14 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
     @NotEmpty
+    String telegramToken,
+
+    @NotEmpty
     String scrapperUrl,
 
     @NotEmpty
-    String telegramToken,
+    String kafkaUrl,
 
-    RetryPolicy retryPolicy,
-
-    @NotEmpty
-    String kafkaUrl
+    RetryPolicy retryPolicy
 ) {
 }

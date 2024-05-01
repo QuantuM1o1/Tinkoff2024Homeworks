@@ -17,12 +17,11 @@ public record ApplicationConfig(
     @NotNull
     int linksToUpdate,
 
-    RetryPolicy retryPolicy
-    int linksToUpdate,
-
     @NotEmpty
     String kafkaUrl,
 
-    boolean useQueue
+    boolean useQueue,
+
+    RetryPolicy retryPolicy
 ) {
 }

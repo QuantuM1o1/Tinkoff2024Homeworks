@@ -37,7 +37,12 @@ public class TgChatClientTest {
         this.wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
         RetryPolicy retryPolicy = new RetryPolicy(RetryType.CONSTANT, 1, Duration.ZERO, new HashSet<>());
-        ApplicationConfig applicationConfig = new ApplicationConfig("http://localhost:8080", "token", retryPolicy);
+        ApplicationConfig applicationConfig = new ApplicationConfig(
+            "token",
+            "http://localhost:8080",
+            "url",
+            retryPolicy
+        );
         this.retryNumber = 5;
         this.tgChatClient = new TgChatClient(applicationConfig, Retry.fixedDelay(this.retryNumber, Duration.ZERO));
         this.chatId = 123L;
