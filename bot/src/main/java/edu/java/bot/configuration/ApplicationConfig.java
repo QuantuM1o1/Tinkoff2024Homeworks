@@ -11,6 +11,8 @@ public record ApplicationConfig(
     String scrapperUrl,
 
     @NotEmpty
-    String telegramToken
+    String telegramToken,
+
+    RetryPolicy retryPolicy
 ) {
 }

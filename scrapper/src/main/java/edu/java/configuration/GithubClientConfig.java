@@ -1,21 +1,14 @@
 package edu.java.configuration;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-@ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
-public record ApplicationConfig(
+@ConfigurationProperties(prefix = "github-client", ignoreUnknownFields = false)
+public record GithubClientConfig(
     @NotEmpty
-    String botUrl,
-
-    @NotNull
-    AccessType databaseAccessType,
-
-    @NotNull
-    int linksToUpdate,
+    String baseUrl,
 
     RetryPolicy retryPolicy
 ) {
