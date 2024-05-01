@@ -2,9 +2,10 @@ package edu.java.client;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.GithubClientConfig;
 import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
+import java.time.Duration;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,8 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -30,15 +31,18 @@ public class GitHubRepositoriesClientTest {
 
     private GitHubRepositoriesClient gitHubRepositoriesClient;
 
+    private int retryAttempts;
+
     @BeforeEach
     public void setUp() {
         this.wireMockServer = new WireMockServer();
         this.wireMockServer.start();
         WireMock.configureFor(this.wireMockServer.port());
         this.request = new GitHubRepositoryRequest("octocat", "Hello-World");
-        ApplicationConfig mockConfig = Mockito.mock(ApplicationConfig.class);
-        when(mockConfig.gitHubBaseUrl()).thenReturn("http://localhost:8080");
-        gitHubRepositoriesClient = new GitHubRepositoriesClient(mockConfig);
+        GithubClientConfig mockConfig = Mockito.mock(GithubClientConfig.class);
+        when(mockConfig.baseUrl()).thenReturn("http://localhost:8080");
+        this.retryAttempts = 2;
+        gitHubRepositoriesClient = new GitHubRepositoriesClient(mockConfig, Retry.fixedDelay(this.retryAttempts, Duration.ZERO));
     }
 
     @AfterEach
@@ -67,21 +71,18 @@ public class GitHubRepositoriesClientTest {
     }
 
     @Test
-    @DisplayName("Ответ 404 от сервера")
-    public void repositoryNotFound() {
+    @DisplayName("Проверка ретраев")
+    public void retryCheck() {
         // given
         stubFor(get(urlPathEqualTo("/repos/" + this.request.owner() + "/" + this.request.repoName()))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.NOT_FOUND.value())));
+            .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
 
         // when
         Mono<GitHubRepositoryResponse> answer = this.gitHubRepositoriesClient.fetch(this.request);
 
         // then
-        WebClientResponseException exception = assertThrows(
-            WebClientResponseException.class,
-                answer::block
-        );
-        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        Exception exception = assertThrows(RuntimeException.class, answer::block);
+        assertThat(exception.getMessage()).contains("Retries exhausted");
+        assertThat(exception.getMessage()).contains(String.valueOf(this.retryAttempts));
     }
 }

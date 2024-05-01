@@ -13,6 +13,8 @@ public record ApplicationConfig(
     @NotEmpty
     String telegramToken,
 
+    RetryPolicy retryPolicy,
+
     @NotEmpty
     String kafkaUrl
 ) {

@@ -11,16 +11,13 @@ public record ApplicationConfig(
     @NotEmpty
     String botUrl,
 
-    @NotEmpty
-    String gitHubBaseUrl,
-
-    @NotEmpty
-    String stackOverflowBaseUrl,
-
     @NotNull
     AccessType databaseAccessType,
 
     @NotNull
+    int linksToUpdate,
+
+    RetryPolicy retryPolicy
     int linksToUpdate,
 
     @NotEmpty
