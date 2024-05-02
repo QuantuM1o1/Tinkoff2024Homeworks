@@ -6,13 +6,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.client.LinksClient;
 import edu.java.bot.client.TgChatClient;
-import edu.java.bot.commands.HelpCommand;
-import edu.java.bot.commands.ListCommand;
-import edu.java.bot.commands.StartCommand;
-import edu.java.bot.commands.TrackCommand;
-import edu.java.bot.commands.UntrackCommand;
-
-import edu.java.bot.dao.UsersMap;
+import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +14,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +21,9 @@ import static org.mockito.Mockito.when;
 public class UserMessageProcessorServiceTest {
     @Autowired
     private UserMessageProcessorService userMessageProcessor;
+
+    @Autowired
+    private Counter processedMessagesCounter;
 
     @MockBean
     private LinksClient linksClient;
@@ -41,11 +37,14 @@ public class UserMessageProcessorServiceTest {
 
     private Chat mockChat;
 
+    private double count;
+
     @BeforeEach
     void setUp() {
         this.mockUpdate = Mockito.mock(Update.class);
         this.mockMessage = Mockito.mock(Message.class);
         this.mockChat = Mockito.mock(Chat.class);
+        this.count = this.processedMessagesCounter.count();
     }
 
     @Test
@@ -65,6 +64,7 @@ public class UserMessageProcessorServiceTest {
 
         // then
         assertThat(answer).contains("/list").contains("/start").contains("/track");
+        assertThat(this.processedMessagesCounter.count()).isEqualTo(this.count + 1);
     }
 
     @Test
@@ -84,6 +84,7 @@ public class UserMessageProcessorServiceTest {
 
         // then
         assertThat(answer).isEqualTo("Invalid command format. Please use '/track \"url\"'.");
+        assertThat(this.processedMessagesCounter.count()).isEqualTo(this.count + 1);
     }
 
     @Test
@@ -103,6 +104,7 @@ public class UserMessageProcessorServiceTest {
 
         // then
         assertThat(answer).isEqualTo("Invalid command format. Please use '/untrack \"url\"'.");
+        assertThat(this.processedMessagesCounter.count()).isEqualTo(this.count + 1);
     }
 
     @Test
@@ -122,5 +124,6 @@ public class UserMessageProcessorServiceTest {
 
         // then
         assertThat(answer).isEqualTo("Command is unknown");
+        assertThat(this.processedMessagesCounter.count()).isEqualTo(this.count + 1);
     }
 }

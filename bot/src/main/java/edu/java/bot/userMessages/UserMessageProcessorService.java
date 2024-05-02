@@ -14,12 +14,8 @@ public class UserMessageProcessorService implements UserMessageProcessor {
     @Autowired
     private List<Command> commands;
 
-    private final Counter processedMessagesCounter;
-
     @Autowired
-    public UserMessageProcessorService(MeterRegistry meterRegistry) {
-        this.processedMessagesCounter = meterRegistry.counter("processed_messages_total");
-    }
+    private Counter processedMessagesCounter;
 
     @Override
     public SendMessage process(Update update) {
