@@ -24,15 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {
-    HelpCommand.class,
-    ListCommand.class,
-    StartCommand.class,
-    TrackCommand.class,
-    UntrackCommand.class,
-    UsersMap.class,
-    UserMessageProcessorService.class,
-})
+@SpringBootTest
 public class UserMessageProcessorServiceTest {
     @Autowired
     private UserMessageProcessorService userMessageProcessor;
