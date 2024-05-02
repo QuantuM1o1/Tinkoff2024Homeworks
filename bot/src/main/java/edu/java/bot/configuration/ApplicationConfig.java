@@ -13,9 +13,6 @@ public record ApplicationConfig(
     @NotEmpty
     String scrapperUrl,
 
-    @NotEmpty
-    String kafkaUrl,
-
     RetryPolicy retryPolicy
 ) {
 }

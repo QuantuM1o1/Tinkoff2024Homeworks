@@ -1,7 +1,6 @@
 app:
   telegram-token: ${TELEGRAM_TOKEN}
   scrapper-url: http://localhost:8080
-  kafka-url: http://localhost:29091
 
   retry-policy:
     type: constant

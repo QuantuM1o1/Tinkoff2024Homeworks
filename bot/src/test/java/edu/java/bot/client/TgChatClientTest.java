@@ -40,7 +40,6 @@ public class TgChatClientTest {
         ApplicationConfig applicationConfig = new ApplicationConfig(
             "token",
             "http://localhost:8080",
-            "url",
             retryPolicy
         );
         this.retryNumber = 5;
