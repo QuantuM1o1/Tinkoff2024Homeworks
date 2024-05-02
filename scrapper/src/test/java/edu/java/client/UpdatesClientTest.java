@@ -56,7 +56,6 @@ public class UpdatesClientTest {
             "http://localhost:8090",
             AccessType.JDBC,
             1,
-            "kafka",
             false,
             retryPolicy
         );

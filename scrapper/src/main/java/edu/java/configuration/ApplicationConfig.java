@@ -17,9 +17,6 @@ public record ApplicationConfig(
     @NotNull
     int linksToUpdate,
 
-    @NotEmpty
-    String kafkaUrl,
-
     boolean useQueue,
 
     RetryPolicy retryPolicy

@@ -36,6 +36,12 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 5s
+      timeout: 10s
+      retries: 3
 
   kafka:
     image: confluentinc/cp-kafka:7.2.1
@@ -45,31 +51,19 @@ services:
       - "29091:29091"
     environment:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9091,PLAINTEXT_HOST://localhost:29091
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9091,PLAINTEXT_HOST://localhost:29091
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9091,PLAINTEXT_HOST://0.0.0.0:29091
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      TOPIC_AUTO_CREATE: updates.protobuf:1:1
       BOOTSTRAP_SERVERS: kafka:9091
       ZOOKEEPER: zookeeper:2181
     depends_on:
-      - zookeeper
-
-  init-kafka:
-    image: confluentinc/cp-kafka:7.2.1
-    depends_on:
-      - kafka
-    entrypoint: [ '/bin/sh', '-c' ]
-    command: |
-      "
-      # blocks until kafka is reachable
-      kafka-topics --bootstrap-server kafka:9091 --list
-
-      echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server kafka:9091 --create --if-not-exists --topic updates.protobuf --replication-factor 1 --partitions 1
-
-      echo -e 'Successfully created the following topics:'
-      kafka-topics --bootstrap-server kafka:9091 --list
-      "
+      zookeeper:
+        condition: service_healthy
+    volumes:
+      - ./kafka/data:/var/lib/kafka/data
 
 volumes:
   postgresql: { }
