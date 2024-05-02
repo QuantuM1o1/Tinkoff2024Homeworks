@@ -24,11 +24,7 @@ public class UpdatesKafkaListener {
         containerFactory = "protobufKafkaListenerContainerFactory"
     )
     public void listen(Updates.Update update) {
-        if (update.getDescription().isBlank()) {
-            this.updateKafkaTemplate.send("scrapper.update.dlq", update);
-        } else {
-            log.info("Update {} received!", update.getDescription());
-        }
+        log.info("Update {} received!", update.getDescription());
         this.latch.countDown();
     }
 
