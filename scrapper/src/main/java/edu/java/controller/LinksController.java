@@ -170,5 +170,4 @@ public class LinksController {
         this.linkService.add(tgChatId, addLinkRequest.link().toString(), addLinkRequest.link().getHost());
         return new LinkResponse(tgChatId, addLinkRequest.link());
     }
-
 }

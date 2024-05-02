@@ -5,11 +5,10 @@ import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.LinkDTO;
 import edu.java.dto.StackOverflowQuestionRequest;
 import edu.java.dto.StackOverflowQuestionResponse;
-import edu.java.property.SupportedResource;
+import edu.java.dto.UpdateCheckerResponse;
 import edu.java.repository.LinkRepository;
 import edu.java.service.UpdateChecker;
 import java.time.OffsetDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,60 +20,34 @@ public class StackOverflowUpdateChecker implements UpdateChecker {
 
     private final LinkRepository linkRepository;
 
-    @Autowired
-    private ResourcesConfig resourcesConfig;
+    private final Pattern pattern;
 
-    public StackOverflowUpdateChecker(LinkRepository linkRepository) {
+    public StackOverflowUpdateChecker(LinkRepository linkRepository, ResourcesConfig resourcesConfig) {
         this.linkRepository = linkRepository;
+        String patternString = resourcesConfig.supportedResources().get("stackoverflow.com").urlPattern();
+        this.pattern = Pattern.compile(patternString);
     }
 
     @Override
-    public Optional<String> description(String url) {
+    public UpdateCheckerResponse updateLink(String url) {
         LinkDTO link = this.linkRepository.findLinkByUrl(url).getFirst();
         StackOverflowQuestionResponse response = this.stackOverflowQuestionClient
-            .fetch(this.createResourceRequest(url, this.resourcesConfig.supportedResources().get(link.domainName())))
+            .fetch(this.createResourceRequest(url))
             .block();
+        Optional<String> description = Optional.empty();
         if (link.updatedAt() != response.items().getFirst().lastActivityDate()) {
-            return Optional.of("New answer in StackOverflowQuestion");
-        } else {
-            return Optional.empty();
+            this.linkRepository.setUpdatedAt(url, response.items().getFirst().lastActivityDate());
+            description = Optional.of("New answer in StackOverflowQuestion");
         }
+        OffsetDateTime lastActivity = response.items().getFirst().lastActivityDate();
+        int answerCount = response.items().getFirst().answerCount();
+        int commentCount = response.items().getFirst().commentCount();
+
+        return new UpdateCheckerResponse(description, lastActivity, answerCount, commentCount);
     }
 
-    @Override
-    public OffsetDateTime getLastActivity(String url, String domain) {
-        return Objects.requireNonNull(this.stackOverflowQuestionClient
-                .fetch(this.createResourceRequest(url, this.resourcesConfig.supportedResources().get(domain)))
-                .block())
-            .items()
-            .getFirst()
-            .lastActivityDate();
-    }
-
-    @Override
-    public int getAnswerCount(String url, String domain) {
-        return Objects.requireNonNull(this.stackOverflowQuestionClient
-                .fetch(this.createResourceRequest(url, this.resourcesConfig.supportedResources().get(domain)))
-                .block())
-            .items()
-            .getFirst()
-            .answerCount();
-    }
-
-    @Override
-    public int getCommentCount(String url, String domain) {
-        return Objects.requireNonNull(this.stackOverflowQuestionClient
-                .fetch(this.createResourceRequest(url, this.resourcesConfig.supportedResources().get(domain)))
-                .block())
-            .items()
-            .getFirst()
-            .commentCount();
-    }
-
-    private StackOverflowQuestionRequest createResourceRequest(String url, SupportedResource resource) {
-        String patternString = resource.urlPattern();
-        Pattern pattern = Pattern.compile(patternString);
-        Matcher matcher = pattern.matcher(url);
+    private StackOverflowQuestionRequest createResourceRequest(String url) {
+        Matcher matcher = this.pattern.matcher(url);
         long questionId = 0;
         if (matcher.find()) {
             questionId = Long.parseLong(matcher.group(1));

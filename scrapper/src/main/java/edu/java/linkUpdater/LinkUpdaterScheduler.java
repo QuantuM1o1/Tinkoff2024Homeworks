@@ -44,7 +44,8 @@ public class LinkUpdaterScheduler {
             if (this.updateCheckerMap.containsKey(link.domainName())) {
                 Optional<String> optionalDescription = this.updateCheckerMap
                     .get(link.domainName())
-                    .description(link.url());
+                    .updateLink(link.url())
+                    .description();
                 optionalDescription.ifPresent(description -> this.client.sendUpdate(new LinkUpdateRequest(
                     link.linkId(),
                     URI.create(link.url()),

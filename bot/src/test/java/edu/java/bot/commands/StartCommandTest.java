@@ -17,20 +17,22 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 public class StartCommandTest {
-    private AutoCloseable closeable;
+    private AutoCloseable mocks;
+
     @Mock
     private TgChatClient mockClient;
+
     @InjectMocks
-    private final StartCommand startCommand = new StartCommand();
+    private StartCommand startCommand;
 
     @BeforeEach
     public void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
+        this.mocks = MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        closeable.close();
+        this.mocks.close();
     }
 
     @Test
@@ -39,7 +41,7 @@ public class StartCommandTest {
         // given
 
         // when
-        String answer = startCommand.name();
+        String answer = this.startCommand.name();
 
         // then
         assertThat(answer).isEqualTo("/start");
@@ -53,16 +55,17 @@ public class StartCommandTest {
         Long chatId = 123456L;
         Update mockUpdate = Mockito.mock(Update.class);
         Message mockMessage = Mockito.mock(Message.class);
-        when(mockUpdate.message()).thenReturn(mockMessage);
         Chat mockChat = Mockito.mock(Chat.class);
+        Mono<Void> mockMono = Mono.empty();
+
+        // when
+        when(mockUpdate.message()).thenReturn(mockMessage);
         when(mockUpdate.message().chat()).thenReturn(mockChat);
         when(mockUpdate.message().chat().id()).thenReturn(chatId);
         when(mockUpdate.message().chat().firstName()).thenReturn(name);
-        Mono<Void> mockMono = Mono.empty();
-        when(mockClient.addChat(chatId)).thenReturn(mockMono);
+        when(this.mockClient.addChat(chatId)).thenReturn(mockMono);
 
-        // when
-        String answer = startCommand.handle(mockUpdate);
+        String answer = this.startCommand.handle(mockUpdate);
 
         // then
         assertThat(answer).isEqualTo("Hello, " + name + "! Welcome to the notification Telegram bot.");

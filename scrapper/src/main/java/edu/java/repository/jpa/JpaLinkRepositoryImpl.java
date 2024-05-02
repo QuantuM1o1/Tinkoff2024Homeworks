@@ -8,6 +8,7 @@ import edu.java.repository.LinkRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class JpaLinkRepositoryImpl implements LinkRepository {
     private JpaLinkRepository jpaLinkRepository;
@@ -35,7 +36,6 @@ public class JpaLinkRepositoryImpl implements LinkRepository {
     public List<LinkDTO> findAllLinks() {
         List<LinkEntity> linkEntities = this.jpaLinkRepository.findAll();
         List<LinkDTO> list = new ArrayList<>();
-//        List<LinksSitesEntity> linksSitesEntities = this.jpaLinksSitesRepository.getReferenceById()
         linkEntities.forEach(linkEntity -> list.add(new LinkDTO(
             linkEntity.getId(),
             linkEntity.getUrl(),
@@ -72,18 +72,16 @@ public class JpaLinkRepositoryImpl implements LinkRepository {
     public List<LinkDTO> findNLinksLastUpdated(int n) {
         List<LinkEntity> linkEntities = this.jpaLinkRepository.findAllByOrderByUpdatedAt();
         List<LinkDTO> list = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            list.add(new LinkDTO(
-                linkEntities.get(i).getId(),
-                linkEntities.get(i).getUrl(),
-                linkEntities.get(i).getAddedAt(),
-                linkEntities.get(i).getUpdatedAt(),
-                linkEntities.get(i).getLastActivity(),
-                linkEntities.get(i).getAnswerCount(),
-                linkEntities.get(i).getCommentCount(),
-                this.jpaLinksSitesRepository.getReferenceById(linkEntities.get(i).getId()).getDomainName()
-            ));
-        }
+        IntStream.range(0, n).forEach(i -> list.add(new LinkDTO(
+            linkEntities.get(i).getId(),
+            linkEntities.get(i).getUrl(),
+            linkEntities.get(i).getAddedAt(),
+            linkEntities.get(i).getUpdatedAt(),
+            linkEntities.get(i).getLastActivity(),
+            linkEntities.get(i).getAnswerCount(),
+            linkEntities.get(i).getCommentCount(),
+            this.jpaLinksSitesRepository.getReferenceById(linkEntities.get(i).getId()).getDomainName()
+        )));
 
         return list;
     }

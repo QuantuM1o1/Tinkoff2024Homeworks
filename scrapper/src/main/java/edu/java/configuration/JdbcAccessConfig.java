@@ -39,15 +39,15 @@ public class JdbcAccessConfig {
 
     @Bean(name = "github.com")
     public GithubUpdateChecker githubUpdateChecker(
-        JdbcLinkRepository linkRepository
+        JdbcLinkRepository linkRepository, ResourcesConfig resourcesConfig
     ) {
-        return new GithubUpdateChecker(linkRepository);
+        return new GithubUpdateChecker(linkRepository, resourcesConfig);
     }
 
     @Bean(name = "stackoverflow.com")
     public StackOverflowUpdateChecker stackOverflowUpdateChecker(
-        JdbcLinkRepository linkRepository
+        JdbcLinkRepository linkRepository, ResourcesConfig resourcesConfig
     ) {
-        return new StackOverflowUpdateChecker(linkRepository);
+        return new StackOverflowUpdateChecker(linkRepository, resourcesConfig);
     }
 }

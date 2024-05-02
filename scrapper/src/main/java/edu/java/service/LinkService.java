@@ -5,6 +5,7 @@ import dto.ListLinksResponse;
 import edu.java.apiException.LinkAlreadyExistsException;
 import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.LinkDTO;
+import edu.java.dto.UpdateCheckerResponse;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.UserLinkRepository;
 import java.net.URI;
@@ -36,15 +37,13 @@ public class LinkService {
     public void add(long tgChatId, String url, String domain) throws LinkAlreadyExistsException {
         if (this.linkRepository.findLinkByUrl(url).isEmpty()) {
             if (this.updateCheckerMap.containsKey(domain)) {
-                OffsetDateTime lastActivity = this.updateCheckerMap.get(domain).getLastActivity(url, domain);
-                int answerCount = this.updateCheckerMap.get(domain).getAnswerCount(url, domain);
-                int commentCount = this.updateCheckerMap.get(domain).getCommentCount(url, domain);
+                UpdateCheckerResponse response = this.updateCheckerMap.get(domain).updateLink(url);
                 this.linkRepository.addLink(
                     url,
-                    lastActivity,
+                    response.lastActivity(),
                     this.resourcesConfig.supportedResources().get(domain).id(),
-                    answerCount,
-                    commentCount
+                    response.answerCount(),
+                    response.commentCount()
                 );
             } else {
                 this.linkRepository.addLink(url, OffsetDateTime.now(), 0, 0, 0);

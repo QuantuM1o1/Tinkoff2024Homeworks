@@ -2,9 +2,10 @@ package edu.java.client;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.StackOverflowClientConfig;
 import edu.java.dto.StackOverflowQuestionRequest;
 import edu.java.dto.StackOverflowQuestionResponse;
+import java.time.Duration;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,8 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -25,18 +26,24 @@ import static org.mockito.Mockito.when;
 
 public class StackOverflowQuestionClientTest {
     private WireMockServer wireMockServer;
+
     private StackOverflowQuestionRequest request;
+
     private StackOverflowQuestionClient stackOverflowQuestionClient;
+
+    private int retryAttempts;
 
     @BeforeEach
     public void setUp() {
-        wireMockServer = new WireMockServer();
-        wireMockServer.start();
-        WireMock.configureFor(wireMockServer.port());
-        request = new StackOverflowQuestionRequest("stackoverflow", 3615006L);
-        ApplicationConfig mockConfig = Mockito.mock(ApplicationConfig.class);
-        when(mockConfig.stackOverflowBaseUrl()).thenReturn("http://localhost:8080");
-        stackOverflowQuestionClient = new StackOverflowQuestionClient(mockConfig);
+        this.wireMockServer = new WireMockServer();
+        this.wireMockServer.start();
+        WireMock.configureFor(this.wireMockServer.port());
+        this.request = new StackOverflowQuestionRequest("stackoverflow", 3615006L);
+        StackOverflowClientConfig mockConfig = Mockito.mock(StackOverflowClientConfig.class);
+        this.retryAttempts = 3;
+        when(mockConfig.baseUrl()).thenReturn("http://localhost:8080");
+        this.stackOverflowQuestionClient
+            = new StackOverflowQuestionClient(mockConfig, Retry.fixedDelay(this.retryAttempts, Duration.ZERO));
     }
 
     @AfterEach
@@ -48,20 +55,20 @@ public class StackOverflowQuestionClientTest {
     @DisplayName("Сбор данных в соответствующий DTO")
     public void fetchDataIntoDTO() {
         // given
-        stubFor(get(urlPathEqualTo("/questions/" + request.questionId()))
+        stubFor(get(urlPathEqualTo("/questions/" + this.request.questionId()))
             .willReturn(aResponse()
                 .withStatus(HttpStatus.OK.value())
                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .withBody(
-                    "{   \"items\": [     {       " +
-                        "\"comment_count\": 1,       " +
-                        "\"answer_count\": 2,       " +
-                        "\"last_activity_date\": 1283320547,       " +
-                        "\"question_id\": 3615006,       " +
-                        "\"link\": \"https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package\"     }   ] }")));
+                    "{\"items\":[{" +
+                        "\"comment_count\": 1," +
+                        "\"answer_count\": 2," +
+                        "\"last_activity_date\": 1283320547," +
+                        "\"question_id\": 3615006," +
+                        "\"link\": \"https://stackoverflow.com/questions/3615006/unit-tests-must-locate-in-the-same-package\"}]}")));
 
         // when
-        Mono<StackOverflowQuestionResponse> answer = stackOverflowQuestionClient.fetch(request);
+        Mono<StackOverflowQuestionResponse> answer = this.stackOverflowQuestionClient.fetch(this.request);
 
         // then
         assertThat(Objects.requireNonNull(answer.block()).items().getFirst().lastActivityDate())
@@ -73,21 +80,18 @@ public class StackOverflowQuestionClientTest {
     }
 
     @Test
-    @DisplayName("Ответ 404 от сервера")
-    public void questionNotFound() {
+    @DisplayName("Проверка ретраев")
+    public void retryCheck() {
         // given
-        stubFor(get(urlPathEqualTo("/questions/" + request.questionId()))
-            .willReturn(aResponse()
-                .withStatus(HttpStatus.NOT_FOUND.value())));
+        stubFor(get(urlPathEqualTo("/questions/" + this.request.questionId()))
+            .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
 
         // when
-        Mono<StackOverflowQuestionResponse> answer = stackOverflowQuestionClient.fetch(request);
+        Mono<StackOverflowQuestionResponse> answer = this.stackOverflowQuestionClient.fetch(this.request);
 
         // then
-        WebClientResponseException exception = assertThrows(
-            WebClientResponseException.class,
-                answer::block
-        );
-        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        Exception exception = assertThrows(RuntimeException.class, answer::block);
+        assertThat(exception.getMessage()).contains("Retries exhausted");
+        assertThat(exception.getMessage()).contains(String.valueOf(this.retryAttempts));
     }
 }
