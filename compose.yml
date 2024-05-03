@@ -109,7 +109,7 @@ services:
 
 volumes:
   postgresql: { }
-  kafka_data: {}
+  kafka_data: { }
 
 networks:
   backend: { }
