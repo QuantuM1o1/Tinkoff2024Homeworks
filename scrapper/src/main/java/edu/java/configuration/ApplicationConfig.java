@@ -17,6 +17,8 @@ public record ApplicationConfig(
     @NotNull
     int linksToUpdate,
 
+    boolean useQueue,
+
     RetryPolicy retryPolicy
 ) {
 }
