@@ -1,20 +1,44 @@
 app:
-  bot-url: "http://host.docker.internal:8090"
-  github-baseurl: "https://api.github.com"
-  stackoverflow-baseurl: "https://api.stackexchange.com/2.3"
+  bot-url: http://localhost:8090
   database-access-type: JDBC
   links-to-update: 2
+  use-queue: false
+
+  retry-policy:
+    type: constant
+    attempts: 3
+    backoff: 30s
+    httpStatusCodes:
+      - 404
+
+github-client:
+  base-url: https://api.github.com
+  retry-policy:
+    type: constant
+    attempts: 3
+    backoff: 30s
+    httpStatusCodes:
+      - 404
+
+stackoverflow-client:
+  base-url: https://api.stackexchange.com/2.3
+  retry-policy:
+    type: constant
+    attempts: 3
+    backoff: 30s
+    httpStatusCodes:
+      - 404
 
 scheduler:
   enable: true
-  interval: 10m
+  interval: 30m
   force-check-delay: 60m
 
 spring:
   application:
     name: scrapper
   datasource:
-    url: jdbc:postgresql://host.docker.internal:5432/scrapper
+    url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
     password: postgres
   liquibase:
@@ -23,6 +47,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: localhost:29091
 
 server:
   port: 8080
@@ -40,7 +66,22 @@ resources:
       id: 1
       base-url: https://api.stackexchange.com/2.3
       url-pattern: ^https?://stackoverflow\.com/.*/(.*)/.*$
+
     "[github.com]":
       id: 2
       base-url: https://api.github.com
       url-pattern: ^https?://github\.com/(.*)/(.*)$
+
+management:
+  endpoints:
+    web:
+      base-path:
+      exposure:
+        include: health, info, prometheus
+      path-mapping:
+        prometheus: metrics
+  server:
+    port: 8081
+  metrics:
+    tags:
+      application: ${spring.application.name}

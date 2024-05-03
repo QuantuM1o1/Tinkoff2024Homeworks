@@ -30,7 +30,7 @@ public class StartCommand implements Command {
             this.client.addChat(chatId).block();
             return "Hello, " + userName + "! Welcome to the notification Telegram bot.";
         } catch (Exception e) {
-            return e.getCause().getMessage();
+            return e.getMessage();
         }
     }
 
