@@ -17,7 +17,7 @@ COPY /scrapper/pom.xml ./scrapper/pom.xml
 COPY /scrapper-jooq/src ./scrapper-jooq/src
 COPY /scrapper-jooq/pom.xml ./scrapper-jooq/pom.xml
 
-RUN mvn clean package -Dmaven.test.skip=true
+RUN mvn clean package -Dmaven.test.skip=true -pl bot -am
 
 
 FROM openjdk:21
