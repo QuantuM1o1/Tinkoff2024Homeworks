@@ -1,7 +1,7 @@
 FROM openjdk:21
 
 # Set working directory
-WORKDIR /app/scrapper
+WORKDIR /app
 
 COPY target/scrapper.jar .
 
