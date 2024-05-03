@@ -2,6 +2,7 @@ app:
   bot-url: http://localhost:8090
   database-access-type: JDBC
   links-to-update: 2
+  use-queue: false
 
   retry-policy:
     type: constant
@@ -46,6 +47,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: localhost:29091
 
 server:
   port: 8080

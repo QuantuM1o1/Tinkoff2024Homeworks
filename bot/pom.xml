@@ -213,7 +213,13 @@
                         </goals>
                         <configuration>
                             <protoSourceRoot>${basedir}/src/main/resources/proto</protoSourceRoot>
+                            <protocArtifact>
+                                com.google.protobuf:protoc:4.26.1:exe:${os.detected.classifier}
+                            </protocArtifact>
                             <pluginId>proto-java</pluginId>
+                            <pluginArtifact>
+                                io.grpc:protoc-gen-grpc-java:1.4.0:exe:${os.detected.classifier}
+                            </pluginArtifact>
                         </configuration>
                     </execution>
                 </executions>
