@@ -47,3 +47,17 @@ server:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+management:
+  endpoints:
+    web:
+      base-path:
+      exposure:
+        include: health, info, prometheus
+      path-mapping:
+        prometheus: metrics
+  server:
+    port: 8091
+  metrics:
+    tags:
+      application: ${spring.application.name}

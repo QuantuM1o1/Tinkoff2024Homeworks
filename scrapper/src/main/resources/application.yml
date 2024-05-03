@@ -31,7 +31,7 @@ stackoverflow-client:
 
 scheduler:
   enable: true
-  interval: 10m
+  interval: 30m
   force-check-delay: 60m
 
 spring:
@@ -71,3 +71,17 @@ resources:
       id: 2
       base-url: https://api.github.com
       url-pattern: ^https?://github\.com/(.*)/(.*)$
+
+management:
+  endpoints:
+    web:
+      base-path:
+      exposure:
+        include: health, info, prometheus
+      path-mapping:
+        prometheus: metrics
+  server:
+    port: 8081
+  metrics:
+    tags:
+      application: ${spring.application.name}
