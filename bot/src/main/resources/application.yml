@@ -18,7 +18,8 @@ spring:
     activate:
       on-profile: default
   kafka:
-    bootstrap-servers: kafka:9091
+    bootstrap-servers: localhost:9091 # for github build
+#    bootstrap-servers: kafka:9091    # for actual work
 
   cache:
     cache-names:
