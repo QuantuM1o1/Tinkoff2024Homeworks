@@ -1,6 +1,6 @@
 app:
   telegram-token: ${TELEGRAM_TOKEN}
-  scrapper-url: http://localhost:8080
+  scrapper-url: scrapper:8080
 
   retry-policy:
     type: constant
@@ -18,7 +18,8 @@ spring:
     activate:
       on-profile: default
   kafka:
-    bootstrap-servers: localhost:29091
+    bootstrap-servers: localhost:9091 # for github build
+#    bootstrap-servers: kafka:9091    # for actual work
 
   cache:
     cache-names:

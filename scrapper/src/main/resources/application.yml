@@ -1,8 +1,8 @@
 app:
-  bot-url: http://localhost:8090
+  bot-url: bot:8090
   database-access-type: JDBC
   links-to-update: 2
-  use-queue: false
+  use-queue: true
 
   retry-policy:
     type: constant
@@ -38,7 +38,7 @@ spring:
   application:
     name: scrapper
   datasource:
-    url: jdbc:postgresql://localhost:5432/scrapper
+    url: jdbc:postgresql://host.docker.internal:5432/scrapper
     username: postgres
     password: postgres
   liquibase:
@@ -48,7 +48,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
-    bootstrap-servers: localhost:29091
+    bootstrap-servers: kafka:9091
 
 server:
   port: 8080
