@@ -11,9 +11,10 @@ services:
       - postgresql:/var/lib/postgresql/data
     networks:
       - backend
+    restart: unless-stopped
 
   liquibase-migrations:
-    image: liquibase/liquibase:4.25
+    image: liquibase/liquibase:4.27
     depends_on:
       - postgresql
     command:
@@ -29,7 +30,7 @@ services:
       - backend
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.2.1
+    image: confluentinc/cp-zookeeper:7.5.4
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -37,14 +38,16 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: "-Dzookeeper.4lw.commands.whitelist=ruok"
     healthcheck:
-      test: nc -z localhost 2181 || exit -1
-      interval: 5s
+      test: ["CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok || exit 1"]
+      interval: 10s
       timeout: 10s
       retries: 3
+    restart: unless-stopped
 
   kafka:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:7.5.4
     hostname: kafka
     container_name: kafka
     ports:
@@ -62,11 +65,17 @@ services:
     depends_on:
       zookeeper:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "nc -z localhost 9091 || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
     volumes:
       - ./kafka/data:/var/lib/kafka/data
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v2.52.0
     container_name: prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -78,7 +87,7 @@ services:
       - ./prometheus_data:/prometheus
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:10.2.7
     container_name: grafana
     ports:
       - 3000:3000
@@ -90,30 +99,35 @@ services:
       - ./grafana:/etc/grafana/provisioning/datasources
 
   bot:
-    image: ghcr.io/quantum1o1/tinkoff2024homeworks/bot:pr-11
-#    build:
-#      dockerfile: bot.Dockerfile
-    hostname: bot
+#    image: ghcr.io/quantum1o1/tinkoff2024homeworks/bot:pr-11
+    build:
+      dockerfile: bot.Dockerfile
     container_name: bot
-    ports:
-      - "8090:8090"
+    hostname: bot
+    depends_on:
+      kafka:
+        condition: service_healthy
     env_file:
       - .env
+    ports:
+      - "8090:8090"
+    restart: unless-stopped
 
   scrapper:
-    image: ghcr.io/quantum1o1/tinkoff2024homeworks/scrapper:pr-11
-#    build:
-#      dockerfile: scrapper.Dockerfile
-    hostname: scrapper
+#    image: ghcr.io/quantum1o1/tinkoff2024homeworks/scrapper:pr-11
+    build:
+      dockerfile: scrapper.Dockerfile
     container_name: scrapper
+    hostname: scrapper
     depends_on:
       - postgresql
     ports:
       - "8080:8080"
+    restart: unless-stopped
 
 volumes:
+  kafka: { }
   postgresql: { }
-  kafka_data: { }
 
 networks:
   backend: { }
