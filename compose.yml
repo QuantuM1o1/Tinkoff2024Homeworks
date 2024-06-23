@@ -45,6 +45,8 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
+    networks:
+      - backend
 
   kafka:
     image: confluentinc/cp-kafka:7.5.4
@@ -73,6 +75,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./kafka/data:/var/lib/kafka/data
+    networks:
+      - backend
 
   prometheus:
     image: prom/prometheus:v2.52.0
@@ -85,6 +89,8 @@ services:
     volumes:
       - ./prometheus:/etc/prometheus
       - ./prometheus_data:/prometheus
+    networks:
+      - backend
 
   grafana:
     image: grafana/grafana:10.2.7
@@ -97,6 +103,8 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
       - ./grafana:/etc/grafana/provisioning/datasources
+    networks:
+      - backend
 
   bot:
 #    image: ghcr.io/quantum1o1/tinkoff2024homeworks/bot:pr-11
@@ -112,6 +120,8 @@ services:
     ports:
       - "8090:8090"
     restart: unless-stopped
+    networks:
+      - backend
 
   scrapper:
 #    image: ghcr.io/quantum1o1/tinkoff2024homeworks/scrapper:pr-11
@@ -124,6 +134,8 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    networks:
+      - backend
 
 volumes:
   kafka: { }
