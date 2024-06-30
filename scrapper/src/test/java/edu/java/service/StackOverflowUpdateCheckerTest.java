@@ -56,7 +56,7 @@ public class StackOverflowUpdateCheckerTest {
         when(mockMono.block()).thenReturn(mockResponse);
         when(this.linkRepository.findLinkByUrl(url)).thenReturn(list);
 
-        UpdateCheckerResponse answer = this.updateChecker.updateLink(url);
+        UpdateCheckerResponse answer = this.updateChecker.updateLink(linkDTO);
 
         // then
         assertThat(answer.description().get()).isEqualTo("New answer in StackOverflowQuestion");

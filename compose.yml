@@ -7,6 +7,11 @@ services:
       POSTGRES_DB: scrapper
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d database || exit 1" ]
+      interval: 10s
+      timeout: 30s
+      retries: 5
     volumes:
       - postgresql:/var/lib/postgresql/data
     networks:
@@ -16,7 +21,8 @@ services:
   liquibase-migrations:
     image: liquibase/liquibase:4.27
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
     command:
       - --changelog-file=master.xml
       - --driver=org.postgresql.Driver
@@ -42,7 +48,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok || exit 1"]
       interval: 10s
-      timeout: 10s
+      timeout: 30s
       retries: 3
     restart: unless-stopped
     networks:
@@ -53,6 +59,7 @@ services:
     hostname: kafka
     container_name: kafka
     ports:
+      - "9091:9091"
       - "29091:29091"
     environment:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -70,7 +77,7 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "nc -z localhost 9091 || exit 1" ]
       interval: 10s
-      timeout: 10s
+      timeout: 30s
       retries: 3
     restart: unless-stopped
     volumes:
@@ -130,7 +137,10 @@ services:
     container_name: scrapper
     hostname: scrapper
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     ports:
       - "8080:8080"
     restart: unless-stopped

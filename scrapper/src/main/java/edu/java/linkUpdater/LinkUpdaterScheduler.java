@@ -1,9 +1,10 @@
 package edu.java.linkUpdater;
 
 import dto.LinkUpdateRequest;
-import edu.java.client.UpdatesClient;
 import edu.java.configuration.ApplicationConfig;
 import edu.java.dto.LinkDTO;
+import edu.java.dto.UpdateCheckerResponse;
+import edu.java.service.BotUpdateSender;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdaterService;
 import edu.java.service.UpdateChecker;
@@ -28,7 +29,7 @@ public class LinkUpdaterScheduler {
     private LinkService linkService;
 
     @Autowired
-    private UpdatesClient client;
+    private BotUpdateSender updateSender;
 
     @Autowired
     private ApplicationConfig applicationConfig;
@@ -42,17 +43,18 @@ public class LinkUpdaterScheduler {
         List<LinkDTO> list = this.updaterService.findNLinksToUpdate(this.applicationConfig.linksToUpdate());
         for (LinkDTO link : list) {
             if (this.updateCheckerMap.containsKey(link.domainName())) {
-                Optional<String> optionalDescription = this.updateCheckerMap
-                    .get(link.domainName())
-                    .updateLink(link.url())
-                    .description();
-                optionalDescription.ifPresent(description -> this.client.sendUpdate(new LinkUpdateRequest(
+                UpdateCheckerResponse response = this.updateCheckerMap.get(link.domainName()).updateLink(link);
+                this.linkService.changeLastActivity(link.url(), response.lastActivity());
+                Optional<String> optionalDescription = response.description();
+                optionalDescription.ifPresent(description -> this.updateSender.sendUpdate(new LinkUpdateRequest(
                     link.linkId(),
                     URI.create(link.url()),
                     description,
                     (List<Long>) this.linkService.findAllUsersForLink(link.linkId())
                 )));
             }
+
+            this.linkService.changeUpdatedAtToNow(link.url());
         }
     }
 }

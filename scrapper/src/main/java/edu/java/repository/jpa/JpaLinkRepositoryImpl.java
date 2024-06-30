@@ -92,4 +92,25 @@ public class JpaLinkRepositoryImpl implements LinkRepository {
         linkEntity.setUpdatedAt(updatedAt);
         this.jpaLinkRepository.saveAndFlush(linkEntity);
     }
+
+    @Override
+    public void setAnswerCount(String url, int count) {
+        LinkEntity linkEntity = this.jpaLinkRepository.getByUrl(url);
+        linkEntity.setAnswerCount(count);
+        this.jpaLinkRepository.saveAndFlush(linkEntity);
+    }
+
+    @Override
+    public void setCommentCount(String url, int count) {
+        LinkEntity linkEntity = this.jpaLinkRepository.getByUrl(url);
+        linkEntity.setCommentCount(count);
+        this.jpaLinkRepository.saveAndFlush(linkEntity);
+    }
+
+    @Override
+    public void setLastActivity(String url, OffsetDateTime lastActivity) {
+        LinkEntity linkEntity = this.jpaLinkRepository.getByUrl(url);
+        linkEntity.setLastActivity(lastActivity);
+        this.jpaLinkRepository.saveAndFlush(linkEntity);
+    }
 }

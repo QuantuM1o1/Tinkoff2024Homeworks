@@ -8,13 +8,11 @@ public record StackOverflowQuestionResponse(
     List<Item> items
 ) {
     public record Item(
-        @JsonProperty("question_id")
-        long id,
-        @JsonProperty("last_activity_date")
-        OffsetDateTime lastActivityDate,
+        @JsonProperty("question_id") long id,
+        @JsonProperty("last_activity_date") OffsetDateTime lastActivityDate,
         String link,
-        int commentCount,
-        int answerCount
+        @JsonProperty("comment_count") int commentCount,
+        @JsonProperty("answer_count") int answerCount
     ) {
     }
 }

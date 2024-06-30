@@ -12,31 +12,27 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class StackOverflowUpdateChecker implements UpdateChecker {
+@Log4j2 public class StackOverflowUpdateChecker implements UpdateChecker {
     @Autowired
     private StackOverflowQuestionClient stackOverflowQuestionClient;
-
-    private final LinkRepository linkRepository;
 
     private final Pattern pattern;
 
     public StackOverflowUpdateChecker(LinkRepository linkRepository, ResourcesConfig resourcesConfig) {
-        this.linkRepository = linkRepository;
         String patternString = resourcesConfig.supportedResources().get("stackoverflow.com").urlPattern();
         this.pattern = Pattern.compile(patternString);
     }
 
     @Override
-    public UpdateCheckerResponse updateLink(String url) {
-        LinkDTO link = this.linkRepository.findLinkByUrl(url).getFirst();
+    public UpdateCheckerResponse updateLink(LinkDTO link) {
         StackOverflowQuestionResponse response = this.stackOverflowQuestionClient
-            .fetch(this.createResourceRequest(url))
+            .fetch(this.createResourceRequest(link.url()))
             .block();
         Optional<String> description = Optional.empty();
-        if (link.updatedAt() != response.items().getFirst().lastActivityDate()) {
-            this.linkRepository.setUpdatedAt(url, response.items().getFirst().lastActivityDate());
+        if (link.lastActivity() != response.items().getFirst().lastActivityDate()) {
             description = Optional.of("New answer in StackOverflowQuestion");
         }
         OffsetDateTime lastActivity = response.items().getFirst().lastActivityDate();

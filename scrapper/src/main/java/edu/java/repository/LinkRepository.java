@@ -16,4 +16,10 @@ public interface LinkRepository {
     List<LinkDTO> findNLinksLastUpdated(int n);
 
     void setUpdatedAt(String url, OffsetDateTime updatedAt);
+
+    void setAnswerCount(String url, int count);
+
+    void setCommentCount(String url, int count);
+
+    void setLastActivity(String url, OffsetDateTime lastActivity);
 }

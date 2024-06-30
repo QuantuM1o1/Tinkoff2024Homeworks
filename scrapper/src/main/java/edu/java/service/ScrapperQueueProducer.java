@@ -1,12 +1,13 @@
 package edu.java.service;
 
 import dto.LinkUpdateRequest;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import scrapper.Updates;
 
-@Service
+@Log4j2 @Service
 public class ScrapperQueueProducer {
     @Autowired
     private KafkaTemplate<String, Updates.Update> updateKafkaTemplate;

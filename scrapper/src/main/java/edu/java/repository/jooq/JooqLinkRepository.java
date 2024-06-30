@@ -137,4 +137,25 @@ public class JooqLinkRepository extends Links implements LinkRepository {
             .set(LINKS.UPDATED_AT, updatedAt)
             .where(LINKS.URL.eq(url));
     }
+
+    @Override
+    public void setAnswerCount(String url, int count) {
+        this.dslContext.update(LINKS)
+            .set(LINKS.ANSWER_COUNT, count)
+            .where(LINKS.URL.eq(url));
+    }
+
+    @Override
+    public void setCommentCount(String url, int count) {
+        this.dslContext.update(LINKS)
+            .set(LINKS.COMMENT_COUNT, count)
+            .where(LINKS.URL.eq(url));
+    }
+
+    @Override
+    public void setLastActivity(String url, OffsetDateTime lastActivity) {
+        this.dslContext.update(LINKS)
+            .set(LINKS.LAST_ACTIVITY, lastActivity)
+            .where(LINKS.URL.eq(url));
+    }
 }

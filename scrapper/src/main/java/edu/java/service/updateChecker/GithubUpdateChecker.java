@@ -18,21 +18,17 @@ public class GithubUpdateChecker implements UpdateChecker {
     @Autowired
     private GitHubRepositoriesClient gitHubRepositoriesClient;
 
-    private final LinkRepository linkRepository;
-
     private final Pattern pattern;
 
     public GithubUpdateChecker(LinkRepository linkRepository, ResourcesConfig resourcesConfig) {
-        this.linkRepository = linkRepository;
         String patternString = resourcesConfig.supportedResources().get("github.com").urlPattern();
         this.pattern = Pattern.compile(patternString);
     }
 
     @Override
-    public UpdateCheckerResponse updateLink(String url) {
-        LinkDTO link = this.linkRepository.findLinkByUrl(url).getFirst();
+    public UpdateCheckerResponse updateLink(LinkDTO link) {
         GitHubRepositoryResponse response = this.gitHubRepositoriesClient
-            .fetch(this.createResourceRequest(url))
+            .fetch(this.createResourceRequest(link.url()))
             .block();
         Optional<String> description = Optional.empty();
         if (link.updatedAt() != response.updatedAt()) {
