@@ -78,4 +78,27 @@ public class JdbcLinkRepository implements LinkRepository {
 
         jdbcTemplate.update(sql, timestamp, url);
     }
+
+    @Override
+    public void setAnswerCount(String url, int count) {
+        String sql = "UPDATE links SET answer_count = ? WHERE url = ?";
+
+        jdbcTemplate.update(sql, count, url);
+    }
+
+    @Override
+    public void setCommentCount(String url, int count) {
+        String sql = "UPDATE links SET comment_count = ? WHERE url = ?";
+
+        jdbcTemplate.update(sql, count, url);
+    }
+
+    @Override
+    public void setLastActivity(String url, OffsetDateTime lastActivity) {
+        String sql = "UPDATE links SET last_activity = ? WHERE url = ?";
+
+        Timestamp timestamp = Timestamp.valueOf(lastActivity.toLocalDateTime());
+
+        jdbcTemplate.update(sql, timestamp, url);
+    }
 }

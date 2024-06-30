@@ -1,5 +1,5 @@
 app:
-  bot-url: bot:8090
+  bot-url: "http://bot:8090"
   database-access-type: JDBC
   links-to-update: 2
   use-queue: true
@@ -12,7 +12,7 @@ app:
       - 404
 
 github-client:
-  base-url: https://api.github.com
+  base-url: "https://api.github.com"
   retry-policy:
     type: constant
     attempts: 3
@@ -21,7 +21,7 @@ github-client:
       - 404
 
 stackoverflow-client:
-  base-url: https://api.stackexchange.com/2.3
+  base-url: "https://api.stackexchange.com/2.3"
   retry-policy:
     type: constant
     attempts: 3
@@ -38,7 +38,7 @@ spring:
   application:
     name: scrapper
   datasource:
-    url: jdbc:postgresql://host.docker.internal:5432/scrapper
+    url: "jdbc:postgresql://host.docker.internal:5432/scrapper"
     username: postgres
     password: postgres
   liquibase:
@@ -46,9 +46,9 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: "org.hibernate.dialect.PostgreSQLDialect"
   kafka:
-    bootstrap-servers: kafka:9091
+    bootstrap-servers: "kafka:9091"
 
 server:
   port: 8080
@@ -58,19 +58,19 @@ springdoc:
     path: /swagger-ui
 
 logging:
-  config: classpath:log4j2-plain.xml
+  config: "classpath:log4j2-plain.xml"
 
 resources:
   supported-resources:
     "[stackoverflow.com]":
       id: 1
-      base-url: https://api.stackexchange.com/2.3
-      url-pattern: ^https?://stackoverflow\.com/.*/(.*)/.*$
+      base-url: "https://api.stackexchange.com/2.3"
+      url-pattern: "^https?://stackoverflow\\.com/.*/(.*)/.*$"
 
     "[github.com]":
       id: 2
-      base-url: https://api.github.com
-      url-pattern: ^https?://github\.com/(.*)/(.*)$
+      base-url: "https://api.github.com"
+      url-pattern: "^https?://github\\.com/(.*)/(.*)$"
 
 management:
   endpoints:
@@ -84,4 +84,4 @@ management:
     port: 8081
   metrics:
     tags:
-      application: ${spring.application.name}
+      application: "${spring.application.name}"

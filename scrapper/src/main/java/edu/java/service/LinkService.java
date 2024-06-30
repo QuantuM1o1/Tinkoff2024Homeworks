@@ -37,14 +37,19 @@ public class LinkService {
     public void add(long tgChatId, String url, String domain) throws LinkAlreadyExistsException {
         if (this.linkRepository.findLinkByUrl(url).isEmpty()) {
             if (this.updateCheckerMap.containsKey(domain)) {
-                UpdateCheckerResponse response = this.updateCheckerMap.get(domain).updateLink(url);
                 this.linkRepository.addLink(
                     url,
-                    response.lastActivity(),
+                    OffsetDateTime.now(),
                     this.resourcesConfig.supportedResources().get(domain).id(),
-                    response.answerCount(),
-                    response.commentCount()
+                    0,
+                    0
                 );
+                LinkDTO link = this.linkRepository.findLinkByUrl(url).getFirst();
+                UpdateCheckerResponse response = this.updateCheckerMap.get(domain).updateLink(link);
+                this.linkRepository.setUpdatedAt(url, OffsetDateTime.now());
+                this.linkRepository.setLastActivity(url, response.lastActivity());
+                this.linkRepository.setAnswerCount(url, response.answerCount());
+                this.linkRepository.setCommentCount(url, response.commentCount());
             } else {
                 this.linkRepository.addLink(url, OffsetDateTime.now(), 0, 0, 0);
             }
@@ -85,6 +90,14 @@ public class LinkService {
 
     public Collection<Long> findAllUsersForLink(long linkId) {
         return this.userLinkRepository.findAllUsersByLink(linkId);
+    }
+
+    public void changeUpdatedAtToNow(String url) {
+        this.linkRepository.setUpdatedAt(url, OffsetDateTime.now());
+    }
+
+    public void changeLastActivity(String url, OffsetDateTime lastActivity) {
+        this.linkRepository.setLastActivity(url, lastActivity);
     }
 
     private boolean linkExists(long tgChatId, long linkId) {

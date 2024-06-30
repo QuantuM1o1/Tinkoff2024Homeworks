@@ -1,6 +1,6 @@
 app:
-  telegram-token: ${TELEGRAM_TOKEN}
-  scrapper-url: scrapper:8080
+  telegram-token: "${TELEGRAM_TOKEN}"
+  scrapper-url: "http://scrapper:8080"
 
   retry-policy:
     type: constant
@@ -18,8 +18,8 @@ spring:
     activate:
       on-profile: default
   kafka:
-    bootstrap-servers: localhost:9091 # for github build
-#    bootstrap-servers: kafka:9091    # for actual work
+    bootstrap-servers: "localhost:29091" # for github build
+#    bootstrap-servers: "http://kafka:9091"    # for actual work
 
   cache:
     cache-names:
@@ -47,7 +47,7 @@ server:
   port: 8090
 
 logging:
-  config: classpath:log4j2-plain.xml
+  config: "classpath:log4j2-plain.xml"
 
 management:
   endpoints:
@@ -61,4 +61,4 @@ management:
     port: 8091
   metrics:
     tags:
-      application: ${spring.application.name}
+      application: "${spring.application.name}"
