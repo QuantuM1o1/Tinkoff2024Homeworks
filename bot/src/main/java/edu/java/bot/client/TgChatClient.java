@@ -5,6 +5,7 @@ import edu.java.bot.configuration.ApplicationConfig;
 import exception.ChatIsNotFoundException;
 import exception.IncorrectRequestException;
 import java.util.function.Supplier;
+import exception.UserAlreadyRegisteredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -48,12 +49,13 @@ public class TgChatClient {
                 HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(apiErrorResponse ->
-                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
+                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage(),
+                            apiErrorResponse.code())))
             )
             .bodyToMono(Void.class));
     }
 
-    public Mono<Void> addChat(Long tgChatId) {
+    public Mono<Void> addChat(Long tgChatId) throws IncorrectRequestException, UserAlreadyRegisteredException {
         return this.executeWithRetry(() ->
             this.webClient.post()
             .uri(url, tgChatId)
@@ -62,7 +64,15 @@ public class TgChatClient {
                 HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(apiErrorResponse ->
-                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
+                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage(),
+                            apiErrorResponse.code())))
+            )
+            .onStatus(
+                HttpStatus.CONFLICT::equals,
+                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
+                    .flatMap(apiErrorResponse ->
+                        Mono.error(new UserAlreadyRegisteredException(apiErrorResponse.exceptionMessage(),
+                            apiErrorResponse.code())))
             )
             .bodyToMono(Void.class));
     }

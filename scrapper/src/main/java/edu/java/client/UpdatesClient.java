@@ -42,7 +42,7 @@ public class UpdatesClient {
                 HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(apiErrorResponse ->
-                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
+                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage(), apiErrorResponse.code())))
             )
             .onStatus(
                 HttpStatus.NOT_FOUND::equals,

@@ -2,10 +2,13 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.client.TgChatClient;
+import exception.IncorrectRequestException;
+import exception.UserAlreadyRegisteredException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
+@Slf4j @Service
 public class StartCommand implements Command {
     @Autowired
     private TgChatClient client;
@@ -29,7 +32,9 @@ public class StartCommand implements Command {
         try {
             this.client.addChat(chatId).block();
             return "Hello, " + userName + "! Welcome to the notification Telegram bot.";
-        } catch (Exception e) {
+        } catch (UserAlreadyRegisteredException e) {
+            return "Hello, " + userName + "! Welcome to the notification Telegram bot again.";
+        } catch (IncorrectRequestException e) {
             return e.getMessage();
         }
     }

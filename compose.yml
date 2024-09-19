@@ -31,6 +31,8 @@ services:
       - --password=postgres
       - update
     volumes:
+      - ./migrations/master.xml:/liquibase/master.xml
+      - ./migrations/sql:/liquibase/sql
       - ./migrations:/liquibase/changelog
     networks:
       - backend
