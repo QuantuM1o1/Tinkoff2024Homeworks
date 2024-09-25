@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
     private final Pattern pattern;
 
-    public StackOverflowUpdateChecker(LinksRepository linksRepository, ResourcesConfig resourcesConfig) {
+    public StackOverflowUpdateChecker(ResourcesConfig resourcesConfig) {
         String patternString = resourcesConfig.supportedResources().get("stackoverflow.com").urlPattern();
         this.pattern = Pattern.compile(patternString);
     }

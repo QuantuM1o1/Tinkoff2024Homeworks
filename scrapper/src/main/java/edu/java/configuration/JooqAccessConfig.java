@@ -38,16 +38,12 @@ public class JooqAccessConfig {
     }
 
     @Bean(name = "github.com")
-    public GithubUpdateChecker githubUpdateChecker(
-            JooqLinksRepository linkRepository, ResourcesConfig resourcesConfig
-    ) {
-        return new GithubUpdateChecker(linkRepository, resourcesConfig);
+    public GithubUpdateChecker githubUpdateChecker(ResourcesConfig resourcesConfig) {
+        return new GithubUpdateChecker(resourcesConfig);
     }
 
     @Bean(name = "stackoverflow.com")
-    public StackOverflowUpdateChecker stackOverflowUpdateChecker(
-            JooqLinksRepository linkRepository, ResourcesConfig resourcesConfig
-    ) {
-        return new StackOverflowUpdateChecker(linkRepository, resourcesConfig);
+    public StackOverflowUpdateChecker stackOverflowUpdateChecker(ResourcesConfig resourcesConfig) {
+        return new StackOverflowUpdateChecker(resourcesConfig);
     }
 }

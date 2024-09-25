@@ -24,30 +24,22 @@ public class JpaAccessConfig {
     }
 
     @Bean
-    public LinkUpdaterService linkUpdaterService(
-        JpaLinksRepositoryImpl linkRepository
-    ) {
+    public LinkUpdaterService linkUpdaterService(JpaLinksRepositoryImpl linkRepository) {
         return new LinkUpdaterService(linkRepository);
     }
 
     @Bean
-    public TgChatService tgChatService(
-        JpaUsersRepositoryImpl userRepository
-    ) {
+    public TgChatService tgChatService(JpaUsersRepositoryImpl userRepository) {
         return new TgChatService(userRepository);
     }
 
     @Bean(name = "github.com")
-    public GithubUpdateChecker githubUpdateChecker(
-            JpaLinksRepositoryImpl linkRepository, ResourcesConfig resourcesConfig
-    ) {
-        return new GithubUpdateChecker(linkRepository, resourcesConfig);
+    public GithubUpdateChecker githubUpdateChecker(ResourcesConfig resourcesConfig) {
+        return new GithubUpdateChecker(resourcesConfig);
     }
 
     @Bean(name = "stackoverflow.com")
-    public StackOverflowUpdateChecker stackOverflowUpdateChecker(
-            JpaLinksRepositoryImpl linkRepository, ResourcesConfig resourcesConfig
-    ) {
-        return new StackOverflowUpdateChecker(linkRepository, resourcesConfig);
+    public StackOverflowUpdateChecker stackOverflowUpdateChecker(ResourcesConfig resourcesConfig) {
+        return new StackOverflowUpdateChecker(resourcesConfig);
     }
 }

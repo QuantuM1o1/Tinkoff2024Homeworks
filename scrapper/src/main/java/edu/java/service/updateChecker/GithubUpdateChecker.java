@@ -20,7 +20,7 @@ public class GithubUpdateChecker implements UpdateChecker {
 
     private final Pattern pattern;
 
-    public GithubUpdateChecker(LinksRepository linksRepository, ResourcesConfig resourcesConfig) {
+    public GithubUpdateChecker(ResourcesConfig resourcesConfig) {
         String patternString = resourcesConfig.supportedResources().get("github.com").urlPattern();
         this.pattern = Pattern.compile(patternString);
     }
