@@ -21,7 +21,7 @@ public class JdbcUserRepositoryTest extends IntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private JdbcUserRepository userRepository;
+    private JdbcUsersRepository userRepository;
 
     private long chatId;
 

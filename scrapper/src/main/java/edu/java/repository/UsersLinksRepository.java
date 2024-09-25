@@ -3,7 +3,7 @@ package edu.java.repository;
 import edu.java.dto.LinkDTO;
 import java.util.List;
 
-public interface UserLinkRepository {
+public interface UsersLinksRepository {
     void addUserLink(long chatId, long linkId);
 
     void removeUserLink(long chatId, long linkId);

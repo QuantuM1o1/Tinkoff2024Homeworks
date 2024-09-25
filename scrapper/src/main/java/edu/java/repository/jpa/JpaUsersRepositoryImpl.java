@@ -3,12 +3,12 @@ package edu.java.repository.jpa;
 import edu.java.dto.UserDTO;
 import edu.java.entity.UserEntity;
 import edu.java.repository.JpaUserRepository;
-import edu.java.repository.UserRepository;
+import edu.java.repository.UsersRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JpaUserRepositoryImpl implements UserRepository {
+public class JpaUsersRepositoryImpl implements UsersRepository {
     private  JpaUserRepository jpaUserRepository;
 
     @Override

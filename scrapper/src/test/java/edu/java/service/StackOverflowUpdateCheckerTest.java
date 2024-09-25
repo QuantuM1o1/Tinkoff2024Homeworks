@@ -5,7 +5,7 @@ import edu.java.dto.LinkDTO;
 import edu.java.dto.StackOverflowQuestionRequest;
 import edu.java.dto.StackOverflowQuestionResponse;
 import edu.java.dto.UpdateCheckerResponse;
-import edu.java.repository.jdbc.JdbcLinkRepository;
+import edu.java.repository.jdbc.JdbcLinksRepository;
 import edu.java.service.updateChecker.StackOverflowUpdateChecker;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class StackOverflowUpdateCheckerTest {
     private StackOverflowQuestionClient mockClient;
 
     @MockBean
-    private JdbcLinkRepository linkRepository;
+    private JdbcLinksRepository linkRepository;
 
     @Autowired
     private StackOverflowUpdateChecker updateChecker;

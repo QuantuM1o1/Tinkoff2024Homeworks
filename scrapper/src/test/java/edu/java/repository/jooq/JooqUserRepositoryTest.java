@@ -21,7 +21,7 @@ public class JooqUserRepositoryTest extends IntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private JooqUserRepository userRepository;
+    private JooqUsersRepository userRepository;
 
     private long chatId;
 

@@ -1,8 +1,8 @@
 package edu.java.configuration;
 
-import edu.java.repository.jooq.JooqLinkRepository;
-import edu.java.repository.jooq.JooqUserLinkRepository;
-import edu.java.repository.jooq.JooqUserRepository;
+import edu.java.repository.jooq.JooqLinksRepository;
+import edu.java.repository.jooq.JooqUsersLinksRepository;
+import edu.java.repository.jooq.JooqUsersRepository;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdaterService;
 import edu.java.service.TgChatService;
@@ -17,36 +17,36 @@ import org.springframework.context.annotation.Configuration;
 public class JooqAccessConfig {
     @Bean
     public LinkService linkService(
-        JooqLinkRepository linkRepository,
-        JooqUserLinkRepository userLinkRepository
+        JooqLinksRepository linkRepository,
+        JooqUsersLinksRepository userLinkRepository
     ) {
         return new LinkService(linkRepository, userLinkRepository);
     }
 
     @Bean
     public LinkUpdaterService linkUpdaterService(
-        JooqLinkRepository linkRepository
+        JooqLinksRepository linkRepository
     ) {
         return new LinkUpdaterService(linkRepository);
     }
 
     @Bean
     public TgChatService tgChatService(
-        JooqUserRepository userRepository
+        JooqUsersRepository userRepository
     ) {
         return new TgChatService(userRepository);
     }
 
     @Bean(name = "github.com")
     public GithubUpdateChecker githubUpdateChecker(
-        JooqLinkRepository linkRepository, ResourcesConfig resourcesConfig
+            JooqLinksRepository linkRepository, ResourcesConfig resourcesConfig
     ) {
         return new GithubUpdateChecker(linkRepository, resourcesConfig);
     }
 
     @Bean(name = "stackoverflow.com")
     public StackOverflowUpdateChecker stackOverflowUpdateChecker(
-        JooqLinkRepository linkRepository, ResourcesConfig resourcesConfig
+            JooqLinksRepository linkRepository, ResourcesConfig resourcesConfig
     ) {
         return new StackOverflowUpdateChecker(linkRepository, resourcesConfig);
     }

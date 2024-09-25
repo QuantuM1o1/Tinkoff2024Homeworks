@@ -1,7 +1,7 @@
 package edu.java.repository.jdbc;
 
 import edu.java.dto.LinkDTO;
-import edu.java.repository.UserLinkRepository;
+import edu.java.repository.UsersLinksRepository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,11 +11,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcUserLinkRepository implements UserLinkRepository {
+public class JdbcUsersLinksRepository implements UsersLinksRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JdbcUserLinkRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcUsersLinksRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -16,13 +16,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Transactional
 public class JdbcUserLinkRepositoryTest extends IntegrationTest {
     @Autowired
-    private JdbcUserLinkRepository userLinkRepository;
+    private JdbcUsersLinksRepository userLinkRepository;
 
     @Autowired
-    private JdbcUserRepository userRepository;
+    private JdbcUsersRepository userRepository;
 
     @Autowired
-    private JdbcLinkRepository linkRepository;
+    private JdbcLinksRepository linkRepository;
 
     private long chatId;
 

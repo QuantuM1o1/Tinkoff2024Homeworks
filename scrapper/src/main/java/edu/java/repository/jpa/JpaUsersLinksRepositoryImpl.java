@@ -6,11 +6,11 @@ import edu.java.entity.UserEntity;
 import edu.java.repository.JpaLinkRepository;
 import edu.java.repository.JpaLinksSitesRepository;
 import edu.java.repository.JpaUserRepository;
-import edu.java.repository.UserLinkRepository;
+import edu.java.repository.UsersLinksRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JpaUserLinkRepositoryImpl implements UserLinkRepository {
+public class JpaUsersLinksRepositoryImpl implements UsersLinksRepository {
     private JpaUserRepository jpaUserRepository;
 
     private JpaLinkRepository jpaLinkRepository;

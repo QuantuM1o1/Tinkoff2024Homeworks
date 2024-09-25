@@ -1,7 +1,7 @@
 package edu.java.repository.jooq;
 
 import edu.java.dto.LinkDTO;
-import edu.java.repository.LinkRepository;
+import edu.java.repository.LinksRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +13,11 @@ import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Links;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records.LinksRecord;
 
 @Repository
-public class JooqLinkRepository extends Links implements LinkRepository {
+public class JooqLinksRepository extends Links implements LinksRepository {
     private final DSLContext dslContext;
 
     @Autowired
-    public JooqLinkRepository(DSLContext dslContext) {
+    public JooqLinksRepository(DSLContext dslContext) {
         this.dslContext = dslContext;
     }
 

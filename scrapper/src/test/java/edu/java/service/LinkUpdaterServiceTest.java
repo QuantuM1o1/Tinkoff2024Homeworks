@@ -1,7 +1,7 @@
 package edu.java.service;
 
 import edu.java.dto.LinkDTO;
-import edu.java.repository.jdbc.JdbcLinkRepository;
+import edu.java.repository.jdbc.JdbcLinksRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = LinkUpdaterService.class)
 public class LinkUpdaterServiceTest {
     @MockBean
-    private JdbcLinkRepository mockRepository;
+    private JdbcLinksRepository mockRepository;
 
     @Autowired
     private LinkUpdaterService linkUpdaterService;

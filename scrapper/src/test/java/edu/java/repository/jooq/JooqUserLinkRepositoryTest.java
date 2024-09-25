@@ -16,13 +16,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Transactional
 public class JooqUserLinkRepositoryTest extends IntegrationTest {
     @Autowired
-    private JooqUserLinkRepository userLinkRepository;
+    private JooqUsersLinksRepository userLinkRepository;
 
     @Autowired
-    private JooqUserRepository userRepository;
+    private JooqUsersRepository userRepository;
 
     @Autowired
-    private JooqLinkRepository linkRepository;
+    private JooqLinksRepository linkRepository;
 
     private long chatId;
 

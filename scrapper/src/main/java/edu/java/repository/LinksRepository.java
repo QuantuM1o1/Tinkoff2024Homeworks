@@ -4,7 +4,7 @@ import edu.java.dto.LinkDTO;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public interface LinkRepository {
+public interface LinksRepository {
     void addLink(String url, OffsetDateTime lastActivity, int siteId, int answerCount, int commentCount);
 
     void removeLink(String url);

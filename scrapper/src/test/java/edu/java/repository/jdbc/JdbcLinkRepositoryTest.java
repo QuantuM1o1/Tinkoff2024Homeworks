@@ -21,7 +21,7 @@ public class JdbcLinkRepositoryTest extends IntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private JdbcLinkRepository linkRepository;
+    private JdbcLinksRepository linkRepository;
 
     private String url;
 

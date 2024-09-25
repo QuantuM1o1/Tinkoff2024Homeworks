@@ -4,13 +4,13 @@ import edu.java.dto.LinkDTO;
 import edu.java.entity.LinkEntity;
 import edu.java.repository.JpaLinkRepository;
 import edu.java.repository.JpaLinksSitesRepository;
-import edu.java.repository.LinkRepository;
+import edu.java.repository.LinksRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class JpaLinkRepositoryImpl implements LinkRepository {
+public class JpaLinksRepositoryImpl implements LinksRepository {
     private JpaLinkRepository jpaLinkRepository;
 
     private JpaLinksSitesRepository jpaLinksSitesRepository;

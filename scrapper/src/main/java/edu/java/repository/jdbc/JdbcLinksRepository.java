@@ -2,7 +2,7 @@ package edu.java.repository.jdbc;
 
 
 import edu.java.dto.LinkDTO;
-import edu.java.repository.LinkRepository;
+import edu.java.repository.LinksRepository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class JdbcLinkRepository implements LinkRepository {
+public class JdbcLinksRepository implements LinksRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JdbcLinkRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcLinksRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

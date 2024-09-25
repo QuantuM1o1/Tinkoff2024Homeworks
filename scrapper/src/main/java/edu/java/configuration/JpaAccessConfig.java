@@ -1,8 +1,8 @@
 package edu.java.configuration;
 
-import edu.java.repository.jpa.JpaLinkRepositoryImpl;
-import edu.java.repository.jpa.JpaUserLinkRepositoryImpl;
-import edu.java.repository.jpa.JpaUserRepositoryImpl;
+import edu.java.repository.jpa.JpaLinksRepositoryImpl;
+import edu.java.repository.jpa.JpaUsersLinksRepositoryImpl;
+import edu.java.repository.jpa.JpaUsersRepositoryImpl;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdaterService;
 import edu.java.service.TgChatService;
@@ -17,36 +17,36 @@ import org.springframework.context.annotation.Configuration;
 public class JpaAccessConfig {
     @Bean
     public LinkService linkService(
-        JpaLinkRepositoryImpl linkRepository,
-        JpaUserLinkRepositoryImpl userLinkRepository
+        JpaLinksRepositoryImpl linkRepository,
+        JpaUsersLinksRepositoryImpl userLinkRepository
     ) {
         return new LinkService(linkRepository, userLinkRepository);
     }
 
     @Bean
     public LinkUpdaterService linkUpdaterService(
-        JpaLinkRepositoryImpl linkRepository
+        JpaLinksRepositoryImpl linkRepository
     ) {
         return new LinkUpdaterService(linkRepository);
     }
 
     @Bean
     public TgChatService tgChatService(
-        JpaUserRepositoryImpl userRepository
+        JpaUsersRepositoryImpl userRepository
     ) {
         return new TgChatService(userRepository);
     }
 
     @Bean(name = "github.com")
     public GithubUpdateChecker githubUpdateChecker(
-        JpaLinkRepositoryImpl linkRepository, ResourcesConfig resourcesConfig
+            JpaLinksRepositoryImpl linkRepository, ResourcesConfig resourcesConfig
     ) {
         return new GithubUpdateChecker(linkRepository, resourcesConfig);
     }
 
     @Bean(name = "stackoverflow.com")
     public StackOverflowUpdateChecker stackOverflowUpdateChecker(
-        JpaLinkRepositoryImpl linkRepository, ResourcesConfig resourcesConfig
+            JpaLinksRepositoryImpl linkRepository, ResourcesConfig resourcesConfig
     ) {
         return new StackOverflowUpdateChecker(linkRepository, resourcesConfig);
     }

@@ -21,7 +21,7 @@ public class JooqLinkRepositoryTest extends IntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private JooqLinkRepository linkRepository;
+    private JooqLinksRepository linkRepository;
 
     private String url;
 

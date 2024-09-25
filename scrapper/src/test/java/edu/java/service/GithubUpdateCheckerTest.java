@@ -5,7 +5,7 @@ import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
 import edu.java.dto.LinkDTO;
 import edu.java.dto.UpdateCheckerResponse;
-import edu.java.repository.jdbc.JdbcLinkRepository;
+import edu.java.repository.jdbc.JdbcLinksRepository;
 import edu.java.service.updateChecker.GithubUpdateChecker;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class GithubUpdateCheckerTest {
     private GitHubRepositoriesClient mockClient;
 
     @MockBean
-    private JdbcLinkRepository linkRepository;
+    private JdbcLinksRepository linkRepository;
 
     @Autowired
     private GithubUpdateChecker updateChecker;

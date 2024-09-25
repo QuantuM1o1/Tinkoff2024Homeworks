@@ -3,7 +3,7 @@ package edu.java.repository;
 import edu.java.dto.UserDTO;
 import java.util.List;
 
-public interface UserRepository {
+public interface UsersRepository {
     void addUser(long chatId);
 
     void removeUser(long chatId);
