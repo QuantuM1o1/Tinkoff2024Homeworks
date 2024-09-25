@@ -1,6 +1,8 @@
 package edu.java.configuration;
 
+import edu.java.repository.jdbc.JdbcLinksArchiveRepository;
 import edu.java.repository.jdbc.JdbcLinksRepository;
+import edu.java.repository.jdbc.JdbcUsersLinksArchiveRepository;
 import edu.java.repository.jdbc.JdbcUsersLinksRepository;
 import edu.java.repository.jdbc.JdbcUsersRepository;
 import edu.java.service.LinkService;
@@ -17,10 +19,13 @@ import org.springframework.context.annotation.Configuration;
 public class JdbcAccessConfig {
     @Bean
     public LinkService linkService(
-        JdbcLinksRepository linkRepository,
-        JdbcUsersLinksRepository userLinkRepository
+        JdbcLinksRepository linksRepository, JdbcLinksArchiveRepository linksArchiveRepository,
+        JdbcUsersLinksRepository usersLinksRepository, JdbcUsersLinksArchiveRepository usersLinksArchiveRepository
     ) {
-        return new LinkService(linkRepository, userLinkRepository);
+        return new LinkService(
+            linksRepository, linksArchiveRepository,
+            usersLinksRepository, usersLinksArchiveRepository
+        );
     }
 
     @Bean

@@ -5,12 +5,12 @@ import edu.java.repository.UsersRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import edu.java.scrapper.domain.jooq.tables.Users;
+import edu.java.scrapper.domain.jooq.tables.records.UsersRecord;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Users;
-import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records.UsersRecord;
 
 @Repository
 public class JooqUsersRepository extends Users implements UsersRepository {
@@ -27,8 +27,7 @@ public class JooqUsersRepository extends Users implements UsersRepository {
         OffsetDateTime currentTime = OffsetDateTime.now();
 
         this.dslContext.insertInto(USERS)
-            .set(USERS.CHAT_ID, chatId)
-            .set(USERS.ADDED_AT, currentTime)
+            .set(USERS.TG_CHAT_ID, chatId)
             .execute();
     }
 
@@ -37,9 +36,8 @@ public class JooqUsersRepository extends Users implements UsersRepository {
     public void removeUser(long chatId) {
         OffsetDateTime currentTime = OffsetDateTime.now();
 
-        this.dslContext.update(USERS)
-            .set(USERS.DELETED_AT, currentTime)
-            .where(USERS.CHAT_ID.eq(chatId))
+        this.dslContext.delete(USERS)
+            .where(USERS.TG_CHAT_ID.eq(chatId))
             .execute();
     }
 
@@ -47,13 +45,9 @@ public class JooqUsersRepository extends Users implements UsersRepository {
     @Transactional(readOnly = true)
     public List<UserDTO> findAllUsers() {
         List<UsersRecord> records = this.dslContext.selectFrom(USERS)
-            .where(USERS.DELETED_AT.isNull())
             .fetchInto(UsersRecord.class);
         List<UserDTO> list = new ArrayList<>();
-        records.forEach(usersRecord -> list.add(new UserDTO(
-            usersRecord.getChatId(),
-            usersRecord.getAddedAt()
-        )));
+        records.forEach(usersRecord -> list.add(new UserDTO(usersRecord.getTgChatId())));
 
         return list;
     }
@@ -62,13 +56,10 @@ public class JooqUsersRepository extends Users implements UsersRepository {
     @Transactional(readOnly = true)
     public List<UserDTO> findUserById(long chatId) {
         List<UsersRecord> records = this.dslContext.selectFrom(USERS)
-            .where(USERS.DELETED_AT.isNull().and(USERS.CHAT_ID.eq(chatId)))
+            .where(USERS.TG_CHAT_ID.eq(chatId))
             .fetchInto(UsersRecord.class);
         List<UserDTO> list = new ArrayList<>();
-        records.forEach(usersRecord -> list.add(new UserDTO(
-            usersRecord.getChatId(),
-            usersRecord.getAddedAt()
-        )));
+        records.forEach(usersRecord -> list.add(new UserDTO(usersRecord.getTgChatId())));
 
         return list;
     }

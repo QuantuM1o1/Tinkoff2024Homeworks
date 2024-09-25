@@ -103,10 +103,10 @@ public class LinkServiceTest extends IntegrationTest {
     public void returnAllUsersForLink() {
         // given
         List<LinkDTO> list = this.linkRepository.findLinkByUrl(this.url);
-        this.userLinkRepository.addUserLink(this.id, list.getFirst().linkId());
+        this.userLinkRepository.addUserLink(this.id, list.getFirst().id());
 
         // when
-        List<Long> answer = (List<Long>) this.linkService.findAllUsersForLink(list.getFirst().linkId());
+        List<Long> answer = (List<Long>) this.linkService.findAllUsersForLink(list.getFirst().id());
 
         // then
         assertThat(answer.size()).isEqualTo(1);

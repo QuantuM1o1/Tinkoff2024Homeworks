@@ -5,12 +5,12 @@ import edu.java.repository.LinksRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import edu.java.scrapper.domain.jooq.tables.Links;
+import edu.java.scrapper.domain.jooq.tables.records.LinksRecord;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Links;
-import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records.LinksRecord;
 
 @Repository
 public class JooqLinksRepository extends Links implements LinksRepository {
@@ -28,7 +28,6 @@ public class JooqLinksRepository extends Links implements LinksRepository {
 
         this.dslContext.insertInto(LINKS)
             .set(LINKS.URL, url)
-            .set(LINKS.ADDED_AT, currentTime)
             .set(LINKS.UPDATED_AT, currentTime)
             .set(LINKS.LAST_ACTIVITY, lastActivity)
             .set(LINKS.SITE_ID, siteId)
@@ -42,8 +41,7 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     public void removeLink(String url) {
         OffsetDateTime currentTime = OffsetDateTime.now();
 
-        this.dslContext.update(LINKS)
-            .set(LINKS.DELETED_AT, currentTime)
+        this.dslContext.delete(LINKS)
             .where(LINKS.URL.equal(url))
             .execute();
     }
@@ -52,7 +50,6 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     @Transactional(readOnly = true)
     public List<LinkDTO> findAllLinks() {
         List<LinksRecord> records = this.dslContext.selectFrom(LINKS)
-            .where(LINKS.DELETED_AT.isNull())
             .fetchInto(LinksRecord.class);
         List<LinkDTO> list = new ArrayList<>();
         for (LinksRecord linksRecord : records) {
@@ -61,9 +58,8 @@ public class JooqLinksRepository extends Links implements LinksRepository {
                 .where(LINKS.linksSites().ID.eq(linksRecord.getSiteId()))
                 .fetchOneInto(String.class);
             list.add(new LinkDTO(
-                linksRecord.getLinkId(),
+                linksRecord.getId(),
                 linksRecord.getUrl(),
-                linksRecord.getAddedAt(),
                 linksRecord.getUpdatedAt(),
                 linksRecord.getLastActivity(),
                 linksRecord.getAnswerCount(),
@@ -79,7 +75,7 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     @Transactional(readOnly = true)
     public List<LinkDTO> findLinkByUrl(String url) {
         List<LinksRecord> records = this.dslContext.selectFrom(LINKS)
-            .where(LINKS.DELETED_AT.isNull().and(LINKS.URL.eq(url)))
+            .where(LINKS.URL.eq(url))
             .fetchInto(LinksRecord.class);
         List<LinkDTO> list = new ArrayList<>();
         for (LinksRecord linksRecord : records) {
@@ -88,9 +84,8 @@ public class JooqLinksRepository extends Links implements LinksRepository {
                 .where(LINKS.linksSites().ID.eq(linksRecord.getSiteId()))
                 .fetchOneInto(String.class);
             list.add(new LinkDTO(
-                linksRecord.getLinkId(),
+                linksRecord.getId(),
                 linksRecord.getUrl(),
-                linksRecord.getAddedAt(),
                 linksRecord.getUpdatedAt(),
                 linksRecord.getLastActivity(),
                 linksRecord.getAnswerCount(),
@@ -106,7 +101,6 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     @Transactional(readOnly = true)
     public List<LinkDTO> findNLinksLastUpdated(int n) {
         List<LinksRecord> records = this.dslContext.selectFrom(LINKS)
-            .where(LINKS.DELETED_AT.isNull())
             .orderBy(LINKS.UPDATED_AT.asc())
             .limit(n)
             .fetchInto(LinksRecord.class);
@@ -117,9 +111,8 @@ public class JooqLinksRepository extends Links implements LinksRepository {
                 .where(LINKS.linksSites().ID.eq(linksRecord.getSiteId()))
                 .fetchOneInto(String.class);
             list.add(new LinkDTO(
-                linksRecord.getLinkId(),
+                linksRecord.getId(),
                 linksRecord.getUrl(),
-                linksRecord.getAddedAt(),
                 linksRecord.getUpdatedAt(),
                 linksRecord.getLastActivity(),
                 linksRecord.getAnswerCount(),

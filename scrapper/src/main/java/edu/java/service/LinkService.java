@@ -6,7 +6,9 @@ import edu.java.apiException.LinkAlreadyExistsException;
 import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.LinkDTO;
 import edu.java.dto.UpdateCheckerResponse;
+import edu.java.repository.LinksArchiveRepository;
 import edu.java.repository.LinksRepository;
+import edu.java.repository.UsersLinksArchiveRepository;
 import edu.java.repository.UsersLinksRepository;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -20,7 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class LinkService {
     private final LinksRepository linksRepository;
 
+    private final LinksArchiveRepository linksArchiveRepository;
+
     private final UsersLinksRepository usersLinksRepository;
+
+    private final UsersLinksArchiveRepository usersLinksArchiveRepository;
 
     @Autowired
     private Map<String, UpdateChecker> updateCheckerMap;
@@ -28,9 +34,14 @@ public class LinkService {
     @Autowired
     private ResourcesConfig resourcesConfig;
 
-    public LinkService(LinksRepository linksRepository, UsersLinksRepository usersLinksRepository) {
+    public LinkService(
+        LinksRepository linksRepository, LinksArchiveRepository linksArchiveRepository,
+        UsersLinksRepository usersLinksRepository, UsersLinksArchiveRepository usersLinksArchiveRepository
+    ) {
         this.linksRepository = linksRepository;
+        this.linksArchiveRepository = linksArchiveRepository;
         this.usersLinksRepository = usersLinksRepository;
+        this.usersLinksArchiveRepository = usersLinksArchiveRepository;
     }
 
     @Transactional

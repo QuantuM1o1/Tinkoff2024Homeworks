@@ -3,9 +3,8 @@ package edu.java.dto;
 import java.time.OffsetDateTime;
 
 public record LinkDTO(
-    long linkId,
+    long id,
     String url,
-    OffsetDateTime addedAt,
     OffsetDateTime updatedAt,
     OffsetDateTime lastActivity,
     Integer answerCount,

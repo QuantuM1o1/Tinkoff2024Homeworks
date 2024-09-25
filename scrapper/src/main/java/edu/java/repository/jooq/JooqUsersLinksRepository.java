@@ -2,17 +2,17 @@ package edu.java.repository.jooq;
 
 import edu.java.dto.LinkDTO;
 import edu.java.repository.UsersLinksRepository;
+import edu.java.scrapper.domain.jooq.tables.UsersLinks;
+import edu.java.scrapper.domain.jooq.tables.records.LinksRecord;
+import edu.java.scrapper.domain.jooq.tables.records.UsersRecord;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.UsersLinks;
-import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records.LinksRecord;
-import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.records.UsersRecord;
-import static ru.tinkoff.edu.java.scrapper.domain.jooq.Tables.LINKS;
-import static ru.tinkoff.edu.java.scrapper.domain.jooq.Tables.USERS;
+import static edu.java.scrapper.domain.jooq.Tables.LINKS;
+import static edu.java.scrapper.domain.jooq.Tables.USERS;
 
 @Repository
 public class JooqUsersLinksRepository extends UsersLinks implements UsersLinksRepository {
@@ -35,8 +35,7 @@ public class JooqUsersLinksRepository extends UsersLinks implements UsersLinksRe
     public void removeUserLink(long chatId, long linkId) {
         OffsetDateTime currentTime = OffsetDateTime.now();
 
-        this.dslContext.update(USERS_LINKS)
-            .set(USERS_LINKS.DELETED_AT, currentTime)
+        this.dslContext.delete(USERS_LINKS)
             .where(USERS_LINKS.USER_ID.eq(chatId).and(USERS_LINKS.LINK_ID.eq(linkId)))
             .execute();
     }
@@ -45,8 +44,8 @@ public class JooqUsersLinksRepository extends UsersLinks implements UsersLinksRe
     public List<LinkDTO> findAllLinksByUser(long chatId) {
         List<LinksRecord> records = this.dslContext.select(LINKS.fields())
             .from(USERS_LINKS)
-            .innerJoin(LINKS).on(USERS_LINKS.LINK_ID.eq(LINKS.LINK_ID))
-            .where(USERS_LINKS.USER_ID.eq(chatId).and(USERS_LINKS.DELETED_AT.isNull()))
+            .innerJoin(LINKS).on(USERS_LINKS.LINK_ID.eq(LINKS.ID))
+            .where(USERS_LINKS.USER_ID.eq(chatId))
             .fetchInto(LinksRecord.class);
         List<LinkDTO> list = new ArrayList<>();
         for (LinksRecord linksRecord : records) {
@@ -55,9 +54,8 @@ public class JooqUsersLinksRepository extends UsersLinks implements UsersLinksRe
                 .where(LINKS.linksSites().ID.eq(linksRecord.getSiteId()))
                 .fetchOneInto(String.class);
             list.add(new LinkDTO(
-                linksRecord.getLinkId(),
+                linksRecord.getId(),
                 linksRecord.getUrl(),
-                linksRecord.getAddedAt(),
                 linksRecord.getUpdatedAt(),
                 linksRecord.getLastActivity(),
                 linksRecord.getAnswerCount(),
@@ -73,11 +71,11 @@ public class JooqUsersLinksRepository extends UsersLinks implements UsersLinksRe
     public List<Long> findAllUsersByLink(long linkId) {
         List<UsersRecord> records = this.dslContext.select(USERS.fields())
             .from(USERS_LINKS)
-            .innerJoin(USERS).on(USERS_LINKS.USER_ID.eq(USERS.CHAT_ID))
-            .where(USERS_LINKS.LINK_ID.eq(linkId).and(USERS_LINKS.DELETED_AT.isNull()))
+            .innerJoin(USERS).on(USERS_LINKS.USER_ID.eq(USERS.TG_CHAT_ID))
+            .where(USERS_LINKS.LINK_ID.eq(linkId))
             .fetchInto(UsersRecord.class);
         List<Long> list = new ArrayList<>();
-        records.forEach(usersRecord -> list.add(usersRecord.getChatId()));
+        records.forEach(usersRecord -> list.add(usersRecord.getTgChatId()));
 
         return list;
     }
@@ -86,13 +84,12 @@ public class JooqUsersLinksRepository extends UsersLinks implements UsersLinksRe
     public List<Long> findUserLink(long chatId, long linkId) {
         List<UsersRecord> records = this.dslContext.select(USERS.fields())
             .from(USERS_LINKS)
-            .innerJoin(USERS).on(USERS_LINKS.USER_ID.eq(USERS.CHAT_ID))
+            .innerJoin(USERS).on(USERS_LINKS.USER_ID.eq(USERS.TG_CHAT_ID))
             .where(USERS_LINKS.LINK_ID.eq(linkId)
-                .and(USERS_LINKS.USER_ID.eq(chatId))
-                .and(USERS_LINKS.DELETED_AT.isNull()))
+                .and(USERS_LINKS.USER_ID.eq(chatId)))
             .fetchInto(UsersRecord.class);
         List<Long> list = new ArrayList<>();
-        records.forEach(usersRecord -> list.add(usersRecord.getChatId()));
+        records.forEach(usersRecord -> list.add(usersRecord.getTgChatId()));
 
         return list;
     }
