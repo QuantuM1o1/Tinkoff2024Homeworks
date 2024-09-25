@@ -2,8 +2,6 @@ package edu.java.repository.jdbc;
 
 import edu.java.dto.UserDTO;
 import edu.java.repository.UsersRepository;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.DataClassRowMapper;
@@ -28,24 +26,21 @@ public class JdbcUsersRepository implements UsersRepository {
 
     @Override
     public void removeUser(long chatId) {
-        String sql = "UPDATE users SET deleted_at = ? WHERE chat_id = ?";
+        String sql = "DELETE FROM users WHERE tg_chat_id = ?";
 
-        LocalDateTime currentTime = LocalDateTime.now();
-        Timestamp timestamp = Timestamp.valueOf(currentTime);
-
-        this.jdbcTemplate.update(sql, timestamp, chatId);
+        this.jdbcTemplate.update(sql, chatId);
     }
 
     @Override
     public List<UserDTO> findAllUsers() {
-        String sql = "SELECT * FROM users WHERE deleted_at IS NULL";
+        String sql = "SELECT * FROM users";
 
         return this.jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
     }
 
     @Override
     public List<UserDTO> findUserById(long chatId) {
-        String sql = "SELECT * FROM users WHERE deleted_at IS NULL AND chat_id = ?";
+        String sql = "SELECT * FROM users WHERE tg_chat_id = ?";
 
         return this.jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class), chatId);
     }

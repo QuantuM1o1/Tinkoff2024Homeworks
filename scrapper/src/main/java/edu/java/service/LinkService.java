@@ -46,7 +46,6 @@ public class LinkService {
                 );
                 LinkDTO link = this.linksRepository.findLinkByUrl(url).getFirst();
                 UpdateCheckerResponse response = this.updateCheckerMap.get(domain).updateLink(link);
-                this.linksRepository.setUpdatedAt(url, OffsetDateTime.now());
                 this.linksRepository.setLastActivity(url, response.lastActivity());
                 this.linksRepository.setAnswerCount(url, response.answerCount());
                 this.linksRepository.setCommentCount(url, response.commentCount());
@@ -92,10 +91,12 @@ public class LinkService {
         return this.usersLinksRepository.findAllUsersByLink(linkId);
     }
 
+    @Transactional
     public void changeUpdatedAtToNow(String url) {
         this.linksRepository.setUpdatedAt(url, OffsetDateTime.now());
     }
 
+    @Transactional
     public void changeLastActivity(String url, OffsetDateTime lastActivity) {
         this.linksRepository.setLastActivity(url, lastActivity);
     }
