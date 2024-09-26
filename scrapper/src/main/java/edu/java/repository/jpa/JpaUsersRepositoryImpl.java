@@ -2,49 +2,41 @@ package edu.java.repository.jpa;
 
 import edu.java.dto.UserDTO;
 import edu.java.entity.UserEntity;
-import edu.java.repository.JpaUserRepository;
 import edu.java.repository.UsersRepository;
-import java.time.OffsetDateTime;
+import edu.java.repository.jpa.interfaces.JpaUsersRepository;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JpaUsersRepositoryImpl implements UsersRepository {
-    private  JpaUserRepository jpaUserRepository;
+    private JpaUsersRepository jpaUsersRepository;
 
     @Override
     public void addUser(long chatId) {
         UserEntity userEntity = new UserEntity();
-        userEntity.setChatId(chatId);
-        userEntity.setAddedAt(OffsetDateTime.now());
-        this.jpaUserRepository.saveAndFlush(userEntity);
+        userEntity.setTgChatId(chatId);
+        this.jpaUsersRepository.saveAndFlush(userEntity);
     }
 
     @Override
     public void removeUser(long chatId) {
-        UserEntity userEntity = this.jpaUserRepository.getReferenceById(chatId);
-        this.jpaUserRepository.delete(userEntity);
+        UserEntity userEntity = this.jpaUsersRepository.getReferenceById(chatId);
+        this.jpaUsersRepository.delete(userEntity);
     }
 
     @Override
     public List<UserDTO> findAllUsers() {
-        List<UserEntity> userEntities = this.jpaUserRepository.findAll();
+        List<UserEntity> userEntities = this.jpaUsersRepository.findAll();
         List<UserDTO> list = new ArrayList<>();
-        userEntities.forEach(userEntity -> list.add(new UserDTO(
-            userEntity.getChatId(),
-            userEntity.getAddedAt()
-        )));
+        userEntities.forEach(userEntity -> list.add(new UserDTO(userEntity.getTgChatId())));
 
         return list;
     }
 
     @Override
     public List<UserDTO> findUserById(long chatId) {
-        UserEntity userEntity = this.jpaUserRepository.getReferenceById(chatId);
+        UserEntity userEntity = this.jpaUsersRepository.getReferenceById(chatId);
         List<UserDTO> list = new ArrayList<>();
-        list.add(new UserDTO(
-            userEntity.getChatId(),
-            userEntity.getAddedAt()
-        ));
+        list.add(new UserDTO(userEntity.getTgChatId()));
 
         return list;
     }

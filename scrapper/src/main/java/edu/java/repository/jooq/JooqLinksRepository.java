@@ -10,7 +10,6 @@ import edu.java.scrapper.domain.jooq.tables.records.LinksRecord;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class JooqLinksRepository extends Links implements LinksRepository {
@@ -22,7 +21,6 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     }
 
     @Override
-    @Transactional
     public void addLink(String url, OffsetDateTime lastActivity, int siteId, int answerCount, int commentCount) {
         OffsetDateTime currentTime = OffsetDateTime.now();
 
@@ -37,7 +35,6 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     }
 
     @Override
-    @Transactional
     public void removeLink(String url) {
         OffsetDateTime currentTime = OffsetDateTime.now();
 
@@ -47,7 +44,6 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<LinkDTO> findAllLinks() {
         List<LinksRecord> records = this.dslContext.selectFrom(LINKS)
             .fetchInto(LinksRecord.class);
@@ -72,7 +68,6 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<LinkDTO> findLinkByUrl(String url) {
         List<LinksRecord> records = this.dslContext.selectFrom(LINKS)
             .where(LINKS.URL.eq(url))
@@ -98,7 +93,6 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<LinkDTO> findNLinksLastUpdated(int n) {
         List<LinksRecord> records = this.dslContext.selectFrom(LINKS)
             .orderBy(LINKS.UPDATED_AT.asc())
@@ -128,27 +122,31 @@ public class JooqLinksRepository extends Links implements LinksRepository {
     public void setUpdatedAt(String url, OffsetDateTime updatedAt) {
         this.dslContext.update(LINKS)
             .set(LINKS.UPDATED_AT, updatedAt)
-            .where(LINKS.URL.eq(url));
+            .where(LINKS.URL.eq(url))
+            .execute();
     }
 
     @Override
     public void setAnswerCount(String url, int count) {
         this.dslContext.update(LINKS)
             .set(LINKS.ANSWER_COUNT, count)
-            .where(LINKS.URL.eq(url));
+            .where(LINKS.URL.eq(url))
+            .execute();
     }
 
     @Override
     public void setCommentCount(String url, int count) {
         this.dslContext.update(LINKS)
             .set(LINKS.COMMENT_COUNT, count)
-            .where(LINKS.URL.eq(url));
+            .where(LINKS.URL.eq(url))
+            .execute();
     }
 
     @Override
     public void setLastActivity(String url, OffsetDateTime lastActivity) {
         this.dslContext.update(LINKS)
             .set(LINKS.LAST_ACTIVITY, lastActivity)
-            .where(LINKS.URL.eq(url));
+            .where(LINKS.URL.eq(url))
+            .execute();
     }
 }

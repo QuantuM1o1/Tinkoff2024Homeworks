@@ -10,7 +10,6 @@ import edu.java.scrapper.domain.jooq.tables.records.UsersRecord;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class JooqUsersRepository extends Users implements UsersRepository {
@@ -22,7 +21,6 @@ public class JooqUsersRepository extends Users implements UsersRepository {
     }
 
     @Override
-    @Transactional
     public void addUser(long chatId) {
         OffsetDateTime currentTime = OffsetDateTime.now();
 
@@ -32,7 +30,6 @@ public class JooqUsersRepository extends Users implements UsersRepository {
     }
 
     @Override
-    @Transactional
     public void removeUser(long chatId) {
         OffsetDateTime currentTime = OffsetDateTime.now();
 
@@ -42,7 +39,6 @@ public class JooqUsersRepository extends Users implements UsersRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserDTO> findAllUsers() {
         List<UsersRecord> records = this.dslContext.selectFrom(USERS)
             .fetchInto(UsersRecord.class);
@@ -53,7 +49,6 @@ public class JooqUsersRepository extends Users implements UsersRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserDTO> findUserById(long chatId) {
         List<UsersRecord> records = this.dslContext.selectFrom(USERS)
             .where(USERS.TG_CHAT_ID.eq(chatId))

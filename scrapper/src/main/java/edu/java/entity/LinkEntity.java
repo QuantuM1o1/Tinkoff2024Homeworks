@@ -29,13 +29,8 @@ public class LinkEntity {
 
     private String url;
 
-    private OffsetDateTime deletedAt;
-
     @LastModifiedDate
     private OffsetDateTime updatedAt;
-
-    @CreatedDate
-    private OffsetDateTime addedAt;
 
     private OffsetDateTime lastActivity;
 

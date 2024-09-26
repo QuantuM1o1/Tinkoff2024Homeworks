@@ -9,24 +9,28 @@ import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SoftDelete;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "users")
-public class UserEntity {
+@Table(name = "users_archive")
+public class UserArchiveEntity {
     @Id
+    private long id;
+
     private long tgChatId;
 
-    @ManyToMany
-    @JoinTable(
-        name = "users_links",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "link_id"))
-    private List<LinkEntity> links = new ArrayList<>();
+    @CreatedDate
+    private OffsetDateTime addedAt;
+
+    private OffsetDateTime deletedAt;
 }
