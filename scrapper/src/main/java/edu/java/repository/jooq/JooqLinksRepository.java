@@ -2,11 +2,11 @@ package edu.java.repository.jooq;
 
 import edu.java.dto.LinkDTO;
 import edu.java.repository.LinksRepository;
+import edu.java.scrapper.domain.jooq.tables.Links;
+import edu.java.scrapper.domain.jooq.tables.records.LinksRecord;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import edu.java.scrapper.domain.jooq.tables.Links;
-import edu.java.scrapper.domain.jooq.tables.records.LinksRecord;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

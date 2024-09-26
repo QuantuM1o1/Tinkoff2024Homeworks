@@ -2,10 +2,10 @@ package edu.java.repository.jooq;
 
 import edu.java.repository.LinksArchiveRepository;
 import edu.java.scrapper.domain.jooq.tables.LinksArchive;
+import java.time.OffsetDateTime;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import java.time.OffsetDateTime;
 
 @Repository
 public class JooqLinksArchiveRepository extends LinksArchive implements LinksArchiveRepository {

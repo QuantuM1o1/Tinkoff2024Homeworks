@@ -1,11 +1,11 @@
 package edu.java.repository.jdbc;
 
 import edu.java.repository.UsersArchiveRepository;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Repository
 public class JdbcUsersArchiveRepository implements UsersArchiveRepository {

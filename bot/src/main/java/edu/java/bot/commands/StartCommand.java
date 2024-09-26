@@ -14,6 +14,7 @@ public class StartCommand implements Command {
     private TgChatClient client;
     private static final String COMMAND_NAME = "/start";
     private static final String COMMAND_DESCRIPTION = "Start command";
+    private static final String GREETINGS = "Hello, ";
 
     @Override
     public String name() {
@@ -31,9 +32,9 @@ public class StartCommand implements Command {
         String userName = update.message().chat().firstName();
         try {
             this.client.addChat(chatId).block();
-            return "Hello, " + userName + "! Welcome to the notification Telegram bot.";
+            return GREETINGS + userName + "! Welcome to the notification Telegram bot.";
         } catch (UserAlreadyRegisteredException e) {
-            return "Hello, " + userName + "! Welcome to the notification Telegram bot again.";
+            return GREETINGS + userName + "! Welcome to the notification Telegram bot again.";
         } catch (IncorrectRequestException e) {
             return e.getMessage();
         }

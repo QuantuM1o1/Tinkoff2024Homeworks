@@ -6,7 +6,6 @@ import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
 import edu.java.dto.LinkDTO;
 import edu.java.dto.UpdateCheckerResponse;
-import edu.java.repository.LinksRepository;
 import edu.java.service.UpdateChecker;
 import java.time.OffsetDateTime;
 import java.util.Optional;
