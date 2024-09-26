@@ -47,7 +47,7 @@ public class StackOverflowUpdateCheckerTest {
         itemList.add(item);
         StackOverflowQuestionResponse mockResponse = new StackOverflowQuestionResponse(itemList);
         List<LinkDTO> list = new ArrayList<>();
-        LinkDTO linkDTO = new LinkDTO(1, url, time, time, time, answers - 1, comments - 1, "domain");
+        LinkDTO linkDTO = new LinkDTO(1, url, time, time, answers - 1, comments - 1, "domain");
         list.add(linkDTO);
         Mono<StackOverflowQuestionResponse> mockMono = Mockito.mock(Mono.class);
 

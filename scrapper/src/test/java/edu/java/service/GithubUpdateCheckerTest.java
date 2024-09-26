@@ -42,7 +42,7 @@ public class GithubUpdateCheckerTest {
         GitHubRepositoryResponse mockResponse = new GitHubRepositoryResponse(1, "123", lastActivity);
         int count = 0;
         List<LinkDTO> list = new ArrayList<>();
-        LinkDTO linkDTO = new LinkDTO(1, url, time, time, time, count, count, "github.com");
+        LinkDTO linkDTO = new LinkDTO(1, url, time, time, count, count, "github.com");
         list.add(linkDTO);
         Mono<GitHubRepositoryResponse> mockMono = Mockito.mock(Mono.class);
 

@@ -42,7 +42,7 @@ public class JdbcUserLinkRepositoryTest extends IntegrationTest {
         this.lastActivity = OffsetDateTime.now();
         this.siteId = 1;
         this.linkRepository.addLink(this.url, this.lastActivity, this.siteId, 0, 0);
-        this.linkId = this.linkRepository.findAllLinks().getFirst().linkId();
+        this.linkId = this.linkRepository.findAllLinks().getFirst().id();
     }
 
     @Test
@@ -56,7 +56,7 @@ public class JdbcUserLinkRepositoryTest extends IntegrationTest {
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().linkId()).isEqualTo(this.linkId);
+        assertThat(answer.getFirst().id()).isEqualTo(this.linkId);
         assertThat(answer.getFirst().url()).isEqualTo(this.url);
     }
 
@@ -66,7 +66,7 @@ public class JdbcUserLinkRepositoryTest extends IntegrationTest {
         // given
         String url2 = "https://guessthe.game/";
         this.linkRepository.addLink(url2, this.lastActivity, this.siteId, 0, 0);
-        long linkId2 = this.linkRepository.findLinkByUrl(url2).getFirst().linkId();
+        long linkId2 = this.linkRepository.findLinkByUrl(url2).getFirst().id();
 
         // when
         this.userLinkRepository.addUserLink(this.chatId, this.linkId);
@@ -85,7 +85,7 @@ public class JdbcUserLinkRepositoryTest extends IntegrationTest {
         // given
         String url2 = "https://guessthe.game/";
         this.linkRepository.addLink(url2, this.lastActivity, this.siteId, 0, 0);
-        long linkId2 = this.linkRepository.findAllLinks().getLast().linkId();
+        long linkId2 = this.linkRepository.findAllLinks().getLast().id();
 
         // when
         this.userLinkRepository.addUserLink(this.chatId, this.linkId);
