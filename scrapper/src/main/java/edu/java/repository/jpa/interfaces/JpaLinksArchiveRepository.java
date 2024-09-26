@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaLinksArchiveRepository extends JpaRepository<LinkArchiveEntity, Long> {
     @Modifying
-    @Query("UPDATE LinksArchive l SET l.deletedAt = :deletedAt WHERE l.linkId = :linkId AND l.deletedAt IS NULL")
+    @Query("UPDATE LinkArchiveEntity l SET l.deletedAt = :deletedAt WHERE l.linkId = :linkId AND l.deletedAt IS NULL")
     void markAsDeleted(OffsetDateTime deletedAt, long linkId);
 }

@@ -4,10 +4,14 @@ import edu.java.dto.UserDTO;
 import edu.java.entity.UserEntity;
 import edu.java.repository.UsersRepository;
 import edu.java.repository.jpa.interfaces.JpaUsersRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class JpaUsersRepositoryImpl implements UsersRepository {
+    @Autowired
     private JpaUsersRepository jpaUsersRepository;
 
     @Override

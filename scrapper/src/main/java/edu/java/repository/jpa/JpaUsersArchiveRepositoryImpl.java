@@ -3,9 +3,13 @@ package edu.java.repository.jpa;
 import edu.java.entity.UserArchiveEntity;
 import edu.java.repository.UsersArchiveRepository;
 import edu.java.repository.jpa.interfaces.JpaUsersArchiveRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 
+@Repository
 public class JpaUsersArchiveRepositoryImpl implements UsersArchiveRepository {
+    @Autowired
     private JpaUsersArchiveRepository jpaUsersArchiveRepository;
 
     @Override

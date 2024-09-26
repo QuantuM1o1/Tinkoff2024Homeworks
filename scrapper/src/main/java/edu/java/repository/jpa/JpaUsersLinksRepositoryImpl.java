@@ -7,14 +7,20 @@ import edu.java.repository.UsersLinksRepository;
 import edu.java.repository.jpa.interfaces.JpaLinksRepository;
 import edu.java.repository.jpa.interfaces.JpaLinksSitesRepository;
 import edu.java.repository.jpa.interfaces.JpaUsersRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class JpaUsersLinksRepositoryImpl implements UsersLinksRepository {
+    @Autowired
     private JpaUsersRepository jpaUsersRepository;
 
+    @Autowired
     private JpaLinksRepository jpaLinksRepository;
 
+    @Autowired
     private JpaLinksSitesRepository jpaLinksSitesRepository;
 
     @Override

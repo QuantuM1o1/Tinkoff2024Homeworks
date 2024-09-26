@@ -5,14 +5,19 @@ import edu.java.entity.LinkEntity;
 import edu.java.repository.LinksRepository;
 import edu.java.repository.jpa.interfaces.JpaLinksRepository;
 import edu.java.repository.jpa.interfaces.JpaLinksSitesRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+@Repository
 public class JpaLinksRepositoryImpl implements LinksRepository {
+    @Autowired
     private JpaLinksRepository jpaLinksRepository;
 
+    @Autowired
     private JpaLinksSitesRepository jpaLinksSitesRepository;
 
     @Override
