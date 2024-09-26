@@ -32,13 +32,6 @@ VALUES (1, 'stackoverflow.com');
 INSERT INTO links_sites (id, domain_name)
 VALUES (2, 'github.com');
 
-CREATE TABLE IF NOT EXISTS links_archive (
-    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    link_id BIGINT,
-    added_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    deleted_at TIMESTAMP WITH TIME ZONE NULL
-);
-
 CREATE TABLE IF NOT EXISTS users_links (
     user_id BIGINT NOT NULL,
     link_id BIGINT NOT NULL,
@@ -50,7 +43,7 @@ CREATE TABLE IF NOT EXISTS users_links (
 CREATE TABLE IF NOT EXISTS users_links_archive (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
-    link_id BIGINT NOT NULL,
+    url TEXT NOT NULL,
     added_at TIMESTAMP WITH TIME ZONE NOT NULL,
     deleted_at TIMESTAMP WITH TIME ZONE NULL
 );

@@ -1,7 +1,7 @@
 package edu.java.configuration;
 
-import edu.java.repository.jdbc.JdbcLinksArchiveRepository;
 import edu.java.repository.jdbc.JdbcLinksRepository;
+import edu.java.repository.jdbc.JdbcUsersArchiveRepository;
 import edu.java.repository.jdbc.JdbcUsersLinksArchiveRepository;
 import edu.java.repository.jdbc.JdbcUsersLinksRepository;
 import edu.java.repository.jdbc.JdbcUsersRepository;
@@ -19,27 +19,23 @@ import org.springframework.context.annotation.Configuration;
 public class JdbcAccessConfig {
     @Bean
     public LinkService linkService(
-        JdbcLinksRepository linksRepository, JdbcLinksArchiveRepository linksArchiveRepository,
-        JdbcUsersLinksRepository usersLinksRepository, JdbcUsersLinksArchiveRepository usersLinksArchiveRepository
+        JdbcLinksRepository linksRepository,
+        JdbcUsersLinksRepository usersLinksRepository,
+        JdbcUsersLinksArchiveRepository usersLinksArchiveRepository
     ) {
-        return new LinkService(
-            linksRepository, linksArchiveRepository,
-            usersLinksRepository, usersLinksArchiveRepository
-        );
+        return new LinkService(linksRepository, usersLinksRepository, usersLinksArchiveRepository);
     }
 
     @Bean
-    public LinkUpdaterService linkUpdaterService(
-        JdbcLinksRepository linkRepository
-    ) {
+    public LinkUpdaterService linkUpdaterService(JdbcLinksRepository linkRepository) {
         return new LinkUpdaterService(linkRepository);
     }
 
     @Bean
     public TgChatService tgChatService(
-        JdbcUsersRepository userRepository
+        JdbcUsersRepository userRepository, JdbcUsersArchiveRepository userArchiveRepository
     ) {
-        return new TgChatService(userRepository);
+        return new TgChatService(userRepository, userArchiveRepository);
     }
 
     @Bean(name = "github.com")

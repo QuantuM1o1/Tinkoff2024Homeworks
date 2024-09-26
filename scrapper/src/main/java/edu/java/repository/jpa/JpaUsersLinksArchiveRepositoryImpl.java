@@ -9,17 +9,18 @@ public class JpaUsersLinksArchiveRepositoryImpl implements UsersLinksArchiveRepo
     private JpaUsersLinksArchiveRepository jpaUsersLinksArchiveRepository;
 
     @Override
-    public void addUserLink(long chatId, long linkId) {
+    public void addUserLink(long chatId, String url) {
         UserLinkArchiveEntity userLinkArchiveEntity = new UserLinkArchiveEntity();
         userLinkArchiveEntity.setUserId(chatId);
+        userLinkArchiveEntity.setUrl(url);
         userLinkArchiveEntity.setAddedAt(OffsetDateTime.now());
         this.jpaUsersLinksArchiveRepository.saveAndFlush(userLinkArchiveEntity);
     }
 
     @Override
-    public void removeUserLink(long chatId, long linkId) {
+    public void removeUserLink(long chatId, String url) {
         OffsetDateTime currentTime = OffsetDateTime.now();
 
-        this.jpaUsersLinksArchiveRepository.markAsDeleted(currentTime, chatId, linkId);
+        this.jpaUsersLinksArchiveRepository.markAsDeleted(currentTime, chatId, url);
     }
 }

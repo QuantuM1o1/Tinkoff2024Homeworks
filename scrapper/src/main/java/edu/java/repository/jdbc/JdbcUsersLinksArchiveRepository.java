@@ -17,23 +17,23 @@ public class JdbcUsersLinksArchiveRepository implements UsersLinksArchiveReposit
     }
 
     @Override
-    public void addUserLink(long chatId, long linkId) {
-        String sql = "INSERT INTO users_links_archive (user_id, link_id, added_at) VALUES (?, ?, ?)";
+    public void addUserLink(long chatId, String url) {
+        String sql = "INSERT INTO users_links_archive (user_id, url, added_at) VALUES (?, ?, ?)";
 
         LocalDateTime currentTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(currentTime);
 
-        this.jdbcTemplate.update(sql, chatId, linkId, timestamp);
+        this.jdbcTemplate.update(sql, chatId, url, timestamp);
     }
 
     @Override
-    public void removeUserLink(long chatId, long linkId) {
+    public void removeUserLink(long chatId, String url) {
         String sql = "UPDATE users_links_archive SET deleted_at = ? "
-            + "WHERE user_id = ? AND link_id = ? AND deleted_at = NULL";
+            + "WHERE user_id = ? AND url = ? AND deleted_at = NULL";
 
         LocalDateTime currentTime = LocalDateTime.now();
         Timestamp timestamp = Timestamp.valueOf(currentTime);
 
-        this.jdbcTemplate.update(sql, timestamp, chatId, linkId);
+        this.jdbcTemplate.update(sql, timestamp, chatId, url);
     }
 }

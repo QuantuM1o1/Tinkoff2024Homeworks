@@ -20,7 +20,7 @@ public class UserLinkArchiveEntity {
 
     private long userId;
 
-    private long linkId;
+    private String url;
 
     @CreatedDate
     private OffsetDateTime addedAt;

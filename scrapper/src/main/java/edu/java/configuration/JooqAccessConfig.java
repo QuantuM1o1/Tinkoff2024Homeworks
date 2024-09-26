@@ -1,6 +1,8 @@
 package edu.java.configuration;
 
 import edu.java.repository.jooq.JooqLinksRepository;
+import edu.java.repository.jooq.JooqUsersArchiveRepository;
+import edu.java.repository.jooq.JooqUsersLinksArchiveRepository;
 import edu.java.repository.jooq.JooqUsersLinksRepository;
 import edu.java.repository.jooq.JooqUsersRepository;
 import edu.java.service.LinkService;
@@ -18,23 +20,22 @@ public class JooqAccessConfig {
     @Bean
     public LinkService linkService(
         JooqLinksRepository linkRepository,
-        JooqUsersLinksRepository userLinkRepository
+        JooqUsersLinksRepository userLinkRepository,
+        JooqUsersLinksArchiveRepository userLinkArchiveRepository
     ) {
-        return new LinkService(linkRepository, userLinkRepository);
+        return new LinkService(linkRepository, userLinkRepository, userLinkArchiveRepository);
     }
 
     @Bean
-    public LinkUpdaterService linkUpdaterService(
-        JooqLinksRepository linkRepository
-    ) {
+    public LinkUpdaterService linkUpdaterService(JooqLinksRepository linkRepository) {
         return new LinkUpdaterService(linkRepository);
     }
 
     @Bean
     public TgChatService tgChatService(
-        JooqUsersRepository userRepository
+        JooqUsersRepository userRepository, JooqUsersArchiveRepository usersArchiveRepository
     ) {
-        return new TgChatService(userRepository);
+        return new TgChatService(userRepository, usersArchiveRepository);
     }
 
     @Bean(name = "github.com")

@@ -6,7 +6,6 @@ import edu.java.apiException.LinkAlreadyExistsException;
 import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.LinkDTO;
 import edu.java.dto.UpdateCheckerResponse;
-import edu.java.repository.LinksArchiveRepository;
 import edu.java.repository.LinksRepository;
 import edu.java.repository.UsersLinksArchiveRepository;
 import edu.java.repository.UsersLinksRepository;
@@ -22,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class LinkService {
     private final LinksRepository linksRepository;
 
-    private final LinksArchiveRepository linksArchiveRepository;
-
     private final UsersLinksRepository usersLinksRepository;
 
     private final UsersLinksArchiveRepository usersLinksArchiveRepository;
@@ -35,11 +32,11 @@ public class LinkService {
     private ResourcesConfig resourcesConfig;
 
     public LinkService(
-        LinksRepository linksRepository, LinksArchiveRepository linksArchiveRepository,
-        UsersLinksRepository usersLinksRepository, UsersLinksArchiveRepository usersLinksArchiveRepository
+        LinksRepository linksRepository,
+        UsersLinksRepository usersLinksRepository,
+        UsersLinksArchiveRepository usersLinksArchiveRepository
     ) {
         this.linksRepository = linksRepository;
-        this.linksArchiveRepository = linksArchiveRepository;
         this.usersLinksRepository = usersLinksRepository;
         this.usersLinksArchiveRepository = usersLinksArchiveRepository;
     }
@@ -66,19 +63,21 @@ public class LinkService {
         } else {
             if (this.linkExists(
                 tgChatId,
-                this.linksRepository.findLinkByUrl(url).getFirst().linkId()
+                this.linksRepository.findLinkByUrl(url).getFirst().id()
             )) {
                 throw new LinkAlreadyExistsException();
             }
         }
-        long linkId = this.linksRepository.findLinkByUrl(url).getFirst().linkId();
+        long linkId = this.linksRepository.findLinkByUrl(url).getFirst().id();
         this.usersLinksRepository.addUserLink(tgChatId, linkId);
+        this.usersLinksArchiveRepository.addUserLink(tgChatId, url);
     }
 
     @Transactional
     public void remove(long tgChatId, String url) {
-        long linkId = this.linksRepository.findLinkByUrl(url).getFirst().linkId();
+        long linkId = this.linksRepository.findLinkByUrl(url).getFirst().id();
         this.usersLinksRepository.removeUserLink(tgChatId, linkId);
+        this.usersLinksArchiveRepository.removeUserLink(tgChatId, url);
     }
 
     public ListLinksResponse listAll(long tgChatId) {
@@ -86,7 +85,7 @@ public class LinkService {
         List<LinkResponse> responseList = new ArrayList<>();
         for (LinkDTO link : list) {
             LinkResponse linkResponse = new LinkResponse(
-                link.linkId(),
+                link.id(),
                 URI.create(link.url())
             );
             responseList.add(linkResponse);

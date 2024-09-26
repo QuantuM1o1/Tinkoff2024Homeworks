@@ -1,6 +1,8 @@
 package edu.java.configuration;
 
 import edu.java.repository.jpa.JpaLinksRepositoryImpl;
+import edu.java.repository.jpa.JpaUsersArchiveRepositoryImpl;
+import edu.java.repository.jpa.JpaUsersLinksArchiveRepositoryImpl;
 import edu.java.repository.jpa.JpaUsersLinksRepositoryImpl;
 import edu.java.repository.jpa.JpaUsersRepositoryImpl;
 import edu.java.service.LinkService;
@@ -18,9 +20,10 @@ public class JpaAccessConfig {
     @Bean
     public LinkService linkService(
         JpaLinksRepositoryImpl linkRepository,
-        JpaUsersLinksRepositoryImpl userLinkRepository
+        JpaUsersLinksRepositoryImpl userLinkRepository,
+        JpaUsersLinksArchiveRepositoryImpl userLinkArchiveRepository
     ) {
-        return new LinkService(linkRepository, userLinkRepository);
+        return new LinkService(linkRepository, userLinkRepository, userLinkArchiveRepository);
     }
 
     @Bean
@@ -29,8 +32,10 @@ public class JpaAccessConfig {
     }
 
     @Bean
-    public TgChatService tgChatService(JpaUsersRepositoryImpl userRepository) {
-        return new TgChatService(userRepository);
+    public TgChatService tgChatService(
+        JpaUsersRepositoryImpl userRepository, JpaUsersArchiveRepositoryImpl userArchiveRepository
+    ) {
+        return new TgChatService(userRepository, userArchiveRepository);
     }
 
     @Bean(name = "github.com")
