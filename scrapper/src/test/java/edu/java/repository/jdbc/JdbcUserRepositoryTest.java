@@ -2,7 +2,6 @@ package edu.java.repository.jdbc;
 
 import edu.java.dto.UserDTO;
 import edu.java.scrapper.IntegrationTest;
-import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,23 +49,18 @@ public class JdbcUserRepositoryTest extends IntegrationTest {
     void removeTest() {
         // given
         long chatId2 = 1231L;
-        OffsetDateTime addedAt = OffsetDateTime.now();
-        String sql = "SELECT * FROM users WHERE deleted_at IS NULL";
-        String sqlDeleted = "SELECT * FROM users WHERE deleted_at IS NOT NULL";
-        String sqlAdd = "INSERT INTO users (tg_chat_id, added_at) VALUES (?, ?)";
+        String sql = "SELECT * FROM users";
+        String sqlAdd = "INSERT INTO users tg_chat_id VALUES ?";
 
         // when
-        jdbcTemplate.update(sqlAdd, this.chatId, addedAt);
-        jdbcTemplate.update(sqlAdd, chatId2, addedAt);
+        jdbcTemplate.update(sqlAdd, this.chatId);
+        jdbcTemplate.update(sqlAdd, chatId2);
         userRepository.removeUser(this.chatId);
         List<UserDTO> answer = jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
-        List<UserDTO> deleted = jdbcTemplate.query(sqlDeleted, new DataClassRowMapper<>(UserDTO.class));
 
         // then
         assertThat(answer.size()).isEqualTo(1);
         assertThat(answer.getFirst().tgChatId()).isEqualTo(chatId2);
-        assertThat(deleted.size()).isEqualTo(1);
-        assertThat(deleted.getFirst().tgChatId()).isEqualTo(this.chatId);
     }
 
     @Test
@@ -74,12 +68,11 @@ public class JdbcUserRepositoryTest extends IntegrationTest {
     void findAllTest() {
         // given
         long chatId2 = 1231L;
-        OffsetDateTime addedAt = OffsetDateTime.now();
-        String sqlAdd = "INSERT INTO users (tg_chat_id, added_at) VALUES (?, ?)";
+        String sqlAdd = "INSERT INTO users tg_chat_id VALUES ?";
 
         // when
-        jdbcTemplate.update(sqlAdd, this.chatId, addedAt);
-        jdbcTemplate.update(sqlAdd, chatId2, addedAt);
+        jdbcTemplate.update(sqlAdd, this.chatId);
+        jdbcTemplate.update(sqlAdd, chatId2);
         List<UserDTO> answer = userRepository.findAllUsers();
 
         // then
