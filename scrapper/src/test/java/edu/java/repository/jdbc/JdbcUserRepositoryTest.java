@@ -42,7 +42,7 @@ public class JdbcUserRepositoryTest extends IntegrationTest {
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().chatId()).isEqualTo(this.chatId);
+        assertThat(answer.getFirst().tgChatId()).isEqualTo(this.chatId);
     }
 
     @Test
@@ -64,9 +64,9 @@ public class JdbcUserRepositoryTest extends IntegrationTest {
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().chatId()).isEqualTo(chatId2);
+        assertThat(answer.getFirst().tgChatId()).isEqualTo(chatId2);
         assertThat(deleted.size()).isEqualTo(1);
-        assertThat(deleted.getFirst().chatId()).isEqualTo(this.chatId);
+        assertThat(deleted.getFirst().tgChatId()).isEqualTo(this.chatId);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class JdbcUserRepositoryTest extends IntegrationTest {
 
         // then
         assertThat(answer.size()).isEqualTo(2);
-        assertThat(answer.getFirst().chatId()).isEqualTo(this.chatId);
-        assertThat(answer.getLast().chatId()).isEqualTo(chatId2);
+        assertThat(answer.getFirst().tgChatId()).isEqualTo(this.chatId);
+        assertThat(answer.getLast().tgChatId()).isEqualTo(chatId2);
     }
 }

@@ -40,7 +40,7 @@ public class TgChatServiceTest extends IntegrationTest {
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().chatId()).isEqualTo(this.id);
+        assertThat(answer.getFirst().tgChatId()).isEqualTo(this.id);
     }
 
     @Test

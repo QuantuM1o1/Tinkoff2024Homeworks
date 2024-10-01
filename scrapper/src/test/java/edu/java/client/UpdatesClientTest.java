@@ -36,9 +36,9 @@ public class UpdatesClientTest {
 
     @BeforeEach
     public void setUp() {
-        wireMockServer = new WireMockServer(8090);
-        wireMockServer.start();
-        WireMock.configureFor(wireMockServer.port());
+        this.wireMockServer = new WireMockServer(8090);
+        this.wireMockServer.start();
+        WireMock.configureFor(this.wireMockServer.port());
         this.request = new LinkUpdateRequest(
             123L,
             URI.create("https://www.google.com/"),
