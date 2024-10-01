@@ -5,7 +5,6 @@ import edu.java.entity.LinkEntity;
 import edu.java.repository.LinksRepository;
 import edu.java.repository.jpa.interfaces.JpaLinksRepository;
 import edu.java.repository.jpa.interfaces.JpaLinksSitesRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
