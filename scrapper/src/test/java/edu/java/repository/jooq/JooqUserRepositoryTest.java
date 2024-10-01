@@ -53,7 +53,7 @@ public class JooqUserRepositoryTest extends IntegrationTest {
         OffsetDateTime addedAt = OffsetDateTime.now();
         String sql = "SELECT * FROM users WHERE deleted_at IS NULL";
         String sqlDeleted = "SELECT * FROM users WHERE deleted_at IS NOT NULL";
-        String sqlAdd = "INSERT INTO users (chat_id, added_at) VALUES (?, ?)";
+        String sqlAdd = "INSERT INTO users (tg_chat_id, added_at) VALUES (?, ?)";
 
         // when
         this.jdbcTemplate.update(sqlAdd, this.chatId, addedAt);
@@ -75,7 +75,7 @@ public class JooqUserRepositoryTest extends IntegrationTest {
         // given
         long chatId2 = 1231L;
         OffsetDateTime addedAt = OffsetDateTime.now();
-        String sqlAdd = "INSERT INTO users (chat_id, added_at) VALUES (?, ?)";
+        String sqlAdd = "INSERT INTO users (tg_chat_id, added_at) VALUES (?, ?)";
 
         // when
         this.jdbcTemplate.update(sqlAdd, this.chatId, addedAt);
