@@ -14,13 +14,10 @@ import java.util.List;
 
 @Repository
 public class JpaUsersLinksRepositoryImpl implements UsersLinksRepository {
-    @Autowired
     private JpaUsersRepository jpaUsersRepository;
 
-    @Autowired
     private JpaLinksRepository jpaLinksRepository;
 
-    @Autowired
     private JpaLinksSitesRepository jpaLinksSitesRepository;
 
     @Override

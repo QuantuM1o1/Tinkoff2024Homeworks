@@ -9,7 +9,6 @@ import java.time.OffsetDateTime;
 
 @Repository
 public class JpaUsersArchiveRepositoryImpl implements UsersArchiveRepository {
-    @Autowired
     private JpaUsersArchiveRepository jpaUsersArchiveRepository;
 
     @Override

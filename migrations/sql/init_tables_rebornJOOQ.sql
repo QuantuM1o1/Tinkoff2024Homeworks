@@ -26,11 +26,14 @@ CREATE TABLE IF NOT EXISTS links (
 );
 
 INSERT INTO links_sites (id, domain_name)
-VALUES (0, 'unsupported');
+VALUES (0, 'unsupported')
+ON CONFLICT DO NOTHING;
 INSERT INTO links_sites (id, domain_name)
-VALUES (1, 'stackoverflow.com');
+VALUES (1, 'stackoverflow.com')
+ON CONFLICT DO NOTHING;
 INSERT INTO links_sites (id, domain_name)
-VALUES (2, 'github.com');
+VALUES (2, 'github.com')
+ON CONFLICT DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS users_links (
     user_id BIGINT NOT NULL,

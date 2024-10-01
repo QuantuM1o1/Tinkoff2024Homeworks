@@ -1,6 +1,6 @@
 app:
   bot-url: "http://bot:8090"
-  database-access-type: JPA
+  database-access-type: JDBC
   links-to-update: 2
   use-queue: true
 

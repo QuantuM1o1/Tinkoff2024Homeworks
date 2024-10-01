@@ -7,10 +7,5 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-<!--    <include file="sql/init_tablesJOOQ.sql"/>-->
-<!--    <include file="sql/hw5.sql"/>-->
-<!--    <include file="sql/hw6user_link_add_unique_idJOOQ.sql"/>-->
-<!--    <include file="sql/hw6rename_table.sql"/>-->
-<!--    <include file="sql/hw5bonus.sql"/>-->
     <include file="sql/init_tables_rebornJOOQ.sql"/>
 </databaseChangeLog>

@@ -14,10 +14,8 @@ import java.util.stream.IntStream;
 
 @Repository
 public class JpaLinksRepositoryImpl implements LinksRepository {
-    @Autowired
     private JpaLinksRepository jpaLinksRepository;
 
-    @Autowired
     private JpaLinksSitesRepository jpaLinksSitesRepository;
 
     @Override

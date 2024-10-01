@@ -5,7 +5,9 @@ import edu.java.scrapper.domain.jooq.tables.UsersArchive;
 import java.time.OffsetDateTime;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class JooqUsersArchiveRepository extends UsersArchive implements UsersArchiveRepository {
     private final DSLContext dslContext;
 
