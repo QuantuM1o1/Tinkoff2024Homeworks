@@ -3,9 +3,9 @@ package edu.java.service;
 import dto.ListLinksResponse;
 import edu.java.apiException.LinkAlreadyExistsException;
 import edu.java.dto.LinkDTO;
-import edu.java.repository.jdbc.JdbcLinkRepository;
-import edu.java.repository.jdbc.JdbcUserLinkRepository;
-import edu.java.repository.jdbc.JdbcUserRepository;
+import edu.java.repository.jdbc.JdbcLinksRepository;
+import edu.java.repository.jdbc.JdbcUsersLinksRepository;
+import edu.java.repository.jdbc.JdbcUsersRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -25,13 +25,13 @@ public class LinkServiceTest extends IntegrationTest {
     private LinkService linkService;
 
     @Autowired
-    private JdbcUserLinkRepository userLinkRepository;
+    private JdbcUsersLinksRepository userLinkRepository;
 
     @Autowired
-    private JdbcUserRepository userRepository;
+    private JdbcUsersRepository userRepository;
 
     @Autowired
-    private JdbcLinkRepository linkRepository;
+    private JdbcLinksRepository linkRepository;
 
     private long id;
 
@@ -103,10 +103,10 @@ public class LinkServiceTest extends IntegrationTest {
     public void returnAllUsersForLink() {
         // given
         List<LinkDTO> list = this.linkRepository.findLinkByUrl(this.url);
-        this.userLinkRepository.addUserLink(this.id, list.getFirst().linkId());
+        this.userLinkRepository.addUserLink(this.id, list.getFirst().id());
 
         // when
-        List<Long> answer = (List<Long>) this.linkService.findAllUsersForLink(list.getFirst().linkId());
+        List<Long> answer = (List<Long>) this.linkService.findAllUsersForLink(list.getFirst().id());
 
         // then
         assertThat(answer.size()).isEqualTo(1);

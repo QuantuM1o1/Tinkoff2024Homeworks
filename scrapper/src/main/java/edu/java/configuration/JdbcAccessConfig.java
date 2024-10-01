@@ -1,8 +1,10 @@
 package edu.java.configuration;
 
-import edu.java.repository.jdbc.JdbcLinkRepository;
-import edu.java.repository.jdbc.JdbcUserLinkRepository;
-import edu.java.repository.jdbc.JdbcUserRepository;
+import edu.java.repository.jdbc.JdbcLinksRepository;
+import edu.java.repository.jdbc.JdbcUsersArchiveRepository;
+import edu.java.repository.jdbc.JdbcUsersLinksArchiveRepository;
+import edu.java.repository.jdbc.JdbcUsersLinksRepository;
+import edu.java.repository.jdbc.JdbcUsersRepository;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdaterService;
 import edu.java.service.TgChatService;
@@ -17,37 +19,32 @@ import org.springframework.context.annotation.Configuration;
 public class JdbcAccessConfig {
     @Bean
     public LinkService linkService(
-        JdbcLinkRepository linkRepository,
-        JdbcUserLinkRepository userLinkRepository
+        JdbcLinksRepository linksRepository,
+        JdbcUsersLinksRepository usersLinksRepository,
+        JdbcUsersLinksArchiveRepository usersLinksArchiveRepository
     ) {
-        return new LinkService(linkRepository, userLinkRepository);
+        return new LinkService(linksRepository, usersLinksRepository, usersLinksArchiveRepository);
     }
 
     @Bean
-    public LinkUpdaterService linkUpdaterService(
-        JdbcLinkRepository linkRepository
-    ) {
+    public LinkUpdaterService linkUpdaterService(JdbcLinksRepository linkRepository) {
         return new LinkUpdaterService(linkRepository);
     }
 
     @Bean
     public TgChatService tgChatService(
-        JdbcUserRepository userRepository
+        JdbcUsersRepository userRepository, JdbcUsersArchiveRepository userArchiveRepository
     ) {
-        return new TgChatService(userRepository);
+        return new TgChatService(userRepository, userArchiveRepository);
     }
 
     @Bean(name = "github.com")
-    public GithubUpdateChecker githubUpdateChecker(
-        JdbcLinkRepository linkRepository, ResourcesConfig resourcesConfig
-    ) {
-        return new GithubUpdateChecker(linkRepository, resourcesConfig);
+    public GithubUpdateChecker githubUpdateChecker(ResourcesConfig resourcesConfig) {
+        return new GithubUpdateChecker(resourcesConfig);
     }
 
     @Bean(name = "stackoverflow.com")
-    public StackOverflowUpdateChecker stackOverflowUpdateChecker(
-        JdbcLinkRepository linkRepository, ResourcesConfig resourcesConfig
-    ) {
-        return new StackOverflowUpdateChecker(linkRepository, resourcesConfig);
+    public StackOverflowUpdateChecker stackOverflowUpdateChecker(ResourcesConfig resourcesConfig) {
+        return new StackOverflowUpdateChecker(resourcesConfig);
     }
 }

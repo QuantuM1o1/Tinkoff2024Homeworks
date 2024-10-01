@@ -2,7 +2,6 @@ package edu.java.repository.jooq;
 
 import edu.java.dto.UserDTO;
 import edu.java.scrapper.IntegrationTest;
-import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +20,7 @@ public class JooqUserRepositoryTest extends IntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private JooqUserRepository userRepository;
+    private JooqUsersRepository userRepository;
 
     private long chatId;
 
@@ -42,7 +41,7 @@ public class JooqUserRepositoryTest extends IntegrationTest {
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().chatId()).isEqualTo(this.chatId);
+        assertThat(answer.getFirst().tgChatId()).isEqualTo(this.chatId);
     }
 
     @Test
@@ -50,23 +49,18 @@ public class JooqUserRepositoryTest extends IntegrationTest {
     void removeTest() {
         // given
         long chatId2 = 1231L;
-        OffsetDateTime addedAt = OffsetDateTime.now();
-        String sql = "SELECT * FROM users WHERE deleted_at IS NULL";
-        String sqlDeleted = "SELECT * FROM users WHERE deleted_at IS NOT NULL";
-        String sqlAdd = "INSERT INTO users (chat_id, added_at) VALUES (?, ?)";
+        String sql = "SELECT * FROM users";
+        String sqlAdd = "INSERT INTO users (tg_chat_id) VALUES (?)";
 
         // when
-        this.jdbcTemplate.update(sqlAdd, this.chatId, addedAt);
-        this.jdbcTemplate.update(sqlAdd, chatId2, addedAt);
+        this.jdbcTemplate.update(sqlAdd, this.chatId);
+        this.jdbcTemplate.update(sqlAdd, chatId2);
         this.userRepository.removeUser(this.chatId);
         List<UserDTO> answer = this.jdbcTemplate.query(sql, new DataClassRowMapper<>(UserDTO.class));
-        List<UserDTO> deleted = this.jdbcTemplate.query(sqlDeleted, new DataClassRowMapper<>(UserDTO.class));
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().chatId()).isEqualTo(chatId2);
-        assertThat(deleted.size()).isEqualTo(1);
-        assertThat(deleted.getFirst().chatId()).isEqualTo(this.chatId);
+        assertThat(answer.getFirst().tgChatId()).isEqualTo(chatId2);
     }
 
     @Test
@@ -74,17 +68,16 @@ public class JooqUserRepositoryTest extends IntegrationTest {
     void findAllTest() {
         // given
         long chatId2 = 1231L;
-        OffsetDateTime addedAt = OffsetDateTime.now();
-        String sqlAdd = "INSERT INTO users (chat_id, added_at) VALUES (?, ?)";
+        String sqlAdd = "INSERT INTO users (tg_chat_id) VALUES (?)";
 
         // when
-        this.jdbcTemplate.update(sqlAdd, this.chatId, addedAt);
-        this.jdbcTemplate.update(sqlAdd, chatId2, addedAt);
+        this.jdbcTemplate.update(sqlAdd, this.chatId);
+        this.jdbcTemplate.update(sqlAdd, chatId2);
         List<UserDTO> answer = this.userRepository.findAllUsers();
 
         // then
         assertThat(answer.size()).isEqualTo(2);
-        assertThat(answer.getFirst().chatId()).isEqualTo(this.chatId);
-        assertThat(answer.getLast().chatId()).isEqualTo(chatId2);
+        assertThat(answer.getFirst().tgChatId()).isEqualTo(this.chatId);
+        assertThat(answer.getLast().tgChatId()).isEqualTo(chatId2);
     }
 }

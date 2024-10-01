@@ -13,7 +13,6 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
@@ -29,13 +28,8 @@ public class LinkEntity {
 
     private String url;
 
-    private OffsetDateTime deletedAt;
-
     @LastModifiedDate
     private OffsetDateTime updatedAt;
-
-    @CreatedDate
-    private OffsetDateTime addedAt;
 
     private OffsetDateTime lastActivity;
 

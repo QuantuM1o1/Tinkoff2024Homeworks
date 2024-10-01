@@ -5,7 +5,7 @@ import edu.java.dto.GitHubRepositoryRequest;
 import edu.java.dto.GitHubRepositoryResponse;
 import edu.java.dto.LinkDTO;
 import edu.java.dto.UpdateCheckerResponse;
-import edu.java.repository.jdbc.JdbcLinkRepository;
+import edu.java.repository.jdbc.JdbcLinksRepository;
 import edu.java.service.updateChecker.GithubUpdateChecker;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class GithubUpdateCheckerTest {
     private GitHubRepositoriesClient mockClient;
 
     @MockBean
-    private JdbcLinkRepository linkRepository;
+    private JdbcLinksRepository linkRepository;
 
     @Autowired
     private GithubUpdateChecker updateChecker;
@@ -42,7 +42,7 @@ public class GithubUpdateCheckerTest {
         GitHubRepositoryResponse mockResponse = new GitHubRepositoryResponse(1, "123", lastActivity);
         int count = 0;
         List<LinkDTO> list = new ArrayList<>();
-        LinkDTO linkDTO = new LinkDTO(1, url, time, time, time, count, count, "github.com");
+        LinkDTO linkDTO = new LinkDTO(1, url, time, time, count, count, "github.com");
         list.add(linkDTO);
         Mono<GitHubRepositoryResponse> mockMono = Mockito.mock(Mono.class);
 

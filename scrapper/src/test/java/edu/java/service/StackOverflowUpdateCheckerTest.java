@@ -5,7 +5,7 @@ import edu.java.dto.LinkDTO;
 import edu.java.dto.StackOverflowQuestionRequest;
 import edu.java.dto.StackOverflowQuestionResponse;
 import edu.java.dto.UpdateCheckerResponse;
-import edu.java.repository.jdbc.JdbcLinkRepository;
+import edu.java.repository.jdbc.JdbcLinksRepository;
 import edu.java.service.updateChecker.StackOverflowUpdateChecker;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class StackOverflowUpdateCheckerTest {
     private StackOverflowQuestionClient mockClient;
 
     @MockBean
-    private JdbcLinkRepository linkRepository;
+    private JdbcLinksRepository linkRepository;
 
     @Autowired
     private StackOverflowUpdateChecker updateChecker;
@@ -47,7 +47,7 @@ public class StackOverflowUpdateCheckerTest {
         itemList.add(item);
         StackOverflowQuestionResponse mockResponse = new StackOverflowQuestionResponse(itemList);
         List<LinkDTO> list = new ArrayList<>();
-        LinkDTO linkDTO = new LinkDTO(1, url, time, time, time, answers - 1, comments - 1, "domain");
+        LinkDTO linkDTO = new LinkDTO(1, url, time, time, answers - 1, comments - 1, "domain");
         list.add(linkDTO);
         Mono<StackOverflowQuestionResponse> mockMono = Mockito.mock(Mono.class);
 

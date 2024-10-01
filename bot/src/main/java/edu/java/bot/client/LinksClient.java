@@ -57,7 +57,8 @@ public class LinksClient {
                     HttpStatus.BAD_REQUEST::equals,
                     clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                         .flatMap(apiErrorResponse ->
-                            Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
+                            Mono.error(new IncorrectRequestException(
+                                apiErrorResponse.exceptionMessage(), apiErrorResponse.code())))
                 )
                 .bodyToMono(LinkResponse.class));
     }
@@ -72,7 +73,8 @@ public class LinksClient {
                 HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(apiErrorResponse ->
-                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
+                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage(),
+                            apiErrorResponse.code())))
             )
             .bodyToMono(ListLinksResponse.class));
     }
@@ -88,7 +90,8 @@ public class LinksClient {
                 HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(errorResponse ->
-                        Mono.error(new IncorrectRequestException(errorResponse.exceptionMessage())))
+                        Mono.error(new IncorrectRequestException(
+                            errorResponse.exceptionMessage(), errorResponse.code())))
             )
             .bodyToMono(LinkResponse.class));
     }

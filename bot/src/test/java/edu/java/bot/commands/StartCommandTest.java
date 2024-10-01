@@ -4,6 +4,8 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.client.TgChatClient;
+import exception.IncorrectRequestException;
+import exception.UserAlreadyRegisteredException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +51,7 @@ public class StartCommandTest {
 
     @Test
     @DisplayName("Ответ на регистрацию")
-    void reply() {
+    void reply() throws IncorrectRequestException, UserAlreadyRegisteredException {
         // given
         String name = "Name";
         Long chatId = 123456L;

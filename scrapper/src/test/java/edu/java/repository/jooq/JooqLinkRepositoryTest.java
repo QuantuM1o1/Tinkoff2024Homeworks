@@ -21,7 +21,7 @@ public class JooqLinkRepositoryTest extends IntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private JooqLinkRepository linkRepository;
+    private JooqLinksRepository linkRepository;
 
     private String url;
 
@@ -56,24 +56,18 @@ public class JooqLinkRepositoryTest extends IntegrationTest {
     void removeTest() {
         // given
         String url2 = "https://guessthe.game/";
-        String sql = "SELECT * FROM links l INNER JOIN links_sites ls ON l.site_id = ls.id WHERE deleted_at IS NULL";
-        String sqlDeleted
-            = "SELECT * FROM links l INNER JOIN links_sites ls ON l.site_id = ls.id WHERE deleted_at IS NOT NULL";
-        String sqlAdd = "INSERT INTO links (url, added_at, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?, ?)";
+        String sql = "SELECT * FROM links l INNER JOIN links_sites ls ON l.site_id = ls.id";
+        String sqlAdd = "INSERT INTO links (url, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?)";
 
         // when
-        this.jdbcTemplate
-            .update(sqlAdd, this.url, this.lastActivity, this.lastActivity, this.lastActivity, this.siteId);
-        this.jdbcTemplate.update(sqlAdd, url2, this.lastActivity, this.lastActivity, this.lastActivity, this.siteId);
+        this.jdbcTemplate.update(sqlAdd, this.url, this.lastActivity, this.lastActivity, this.siteId);
+        this.jdbcTemplate.update(sqlAdd, url2, this.lastActivity, this.lastActivity, this.siteId);
         this.linkRepository.removeLink(this.url);
         List<LinkDTO> answer = this.jdbcTemplate.query(sql, new DataClassRowMapper<>(LinkDTO.class));
-        List<LinkDTO> deleted = this.jdbcTemplate.query(sqlDeleted, new DataClassRowMapper<>(LinkDTO.class));
 
         // then
         assertThat(answer.size()).isEqualTo(1);
         assertThat(answer.getFirst().url()).isEqualTo(url2);
-        assertThat(deleted.size()).isEqualTo(1);
-        assertThat(deleted.getFirst().url()).isEqualTo(this.url);
     }
 
     @Test
@@ -81,12 +75,11 @@ public class JooqLinkRepositoryTest extends IntegrationTest {
     void findAllTest() {
         // given
         String url2 = "https://guessthe.game/";
-        String sqlAdd = "INSERT INTO links (url, added_at, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?, ?)";
+        String sqlAdd = "INSERT INTO links (url, updated_at, last_activity, site_id) VALUES (?, ?, ?, ?)";
 
         // when
-        this.jdbcTemplate
-            .update(sqlAdd, this.url, this.lastActivity, this.lastActivity, this.lastActivity, this.siteId);
-        this.jdbcTemplate.update(sqlAdd, url2, this.lastActivity, this.lastActivity, this.lastActivity, this.siteId);
+        this.jdbcTemplate.update(sqlAdd, this.url, this.lastActivity, this.lastActivity, this.siteId);
+        this.jdbcTemplate.update(sqlAdd, url2, this.lastActivity, this.lastActivity, this.siteId);
         List<LinkDTO> answer = this.linkRepository.findAllLinks();
 
         // then

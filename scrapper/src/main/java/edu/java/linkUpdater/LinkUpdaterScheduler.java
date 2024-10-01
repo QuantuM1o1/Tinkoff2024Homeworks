@@ -47,10 +47,10 @@ public class LinkUpdaterScheduler {
                 this.linkService.changeLastActivity(link.url(), response.lastActivity());
                 Optional<String> optionalDescription = response.description();
                 optionalDescription.ifPresent(description -> this.updateSender.sendUpdate(new LinkUpdateRequest(
-                    link.linkId(),
+                    link.id(),
                     URI.create(link.url()),
                     description,
-                    (List<Long>) this.linkService.findAllUsersForLink(link.linkId())
+                    (List<Long>) this.linkService.findAllUsersForLink(link.id())
                 )));
             }
 

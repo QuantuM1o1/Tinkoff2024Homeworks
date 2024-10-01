@@ -1,17 +1,17 @@
 package edu.java.service;
 
 import edu.java.dto.LinkDTO;
-import edu.java.repository.LinkRepository;
+import edu.java.repository.LinksRepository;
 import java.util.List;
 
 public class LinkUpdaterService {
-    private final LinkRepository linkRepository;
+    private final LinksRepository linksRepository;
 
-    public LinkUpdaterService(LinkRepository linkRepository) {
-        this.linkRepository = linkRepository;
+    public LinkUpdaterService(LinksRepository linksRepository) {
+        this.linksRepository = linksRepository;
     }
 
     public List<LinkDTO> findNLinksToUpdate(int n) {
-        return this.linkRepository.findNLinksLastUpdated(n);
+        return this.linksRepository.findNLinksLastUpdated(n);
     }
 }

@@ -2,7 +2,7 @@ package edu.java.service;
 
 import edu.java.apiException.AlreadyRegisteredException;
 import edu.java.dto.UserDTO;
-import edu.java.repository.jdbc.JdbcUserRepository;
+import edu.java.repository.jdbc.JdbcUsersRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Transactional
 public class TgChatServiceTest extends IntegrationTest {
     @Autowired
-    private JdbcUserRepository jdbcUserRepository;
+    private JdbcUsersRepository jdbcUserRepository;
 
     @Autowired
     private TgChatService tgChatService;
@@ -40,7 +40,7 @@ public class TgChatServiceTest extends IntegrationTest {
 
         // then
         assertThat(answer.size()).isEqualTo(1);
-        assertThat(answer.getFirst().chatId()).isEqualTo(this.id);
+        assertThat(answer.getFirst().tgChatId()).isEqualTo(this.id);
     }
 
     @Test

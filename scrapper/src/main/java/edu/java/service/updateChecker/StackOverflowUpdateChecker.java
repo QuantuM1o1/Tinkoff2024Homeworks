@@ -6,7 +6,6 @@ import edu.java.dto.LinkDTO;
 import edu.java.dto.StackOverflowQuestionRequest;
 import edu.java.dto.StackOverflowQuestionResponse;
 import edu.java.dto.UpdateCheckerResponse;
-import edu.java.repository.LinkRepository;
 import edu.java.service.UpdateChecker;
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -21,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
     private final Pattern pattern;
 
-    public StackOverflowUpdateChecker(LinkRepository linkRepository, ResourcesConfig resourcesConfig) {
+    public StackOverflowUpdateChecker(ResourcesConfig resourcesConfig) {
         String patternString = resourcesConfig.supportedResources().get("stackoverflow.com").urlPattern();
         this.pattern = Pattern.compile(patternString);
     }
