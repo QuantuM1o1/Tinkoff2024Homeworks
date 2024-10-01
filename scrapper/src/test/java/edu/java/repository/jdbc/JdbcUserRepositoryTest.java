@@ -50,7 +50,7 @@ public class JdbcUserRepositoryTest extends IntegrationTest {
         // given
         long chatId2 = 1231L;
         String sql = "SELECT * FROM users";
-        String sqlAdd = "INSERT INTO users tg_chat_id VALUES ?";
+        String sqlAdd = "INSERT INTO users (tg_chat_id) VALUES (?)";
 
         // when
         jdbcTemplate.update(sqlAdd, this.chatId);
@@ -68,7 +68,7 @@ public class JdbcUserRepositoryTest extends IntegrationTest {
     void findAllTest() {
         // given
         long chatId2 = 1231L;
-        String sqlAdd = "INSERT INTO users tg_chat_id VALUES ?";
+        String sqlAdd = "INSERT INTO users (tg_chat_id) VALUES (?)";
 
         // when
         jdbcTemplate.update(sqlAdd, this.chatId);
