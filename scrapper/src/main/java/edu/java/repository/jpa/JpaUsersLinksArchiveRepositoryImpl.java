@@ -3,8 +3,8 @@ package edu.java.repository.jpa;
 import edu.java.entity.UserLinkArchiveEntity;
 import edu.java.repository.UsersLinksArchiveRepository;
 import edu.java.repository.jpa.interfaces.JpaUsersLinksArchiveRepository;
-import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class JpaUsersLinksArchiveRepositoryImpl implements UsersLinksArchiveRepository {

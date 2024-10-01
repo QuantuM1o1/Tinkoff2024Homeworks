@@ -3,8 +3,8 @@ package edu.java.repository.jpa;
 import edu.java.entity.UserArchiveEntity;
 import edu.java.repository.UsersArchiveRepository;
 import edu.java.repository.jpa.interfaces.JpaUsersArchiveRepository;
-import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class JpaUsersArchiveRepositoryImpl implements UsersArchiveRepository {

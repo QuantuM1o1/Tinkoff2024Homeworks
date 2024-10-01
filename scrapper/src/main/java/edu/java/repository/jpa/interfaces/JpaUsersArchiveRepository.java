@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaUsersArchiveRepository extends JpaRepository<UserArchiveEntity, Long> {
     @Modifying
-    @Query("UPDATE UserArchiveEntity u SET u.deletedAt = :deletedAt WHERE u.tgChatId = :tgChatId AND u.deletedAt IS NULL")
+    @Query("UPDATE UserArchiveEntity u SET u.deletedAt = :deletedAt "
+        + "WHERE u.tgChatId = :tgChatId AND u.deletedAt IS NULL")
     void markAsDeleted(OffsetDateTime deletedAt, long tgChatId);
 }
