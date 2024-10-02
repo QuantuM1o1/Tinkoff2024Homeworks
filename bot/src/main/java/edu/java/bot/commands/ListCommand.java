@@ -6,17 +6,16 @@ import dto.ListLinksResponse;
 import edu.java.bot.client.LinksClient;
 import java.util.List;
 import java.util.Objects;
+import edu.java.bot.service.TelegramBotWriterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ListCommand implements Command {
-    @Autowired
-    private LinksClient client;
-
+    @Autowired private LinksClient client;
     private static final String COMMAND_NAME = "/list";
-
     private static final String COMMAND_DESCRIPTION = "List all tracked URLs";
+    @Autowired private TelegramBotWriterService botWriterService;
 
     @Override
     public String name() {
@@ -29,19 +28,17 @@ public class ListCommand implements Command {
     }
 
     @Override
-    public String handle(Update update) {
+    public void handle(Update update) {
         long chatId = update.message().chat().id();
         ListLinksResponse response = this.client.getLinks(chatId).block();
+        String message;
         if (!Objects.requireNonNull(response).links().isEmpty()) {
-            return this.trackedURLs(response.links());
+            message = this.trackedURLs(response.links());
         } else {
-            return "You are not tracking any URLs.";
+            message = "You are not tracking any URLs.";
         }
-    }
 
-    @Override
-    public Command getInstance() {
-        return new ListCommand();
+        this.botWriterService.sendMessage(update.message().chat().id(), message);
     }
 
     private String trackedURLs(List<LinkResponse> trackedURLs) {

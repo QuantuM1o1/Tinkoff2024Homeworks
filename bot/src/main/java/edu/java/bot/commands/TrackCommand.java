@@ -7,6 +7,7 @@ import edu.java.bot.client.LinksClient;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
+import edu.java.bot.service.TelegramBotWriterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ public class TrackCommand implements Command {
     private LinksClient client;
     private static final String COMMAND_NAME = "/track";
     private static final String COMMAND_DESCRIPTION = "Track a URL";
+    @Autowired private TelegramBotWriterService botWriterService;
 
     @Override
     public String name() {
@@ -28,20 +30,18 @@ public class TrackCommand implements Command {
     }
 
     @Override
-    public String handle(Update update) {
+    public void handle(Update update) {
         long chatId = update.message().chat().id();
         String[] messageText = update.message().text().split(" ");
+        String message;
         if (messageText.length != 1) {
             String url = messageText[1];
-            return this.getMessage(url, chatId);
+            message = this.getMessage(url, chatId);
         } else {
-            return "Invalid command format. Please use '/track \"url\"'.";
+            message = "Invalid command format. Please use '/track \"url\"'.";
         }
-    }
 
-    @Override
-    public Command getInstance() {
-        return new TrackCommand();
+        this.botWriterService.sendMessage(update.message().chat().id(), message);
     }
 
     private boolean isValidUrl(String url) {

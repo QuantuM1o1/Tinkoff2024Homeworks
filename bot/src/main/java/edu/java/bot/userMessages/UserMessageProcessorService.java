@@ -17,14 +17,16 @@ public class UserMessageProcessorService implements UserMessageProcessor {
     private Counter processedMessagesCounter;
 
     @Override
-    public SendMessage process(Update update) {
+    public void process(Update update) {
         this.processedMessagesCounter.increment();
         for (Command command : this.commands) {
             if (command.supports(update)) {
-                return new SendMessage(update.message().chat().id(), command.handle(update));
+                command.handle(update);
             }
         }
-        return new SendMessage(update.message().chat().id(), "Command is unknown");
+
+        //TODO
+//        return new SendMessage(update.message().chat().id(), "Command is unknown");
     }
 }
 

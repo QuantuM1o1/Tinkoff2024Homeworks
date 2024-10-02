@@ -6,6 +6,7 @@ import dto.RemoveLinkRequest;
 import edu.java.bot.client.LinksClient;
 import java.net.URI;
 import java.util.Objects;
+import edu.java.bot.service.TelegramBotWriterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ public class UntrackCommand implements Command {
     private LinksClient client;
     private static final String COMMAND_NAME = "/untrack";
     private static final String COMMAND_DESCRIPTION = "Untrack a URL";
+    @Autowired private TelegramBotWriterService botWriterService;
 
     @Override
     public String name() {
@@ -27,20 +29,18 @@ public class UntrackCommand implements Command {
     }
 
     @Override
-    public String handle(Update update) {
+    public void handle(Update update) {
         long chatId = update.message().chat().id();
         String[] messageText = update.message().text().split(" ");
+        String message;
         if (messageText.length != 1) {
             String url = messageText[1];
-            return this.getMessage(url, chatId);
+            message = this.getMessage(url, chatId);
         } else {
-            return "Invalid command format. Please use '/untrack \"url\"'.";
+            message = "Invalid command format. Please use '/untrack \"url\"'.";
         }
-    }
 
-    @Override
-    public Command getInstance() {
-        return new UntrackCommand();
+        this.botWriterService.sendMessage(update.message().chat().id(), message);
     }
 
     private String getMessage(String stringUrl, long chatId) {

@@ -124,6 +124,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+      scrapper:
+        condition: service_started
     env_file:
       - .env
     ports:

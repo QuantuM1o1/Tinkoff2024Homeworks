@@ -7,9 +7,7 @@ public interface Command {
 
     String description();
 
-    String handle(Update update);
-
-    Command getInstance();
+    void handle(Update update);
 
     default boolean supports(Update update) {
         return update.message().text().startsWith(this.name() + " ")

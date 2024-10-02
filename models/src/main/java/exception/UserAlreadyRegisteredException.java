@@ -4,11 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class UserAlreadyRegisteredException extends Exception {
-    private final String code;
-
-    public UserAlreadyRegisteredException(String message, String code) {
+    public UserAlreadyRegisteredException(String message) {
         super(message);
-        this.code = code;
     }
 
     @Override

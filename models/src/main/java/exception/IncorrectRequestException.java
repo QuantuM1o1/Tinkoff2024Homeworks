@@ -4,11 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class IncorrectRequestException extends Exception {
-    private final String code;
-
-    public IncorrectRequestException(String message, String code) {
+    public IncorrectRequestException(String message) {
         super(message);
-        this.code = code;
     }
 
     @Override
