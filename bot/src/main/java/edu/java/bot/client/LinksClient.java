@@ -51,13 +51,13 @@ public class LinksClient {
                     HttpStatus.NOT_FOUND::equals,
                     clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                         .flatMap(apiErrorResponse ->
-                            Mono.error(new ChatIsNotFoundException(apiErrorResponse.exceptionMessage())))
+                            Mono.error(new ChatIsNotFoundException(apiErrorResponse.getExceptionMessage())))
                 )
                 .onStatus(
                     HttpStatus.BAD_REQUEST::equals,
                     clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                         .flatMap(apiErrorResponse ->
-                            Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
+                            Mono.error(new IncorrectRequestException(apiErrorResponse.getExceptionMessage())))
                 )
                 .bodyToMono(LinkResponse.class));
     }
@@ -72,7 +72,7 @@ public class LinksClient {
                 HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(apiErrorResponse ->
-                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
+                        Mono.error(new IncorrectRequestException(apiErrorResponse.getExceptionMessage())))
             )
             .bodyToMono(ListLinksResponse.class));
     }
@@ -88,7 +88,7 @@ public class LinksClient {
                 HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(errorResponse ->
-                        Mono.error(new IncorrectRequestException(errorResponse.exceptionMessage())))
+                        Mono.error(new IncorrectRequestException(errorResponse.getExceptionMessage())))
             )
             .bodyToMono(LinkResponse.class));
     }

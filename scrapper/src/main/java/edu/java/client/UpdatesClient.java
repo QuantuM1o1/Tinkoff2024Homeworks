@@ -42,13 +42,13 @@ public class UpdatesClient {
                 HttpStatus.BAD_REQUEST::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(apiErrorResponse ->
-                        Mono.error(new IncorrectRequestException(apiErrorResponse.exceptionMessage())))
+                        Mono.error(new IncorrectRequestException(apiErrorResponse.getExceptionMessage())))
             )
             .onStatus(
                 HttpStatus.NOT_FOUND::equals,
                 clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
                     .flatMap(apiErrorResponse ->
-                        Mono.error(new ChatIsNotFoundException(apiErrorResponse.exceptionMessage())))
+                        Mono.error(new ChatIsNotFoundException(apiErrorResponse.getExceptionMessage())))
             )
             .bodyToMono(Void.class));
     }

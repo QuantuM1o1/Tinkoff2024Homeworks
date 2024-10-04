@@ -2,15 +2,11 @@ package edu.java.bot.client;
 
 import dto.ApiErrorResponse;
 import edu.java.bot.configuration.ApplicationConfig;
-import exception.ChatIsNotFoundException;
-import exception.IncorrectRequestException;
-import exception.UserAlreadyRegisteredException;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -54,11 +50,8 @@ public class TgChatClient {
                 .retrieve()
                 .onStatus(
                     HttpStatusCode::isError,
-                    response -> switch (response.statusCode().value()){
-                        case 400 -> Mono.error(new IncorrectRequestException("Bad request"));
-                        case 409 -> Mono.error(new UserAlreadyRegisteredException("User's already registered"));
-                        default -> Mono.error(new Exception("Something went wrong"));
-                    })
+                    response -> response.bodyToMono(ApiErrorResponse.class)
+                )
                 .bodyToMono(Void.class));
     }
 
