@@ -3,10 +3,6 @@ package edu.java.bot.service;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.BaseRequest;
-import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.BaseResponse;
-import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.userMessages.UserMessageProcessor;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -15,33 +11,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TelegramBotService implements BotService {
+public class TelegramBotReaderService implements BotReaderService {
     private final TelegramBot bot;
     private final UserMessageProcessor userMessageProcessor;
 
     @Autowired
-    public TelegramBotService(ApplicationConfig applicationConfig, UserMessageProcessor userMessageProcessor) {
-        this.bot = new TelegramBot(applicationConfig.telegramToken());
+    public TelegramBotReaderService(UserMessageProcessor userMessageProcessor, TelegramBot bot) {
         this.userMessageProcessor = userMessageProcessor;
-    }
-
-    @Override
-    public <T extends BaseRequest<T, R>, R extends BaseResponse> void execute(BaseRequest<T, R> request) {
-        this.bot.execute(request);
+        this.bot = bot;
     }
 
     @Override
     public int process(List<Update> updates) {
         for (Update update : updates) {
-            this.execute(this.userMessageProcessor.process(update));
+            this.userMessageProcessor.process(update);
         }
-        return UpdatesListener.CONFIRMED_UPDATES_ALL;
-    }
 
-    @Override
-    public void sendMessage(long chatId, String message) {
-        SendMessage sendMessage = new SendMessage(chatId, message);
-        this.execute(sendMessage);
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
     @Override

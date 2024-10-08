@@ -5,7 +5,6 @@ import dto.ListLinksResponse;
 import edu.java.apiException.LinkAlreadyExistsException;
 import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.LinkDTO;
-import edu.java.dto.UpdateCheckerResponse;
 import edu.java.repository.LinksRepository;
 import edu.java.repository.UsersLinksArchiveRepository;
 import edu.java.repository.UsersLinksRepository;
@@ -20,16 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class LinkService {
     private final LinksRepository linksRepository;
-
     private final UsersLinksRepository usersLinksRepository;
-
     private final UsersLinksArchiveRepository usersLinksArchiveRepository;
-
-    @Autowired
-    private Map<String, UpdateChecker> updateCheckerMap;
-
-    @Autowired
-    private ResourcesConfig resourcesConfig;
+    @Autowired private Map<String, UpdateChecker> updateCheckerMap;
+    @Autowired private ResourcesConfig resourcesConfig;
 
     public LinkService(
         LinksRepository linksRepository,
@@ -53,18 +46,12 @@ public class LinkService {
                     0
                 );
                 LinkDTO link = this.linksRepository.findLinkByUrl(url).getFirst();
-                UpdateCheckerResponse response = this.updateCheckerMap.get(domain).updateLink(link);
-                this.linksRepository.setLastActivity(url, response.lastActivity());
-                this.linksRepository.setAnswerCount(url, response.answerCount());
-                this.linksRepository.setCommentCount(url, response.commentCount());
+                this.updateCheckerMap.get(domain).setInfoFirstTime(link);
             } else {
                 this.linksRepository.addLink(url, OffsetDateTime.now(), 0, 0, 0);
             }
         } else {
-            if (this.linkExists(
-                tgChatId,
-                this.linksRepository.findLinkByUrl(url).getFirst().id()
-            )) {
+            if (this.linkExists(tgChatId, this.linksRepository.findLinkByUrl(url).getFirst().id())) {
                 throw new LinkAlreadyExistsException();
             }
         }
@@ -109,6 +96,16 @@ public class LinkService {
     @Transactional
     public void changeLastActivity(String url, OffsetDateTime lastActivity) {
         this.linksRepository.setLastActivity(url, lastActivity);
+    }
+
+    @Transactional
+    public void changeCommentCount(String url, int count) {
+        this.linksRepository.setCommentCount(url, count);
+    }
+
+    @Transactional
+    public void changeAnswerCount(String url, int count) {
+        this.linksRepository.setAnswerCount(url, count);
     }
 
     private boolean linkExists(long tgChatId, long linkId) {

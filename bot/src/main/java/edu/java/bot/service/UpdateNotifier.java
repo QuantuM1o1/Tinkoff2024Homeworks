@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UpdateNotifier {
     @Autowired
-    BotService botService;
+    BotWriterService botWriterService;
 
     public void notifyUser(long userId, String description, URI url) {
-        this.botService.sendMessage(userId, description + "\n" + url.toString());
+        this.botWriterService.sendMessage(userId, description + "\n" + url.toString());
     }
 }

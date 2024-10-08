@@ -6,7 +6,9 @@ import edu.java.dto.GitHubRepositoryResponse;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
@@ -14,7 +16,6 @@ import reactor.util.retry.Retry;
 @Component
 public class GitHubRepositoriesClient implements AsyncClient<GitHubRepositoryResponse, GitHubRepositoryRequest> {
     private final WebClient webClient;
-
     private final Retry retry;
 
     @Autowired
@@ -30,10 +31,14 @@ public class GitHubRepositoriesClient implements AsyncClient<GitHubRepositoryRes
     public Mono<GitHubRepositoryResponse> fetch(GitHubRepositoryRequest request) {
         return this.executeWithRetry(() ->
             this.webClient
-            .get()
-            .uri("/repos/{owner}/{repo}", request.owner(), request.repoName())
-            .retrieve()
-            .bodyToMono(GitHubRepositoryResponse.class));
+                .get()
+                .uri("/repos/{owner}/{repo}", request.owner(), request.repoName())
+                .retrieve()
+                .onStatus(
+                    HttpStatusCode::isError,
+                    ClientResponse::createException
+                )
+                .bodyToMono(GitHubRepositoryResponse.class));
     }
 
     private <T> Mono<T> executeWithRetry(Supplier<Mono<T>> supplier) {

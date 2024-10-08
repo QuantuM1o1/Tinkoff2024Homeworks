@@ -2,8 +2,8 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import dto.LinkResponse;
-import dto.ListLinksResponse;
 import edu.java.bot.client.LinksClient;
+import edu.java.bot.service.TelegramBotWriterService;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +11,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ListCommand implements Command {
-    @Autowired
-    private LinksClient client;
-
     private static final String COMMAND_NAME = "/list";
-
     private static final String COMMAND_DESCRIPTION = "List all tracked URLs";
+    @Autowired private LinksClient client;
+    @Autowired private TelegramBotWriterService botWriterService;
 
     @Override
     public String name() {
@@ -29,19 +27,20 @@ public class ListCommand implements Command {
     }
 
     @Override
-    public String handle(Update update) {
+    public void handle(Update update) {
         long chatId = update.message().chat().id();
-        ListLinksResponse response = this.client.getLinks(chatId).block();
-        if (!Objects.requireNonNull(response).links().isEmpty()) {
-            return this.trackedURLs(response.links());
-        } else {
-            return "You are not tracking any URLs.";
-        }
-    }
-
-    @Override
-    public Command getInstance() {
-        return new ListCommand();
+        this.client.getLinks(chatId).subscribe(
+            successfulResponse -> {
+                String message =
+                    Objects.requireNonNull(successfulResponse).links().isEmpty() ? "You are not tracking any URLs."
+                        : this.trackedURLs(successfulResponse.links());
+                this.botWriterService.sendMessage(update.message().chat().id(), message);
+            },
+            error -> {
+                String message = "Uncaught error.";
+                this.botWriterService.sendMessage(update.message().chat().id(), message);
+            }
+        );
     }
 
     private String trackedURLs(List<LinkResponse> trackedURLs) {
@@ -49,6 +48,7 @@ public class ListCommand implements Command {
         for (LinkResponse linkResponse : trackedURLs) {
             messageText.append("- ").append(linkResponse.url()).append("\n");
         }
+
         return messageText.toString();
     }
 }

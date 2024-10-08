@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,12 +30,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
 @RestController
-@RequiredArgsConstructor
 @Validated
 @Tag(name = "links", description = "the links controller")
 public class LinksController {
-    @Autowired
-    private LinkService linkService;
+    @Autowired private LinkService linkService;
 
     /**
      * DELETE /links : Убрать отслеживание ссылки
@@ -168,6 +165,7 @@ public class LinksController {
         AddLinkRequest addLinkRequest
     ) throws LinkAlreadyExistsException {
         this.linkService.add(tgChatId, addLinkRequest.link().toString(), addLinkRequest.link().getHost());
+
         return new LinkResponse(tgChatId, addLinkRequest.link());
     }
 }

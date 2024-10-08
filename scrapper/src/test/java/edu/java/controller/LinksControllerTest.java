@@ -15,11 +15,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class LinksControllerTest {
-    @MockBean
-    private LinkService mockLinkService;
-
-    @Autowired
-    private MockMvc mockMvc;
+    @MockBean private LinkService mockLinkService;
+    @Autowired private MockMvc mockMvc;
 
     @Test
     @DisplayName("Удалить ссылку")
