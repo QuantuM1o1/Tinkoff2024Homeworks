@@ -26,5 +26,14 @@ public class ApiErrorResponse extends Throwable {
         this.exceptionMessage = exceptionMessage;
         this.stacktrace = stacktrace;
     }
+
+    @Override
+    public String toString() {
+        return "{\"description\": \"" + description + "\","
+            + "\"code\": \"" + code + "\""
+            + "\"exception_name\": \"" + exceptionName + "\""
+            + "\"exception_message\": \"" + exceptionMessage + "\""
+            + "\"stacktrace\": \"" + stacktrace + "\"}";
+    }
 }
 

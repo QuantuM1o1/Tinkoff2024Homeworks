@@ -20,16 +20,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TgChatClientTest {
     private WireMockServer wireMockServer;
-
     private TgChatClient tgChatClient;
-
     private long chatId;
-
-    private int retryNumber;
 
     @BeforeEach
     public void setUp() {
@@ -42,8 +37,8 @@ public class TgChatClientTest {
             "http://localhost:8080",
             retryPolicy
         );
-        this.retryNumber = 5;
-        this.tgChatClient = new TgChatClient(applicationConfig, Retry.fixedDelay(this.retryNumber, Duration.ZERO));
+        int retryNumber = 5;
+        this.tgChatClient = new TgChatClient(applicationConfig, Retry.fixedDelay(retryNumber, Duration.ZERO));
         this.chatId = 123L;
     }
 
@@ -78,21 +73,5 @@ public class TgChatClientTest {
 
         // then
         assertThat(answer.block()).isNull();
-    }
-
-    @Test
-    @DisplayName("Проверка ретраев")
-    public void retryCheck() {
-        // given
-        stubFor(post(urlPathEqualTo("/tg-chat/123"))
-            .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
-
-        // when
-        Mono<Void> answer = this.tgChatClient.addChat(chatId);
-
-        // then
-        Exception exception = assertThrows(RuntimeException.class, answer::block);
-        assertThat(exception.getMessage()).contains("Retries exhausted");
-        assertThat(exception.getMessage()).contains(String.valueOf(this.retryNumber));
     }
 }

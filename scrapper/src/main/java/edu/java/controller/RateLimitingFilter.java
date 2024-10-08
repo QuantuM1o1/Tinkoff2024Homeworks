@@ -1,5 +1,6 @@
 package edu.java.controller;
 
+import dto.ApiErrorResponse;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import jakarta.servlet.FilterChain;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +40,14 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } else {
             response.setStatus(TOO_MANY_REQUESTS.code());
-            response.getWriter().write("Too Many Requests");
+            ApiErrorResponse errorResponse = new ApiErrorResponse(
+                "Too many requests",
+                "429",
+                "Too Many Requests",
+                "You're sending too many requests",
+                new ArrayList<>()
+            );
+            response.getWriter().write(errorResponse.toString());
             response.getWriter().flush();
         }
     }

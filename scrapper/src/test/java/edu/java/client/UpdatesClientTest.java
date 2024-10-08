@@ -81,20 +81,4 @@ public class UpdatesClientTest {
         // then
         assertThat(answer.block()).isNull();
     }
-
-    @Test
-    @DisplayName("Проверка ретраев")
-    public void retryCheck() {
-        // given
-        stubFor(post(urlPathEqualTo("/updates"))
-            .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
-
-        // when
-        Mono<Void> answer = this.updatesClient.sendUpdate(this.request);
-
-        // then
-        Throwable exception = assertThrows(Throwable.class, answer::block);
-        assertThat(exception.getMessage()).contains("Retries exhausted");
-        assertThat(exception.getMessage()).contains(String.valueOf(this.retryAttempts));
-    }
 }

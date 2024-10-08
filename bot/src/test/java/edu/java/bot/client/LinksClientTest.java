@@ -18,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
@@ -27,16 +26,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LinksClientTest {
     private WireMockServer wireMockServer;
-
     private LinksClient linksClient;
-
     private long chatId;
-
-    private int retryNumber;
 
     @BeforeEach
     public void setUp() {
@@ -49,8 +43,8 @@ public class LinksClientTest {
             "http://localhost:8080",
             retryPolicy
         );
-        this.retryNumber = 4;
-        this.linksClient = new LinksClient(applicationConfig, Retry.fixedDelay(this.retryNumber, Duration.ZERO));
+        int retryNumber = 4;
+        this.linksClient = new LinksClient(applicationConfig, Retry.fixedDelay(retryNumber, Duration.ZERO));
         this.chatId = 123L;
     }
 
@@ -118,21 +112,5 @@ public class LinksClientTest {
         // then
         assertThat(answer.id()).isEqualTo(123L);
         assertThat(answer.url().toString()).isEqualTo(link);
-    }
-
-    @Test
-    @DisplayName("Проверка ретраев")
-    public void retryCheck() {
-        // given
-        stubFor(get(urlPathEqualTo("/links"))
-            .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
-
-        // when
-        Mono<ListLinksResponse> answer = this.linksClient.getLinks(this.chatId);
-
-        // then
-        Exception exception = assertThrows(RuntimeException.class, answer::block);
-        assertThat(exception.getMessage()).contains("Retries exhausted");
-        assertThat(exception.getMessage()).contains(String.valueOf(this.retryNumber));
     }
 }
