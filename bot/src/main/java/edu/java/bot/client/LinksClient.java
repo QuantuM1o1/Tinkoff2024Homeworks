@@ -6,14 +6,12 @@ import dto.LinkResponse;
 import dto.ListLinksResponse;
 import dto.RemoveLinkRequest;
 import edu.java.bot.configuration.ApplicationConfig;
-import exception.ChatIsNotFoundException;
-import exception.IncorrectRequestException;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -48,16 +46,8 @@ public class LinksClient {
                 .body(BodyInserters.fromValue(removeLinkRequest))
                 .retrieve()
                 .onStatus(
-                    HttpStatus.NOT_FOUND::equals,
-                    clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                        .flatMap(apiErrorResponse ->
-                            Mono.error(new ChatIsNotFoundException(apiErrorResponse.getExceptionMessage())))
-                )
-                .onStatus(
-                    HttpStatus.BAD_REQUEST::equals,
-                    clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                        .flatMap(apiErrorResponse ->
-                            Mono.error(new IncorrectRequestException(apiErrorResponse.getExceptionMessage())))
+                    HttpStatusCode::isError,
+                    response -> response.bodyToMono(ApiErrorResponse.class)
                 )
                 .bodyToMono(LinkResponse.class));
     }
@@ -65,32 +55,28 @@ public class LinksClient {
     public Mono<ListLinksResponse> getLinks(Long tgChatId) {
         return this.executeWithRetry(() ->
             this.webClient.get()
-            .uri(this.url)
-            .headers(headers -> headers.set(this.header, String.valueOf(tgChatId)))
-            .retrieve()
-            .onStatus(
-                HttpStatus.BAD_REQUEST::equals,
-                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(apiErrorResponse ->
-                        Mono.error(new IncorrectRequestException(apiErrorResponse.getExceptionMessage())))
-            )
-            .bodyToMono(ListLinksResponse.class));
+                .uri(this.url)
+                .headers(headers -> headers.set(this.header, String.valueOf(tgChatId)))
+                .retrieve()
+                .onStatus(
+                    HttpStatusCode::isError,
+                    response -> response.bodyToMono(ApiErrorResponse.class)
+                )
+                .bodyToMono(ListLinksResponse.class));
     }
 
     public Mono<LinkResponse> addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
         return this.executeWithRetry(() ->
             this.webClient.post()
-            .uri(this.url)
-            .headers(headers -> headers.set(this.header, String.valueOf(tgChatId)))
-            .body(BodyInserters.fromValue(addLinkRequest))
-            .retrieve()
-            .onStatus(
-                HttpStatus.BAD_REQUEST::equals,
-                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse ->
-                        Mono.error(new IncorrectRequestException(errorResponse.getExceptionMessage())))
-            )
-            .bodyToMono(LinkResponse.class));
+                .uri(this.url)
+                .headers(headers -> headers.set(this.header, String.valueOf(tgChatId)))
+                .body(BodyInserters.fromValue(addLinkRequest))
+                .retrieve()
+                .onStatus(
+                    HttpStatusCode::isError,
+                    response -> response.bodyToMono(ApiErrorResponse.class)
+                )
+                .bodyToMono(LinkResponse.class));
     }
 
     private <T> Mono<T> executeWithRetry(Supplier<Mono<T>> supplier) {

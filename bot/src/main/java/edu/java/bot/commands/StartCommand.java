@@ -14,8 +14,7 @@ public class StartCommand implements Command {
     private static final String COMMAND_NAME = "/start";
     private static final String COMMAND_DESCRIPTION = "Start command";
     private static final String GREETINGS = "Hello, ";
-    @Autowired
-    private TgChatClient client;
+    @Autowired private TgChatClient client;
     @Autowired private TelegramBotWriterService botWriterService;
 
     @Override

@@ -35,12 +35,12 @@ public class TgChatClient {
         return this.executeWithRetry(() ->
             this.webClient.method(HttpMethod.DELETE)
                 .uri(url, tgChatId)
-                .exchangeToMono(clientResponse -> {
-                    if (clientResponse.statusCode().value() == 200) {
-                        return clientResponse.bodyToMono(Void.class);
-                    }
-                    return clientResponse.createException().flatMap(Mono::error);
-                }));
+                .retrieve()
+                .onStatus(
+                    HttpStatusCode::isError,
+                    response -> response.bodyToMono(ApiErrorResponse.class)
+                )
+                .bodyToMono(Void.class));
     }
 
     public Mono<Void> addChat(Long tgChatId) {
