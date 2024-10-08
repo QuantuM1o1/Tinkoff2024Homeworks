@@ -3,13 +3,11 @@ package edu.java.client;
 import dto.ApiErrorResponse;
 import dto.LinkUpdateRequest;
 import edu.java.configuration.ApplicationConfig;
-import exception.ChatIsNotFoundException;
-import exception.IncorrectRequestException;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -20,7 +18,6 @@ import reactor.util.retry.Retry;
 @Component
 public class UpdatesClient {
     private final WebClient webClient;
-
     private final Retry retry;
 
     @Autowired
@@ -35,22 +32,14 @@ public class UpdatesClient {
     public Mono<Void> sendUpdate(LinkUpdateRequest linkUpdate) {
         return this.executeWithRetry(() ->
             this.webClient.post()
-            .uri("/updates")
-            .body(BodyInserters.fromValue(linkUpdate))
-            .retrieve()
-            .onStatus(
-                HttpStatus.BAD_REQUEST::equals,
-                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(apiErrorResponse ->
-                        Mono.error(new IncorrectRequestException(apiErrorResponse.getExceptionMessage())))
-            )
-            .onStatus(
-                HttpStatus.NOT_FOUND::equals,
-                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(apiErrorResponse ->
-                        Mono.error(new ChatIsNotFoundException(apiErrorResponse.getExceptionMessage())))
-            )
-            .bodyToMono(Void.class));
+                .uri("/updates")
+                .body(BodyInserters.fromValue(linkUpdate))
+                .retrieve()
+                .onStatus(
+                    HttpStatusCode::isError,
+                    clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
+                )
+                .bodyToMono(Void.class));
     }
 
     private <T> Mono<T> executeWithRetry(Supplier<Mono<T>> supplier) {

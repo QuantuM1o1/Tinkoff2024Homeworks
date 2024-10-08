@@ -41,7 +41,7 @@ public class UntrackCommand implements Command {
         this.client.deleteLink(chatId, request).subscribe(
             successfulResponse -> {
                 String answer = Objects.requireNonNull(successfulResponse).url()
-                        + " has been removed from your tracked URLs list.";
+                    + " has been removed from your tracked URLs list.";
                 this.botWriterService.sendMessage(update.message().chat().id(), answer);
             },
             error -> {

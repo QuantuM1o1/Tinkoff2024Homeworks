@@ -35,27 +35,27 @@ public class TrackCommand implements Command {
         if (messageText.length == 1) {
             message = "Invalid command format. Please use '/track \"url\"'.";
             this.botWriterService.sendMessage(update.message().chat().id(), message);
-            return;
-        }
-        String url = messageText[1];
-        if (!this.isValidUrl(url)) {
-            message = "Invalid URL format. Please provide a valid URL.";
-            this.botWriterService.sendMessage(update.message().chat().id(), message);
-            return;
-        }
-
-        AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(url));
-        this.client.addLink(chatId, addLinkRequest).subscribe(
-            successfulResponse -> {
-                String answer = Objects.requireNonNull(successfulResponse).url()
-                    + " has been added to your tracked URLs list.";
-                this.botWriterService.sendMessage(update.message().chat().id(), answer);
-            },
-            error -> {
-                String answer = "Uncaught error.";
-                this.botWriterService.sendMessage(update.message().chat().id(), answer);
+        } else {
+            String url = messageText[1];
+            if (!this.isValidUrl(url)) {
+                message = "Invalid URL format. Please provide a valid URL.";
+                this.botWriterService.sendMessage(update.message().chat().id(), message);
+                return;
             }
-        );
+
+            AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(url));
+            this.client.addLink(chatId, addLinkRequest).subscribe(
+                successfulResponse -> {
+                    String answer = Objects.requireNonNull(successfulResponse).url()
+                        + " has been added to your tracked URLs list.";
+                    this.botWriterService.sendMessage(update.message().chat().id(), answer);
+                },
+                error -> {
+                    String answer = "Uncaught error.";
+                    this.botWriterService.sendMessage(update.message().chat().id(), answer);
+                }
+            );
+        }
     }
 
     private boolean isValidUrl(String url) {

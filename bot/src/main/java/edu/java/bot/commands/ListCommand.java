@@ -32,8 +32,8 @@ public class ListCommand implements Command {
         this.client.getLinks(chatId).subscribe(
             successfulResponse -> {
                 String message =
-                    Objects.requireNonNull(successfulResponse).links().isEmpty() ? "You are not tracking any URLs." :
-                        this.trackedURLs(successfulResponse.links());
+                    Objects.requireNonNull(successfulResponse).links().isEmpty() ? "You are not tracking any URLs."
+                        : this.trackedURLs(successfulResponse.links());
                 this.botWriterService.sendMessage(update.message().chat().id(), message);
             },
             error -> {

@@ -1,7 +1,7 @@
 package dto;
 
-import lombok.Getter;
 import java.util.List;
+import lombok.Getter;
 
 /**
  * dto.ApiErrorResponse

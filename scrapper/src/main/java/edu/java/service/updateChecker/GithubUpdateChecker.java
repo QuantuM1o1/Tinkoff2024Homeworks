@@ -1,41 +1,60 @@
 package edu.java.service.updateChecker;
 
+import dto.LinkUpdateRequest;
 import edu.java.client.GitHubRepositoriesClient;
 import edu.java.configuration.ResourcesConfig;
 import edu.java.dto.GitHubRepositoryRequest;
-import edu.java.dto.GitHubRepositoryResponse;
 import edu.java.dto.LinkDTO;
-import edu.java.dto.UpdateCheckerResponse;
+import edu.java.repository.LinksRepository;
+import edu.java.repository.UsersLinksRepository;
+import edu.java.service.BotUpdateSender;
 import edu.java.service.UpdateChecker;
-import java.time.OffsetDateTime;
-import java.util.Optional;
+import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 public class GithubUpdateChecker implements UpdateChecker {
-    @Autowired
-    private GitHubRepositoriesClient gitHubRepositoriesClient;
-
+    private final LinksRepository linksRepository;
+    private final UsersLinksRepository usersLinksRepository;
     private final Pattern pattern;
+    @Autowired private GitHubRepositoriesClient gitHubRepositoriesClient;
+    @Autowired private BotUpdateSender updateSender;
 
-    public GithubUpdateChecker(ResourcesConfig resourcesConfig) {
+    public GithubUpdateChecker(
+        ResourcesConfig resourcesConfig, LinksRepository linksRepository, UsersLinksRepository usersLinksRepository
+    ) {
         String patternString = resourcesConfig.supportedResources().get("github.com").urlPattern();
         this.pattern = Pattern.compile(patternString);
+        this.linksRepository = linksRepository;
+        this.usersLinksRepository = usersLinksRepository;
     }
 
     @Override
-    public UpdateCheckerResponse updateLink(LinkDTO link) {
-        GitHubRepositoryResponse response = this.gitHubRepositoriesClient
+    @Transactional
+    public void checkForUpdates(LinkDTO link) {
+        this.gitHubRepositoriesClient
             .fetch(this.createResourceRequest(link.url()))
-            .block();
-        Optional<String> description = Optional.empty();
-        if (link.updatedAt() != response.updatedAt()) {
-            description = Optional.of("New activity in GitHub repo");
-        }
-        OffsetDateTime lastActivity = response.updatedAt();
+            .subscribe(
+                response -> {
+                    this.linksRepository.setLastActivity(link.url(), response.updatedAt());
+                    this.updateSender.sendUpdate(new LinkUpdateRequest(
+                        link.id(),
+                        URI.create(link.url()),
+                        "New activity in GitHub repo",
+                        this.usersLinksRepository.findAllUsersByLink(link.id())
+                    ));
+                }
+            );
+    }
 
-        return new UpdateCheckerResponse(description, lastActivity, 0, 0);
+    @Override
+    @Transactional
+    public void setInfoFirstTime(LinkDTO link) {
+        this.gitHubRepositoriesClient
+            .fetch(this.createResourceRequest(link.url()))
+            .subscribe(response -> this.linksRepository.setLastActivity(link.url(), response.updatedAt()));
     }
 
     private GitHubRepositoryRequest createResourceRequest(String url) {

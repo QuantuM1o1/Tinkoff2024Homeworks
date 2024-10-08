@@ -39,9 +39,9 @@ public class StartCommand implements Command {
             error -> {
                 log.error(error.toString());
                 String message =
-                    error instanceof ApiErrorResponse ? ((ApiErrorResponse) error).getCode().equals("409") ?
-                        GREETINGS + userName + "! Welcome to the notification Telegram bot, again." :
-                        GREETINGS + userName + "! Our bot has broken." : "Uncaught error.";
+                    error instanceof ApiErrorResponse ? ((ApiErrorResponse) error).getCode().equals("409")
+                        ? GREETINGS + userName + "! Welcome to the notification Telegram bot, again."
+                        : GREETINGS + userName + "! Our bot has broken." : "Uncaught error.";
                 this.botWriterService.sendMessage(update.message().chat().id(), message);
             }
         );

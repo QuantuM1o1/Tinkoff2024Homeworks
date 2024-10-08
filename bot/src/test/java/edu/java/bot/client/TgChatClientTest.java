@@ -7,8 +7,6 @@ import edu.java.bot.configuration.RetryPolicy;
 import edu.java.bot.configuration.RetryType;
 import java.time.Duration;
 import java.util.HashSet;
-import exception.IncorrectRequestException;
-import exception.UserAlreadyRegisteredException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -70,7 +68,7 @@ public class TgChatClientTest {
 
     @Test
     @DisplayName("Добавить чат")
-    public void addChat() throws IncorrectRequestException, UserAlreadyRegisteredException {
+    public void addChat() {
         // given
         stubFor(post(urlPathEqualTo("/tg-chat/123"))
             .willReturn(aResponse().withStatus(HttpStatus.OK.value())));
@@ -84,7 +82,7 @@ public class TgChatClientTest {
 
     @Test
     @DisplayName("Проверка ретраев")
-    public void retryCheck() throws IncorrectRequestException, UserAlreadyRegisteredException {
+    public void retryCheck() {
         // given
         stubFor(post(urlPathEqualTo("/tg-chat/123"))
             .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));

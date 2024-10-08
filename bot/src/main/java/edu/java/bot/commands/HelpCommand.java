@@ -1,16 +1,16 @@
 package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import java.util.List;
 import edu.java.bot.service.TelegramBotWriterService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class HelpCommand implements Command {
-    private final List<Command> commands;
     private static final String COMMAND_NAME = "/help";
     private static final String COMMAND_DESCRIPTION = "List all available commands";
+    private final List<Command> commands;
     @Autowired private TelegramBotWriterService botWriterService;
 
     public HelpCommand(List<Command> commands) {
