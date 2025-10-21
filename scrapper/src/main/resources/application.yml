@@ -38,7 +38,7 @@ spring:
   application:
     name: scrapper
   datasource:
-    url: "jdbc:postgresql://host.docker.internal:5432/scrapper"
+    url: "jdbc:postgresql://postgresql:5432/scrapper"
     username: postgres
     password: postgres
   liquibase:
@@ -48,7 +48,7 @@ spring:
       hibernate:
         dialect: "org.hibernate.dialect.PostgreSQLDialect"
   kafka:
-    bootstrap-servers: "kafka:9091"
+    bootstrap-servers: "kafkasb:9091"
 
 server:
   port: 8080
