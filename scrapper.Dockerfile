@@ -13,6 +13,7 @@ COPY /models/pom.xml ./models/pom.xml
 
 COPY /scrapper/src ./scrapper/src
 COPY /scrapper/pom.xml ./scrapper/pom.xml
+COPY migrations ./migrations
 
 COPY /scrapper-jooq/src ./scrapper-jooq/src
 COPY /scrapper-jooq/pom.xml ./scrapper-jooq/pom.xml
@@ -25,6 +26,7 @@ FROM openjdk:21
 # Set working directory
 WORKDIR /app
 
+COPY --from=build /build/migrations ./migrations
 COPY --from=build /build/scrapper/target/scrapper.jar .
 
 ENTRYPOINT ["java", "-jar", "scrapper.jar"]
